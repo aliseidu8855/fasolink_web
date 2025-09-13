@@ -1,0 +1,41 @@
+/* Reset default styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 1. Color Palette from Style Guide */
+:root {
+  --rouge-faso: #DE0000;
+  --vert-foret: #009A00;
+  --jaune-soleil: #FCD20C;
+  --arriere-plan: #F8F9FA;
+  --texte-sombre: #333333;
+  --blanc: #FFFFFF;
+  --gris-neutre: #f1f1f1;
+}
+
+/* 2. Typography from Style Guide */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--arriere-plan);
+  color: var(--texte-sombre);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utility classes for typography */
+.titre-principal { font-size: 24px; font-weight: 700; }
+.sous-titre { font-size: 20px; font-weight: 600; }
+.texte-corps { font-size: 16px; font-weight: 500; }
+.texte-secondaire { font-size: 14px; font-weight: 400; }
+.legende { font-size: 12px; font-weight: 400; }
+
+/* Basic container for consistent spacing */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}

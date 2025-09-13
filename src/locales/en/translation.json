@@ -1,0 +1,14 @@
+{
+  "header": {
+    "postAd": "Post Ad"
+  },
+  "hero": {
+    "title": "Buy & Sell in",
+    "country": "Burkina Faso",
+    "subtitle": "Your trusted local marketplace - Simple, Safe, Reliable",
+    "searchPlaceholder": "Search for items, cars, phones..."
+  },
+  "categories": {
+    "browse": "Browse Categories"
+  }
+}

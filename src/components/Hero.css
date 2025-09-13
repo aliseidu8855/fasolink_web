@@ -1,0 +1,56 @@
+.hero-section {
+  background-color: var(--blanc);
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 36px; /* Larger than standard title */
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.hero-title span {
+  color: var(--rouge-faso);
+}
+
+.hero-subtitle {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.search-form {
+  display: flex;
+  max-width: 600px;
+  margin: 0 auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.search-input {
+  flex-grow: 1;
+  border: none;
+  padding: 1rem;
+  font-size: 16px;
+}
+
+.search-input:focus {
+  outline: none;
+}
+
+.search-button {
+  background-color: var(--rouge-faso);
+  color: var(--blanc);
+  border: none;
+  padding: 0 1.5rem;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.location-selector {
+  margin-top: 1rem;
+  cursor: pointer;
+  color: #555;
+}

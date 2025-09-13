@@ -1,0 +1,14 @@
+{
+  "header": {
+    "postAd": "Publier une annonce"
+  },
+  "hero": {
+    "title": "Achetez & Vendez au",
+    "country": "Burkina Faso",
+    "subtitle": "Votre marché local de confiance - Simple, Sûr, Fiable",
+    "searchPlaceholder": "Rechercher des articles, voitures, téléphones..."
+  },
+  "categories": {
+    "browse": "Parcourir les catégories"
+  }
+}

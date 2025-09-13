@@ -1,0 +1,32 @@
+.gallery-container {
+flex: 1;
+}
+.main-image-wrapper {
+border-radius: 12px;
+overflow: hidden;
+margin-bottom: 1rem;
+}
+.main-image {
+width: 100%;
+height: 400px;
+object-fit: cover;
+}
+.thumbnail-wrapper {
+display: flex;
+gap: 1rem;
+}
+.thumbnail-image {
+width: 80px;
+height: 80px;
+object-fit: cover;
+border-radius: 8px;
+cursor: pointer;
+border: 2px solid transparent;
+transition: border-color 0.2s;
+}
+.thumbnail-image:hover {
+border-color: var(--rouge-faso);
+}
+.thumbnail-image.active {
+border-color: var(--rouge-faso);
+}

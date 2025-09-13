@@ -1,0 +1,47 @@
+.listing-detail-page {
+  padding: 2rem 1rem;
+}
+.listing-detail-layout {
+  display: flex;
+  gap: 2rem;
+}
+.gallery-column {
+  flex: 3; /* Takes up more space */
+}
+.details-column {
+  flex: 2; /* Takes up less space */
+}
+.detail-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.detail-price {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--rouge-faso);
+  margin-bottom: 1.5rem;
+}
+.seller-info {
+  background-color: var(--arriere-plan);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+.seller-info p {
+  margin-bottom: 0.5rem;
+}
+.divider {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 2rem 0;
+}
+.section-heading {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.detail-description {
+  line-height: 1.6;
+  color: #555;
+}

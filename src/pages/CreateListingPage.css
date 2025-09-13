@@ -1,0 +1,44 @@
+.create-listing-page {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: var(--blanc);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.create-listing-page h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.listing-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.listing-form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.listing-form input,
+.listing-form select,
+.listing-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+}
+
+.listing-form textarea {
+  resize: vertical;
+}
+
+.listing-form button {
+  width: 100%;
+  padding: 1rem;
+  font-size: 18px;
+}
