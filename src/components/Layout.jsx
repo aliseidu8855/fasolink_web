@@ -5,6 +5,7 @@ import Header from './Header';
 import { useScroll } from '../hooks/useScroll';
 import NavBar from './navigation/NavBar';
 import Footer from './Footer';
+import MobileBottomNav from './navigation/MobileBottomNav';
 import Modal from './Modal';
 import { useModal } from '../context/ModalContext';
 
@@ -23,7 +24,8 @@ const Layout = () => {
       <main id="main-content" style={{ paddingTop: applyMainPadding ? '80px' : '0' }}>
         <Outlet />
       </main>
-      <Footer />
+  <Footer />
+  <MobileBottomNav />
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         {modalContent}
       </Modal>

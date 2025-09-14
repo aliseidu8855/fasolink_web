@@ -1,5 +1,6 @@
 {
   "brand": "FasoLink",
+  "home": "Home",
   "dashboard": "Dashboard",
   "messages": "Messages",
   "help": "Help",
@@ -9,6 +10,7 @@
   "logout": "Logout",
   "categories": "Categories",
   "searchPlaceholder": "Search listings...",
+  "search": "Search",
   "notifications": "Notifications",
   "account": "Account",
   "signIn": "Sign In",

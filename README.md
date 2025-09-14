@@ -127,6 +127,18 @@ Enhancements to `MobileDrawer`:
 
 These changes address prior issues where the hamburger state desynced or focus was lost after closing.
 
+### Mobile Bottom Navigation (New)
+
+On screens below 900px a persistent bottom navigation bar (`MobileBottomNav`) provides quick access to:
+
+- Home
+- Listings / Categories
+- Post Ad (prominent floating action; opens auth modal if unauthenticated and preserves intended path)
+- Messages
+- Account / Dashboard
+
+It respects safe-area insets (modern phone notches) and uses accessible labels + active state highlighting.
+
 ### Typography System
 
 Implemented an Amazon-inspired typographic scale (non-proprietary) via CSS variables in `styles/global.css`:

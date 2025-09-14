@@ -14,7 +14,7 @@ const ListingRow = ({ title, subtitle, apiParams, compact = false }) => {
     const getListings = async () => {
       try {
         // Add a limit to only fetch 4 items for the homepage
-        const response = await fetchListings({ ...apiParams, 'page-size': 4 });
+  const response = await fetchListings({ ...apiParams, page_size: 4 });
         setListings(response.data.results || response.data); // Handle pagination if present
       } catch (err) {
         console.error(`Failed to load ${title} listings:`, err);

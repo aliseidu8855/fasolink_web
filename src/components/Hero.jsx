@@ -27,24 +27,27 @@ const Hero = () => {
 
     // Fetch aggregated stats if endpoint exists; fallback to previous method if needed
     const loadStats = async () => {
+      let havePrimary = false;
       try {
         const res = await fetchStats();
         if (res.data) {
+          havePrimary = true;
           setStats({
             listings: res.data.listings ?? null,
             users: res.data.users ?? null,
             categories: res.data.categories ?? null
           });
-          return;
         }
-      } catch {
-        // fallback to approximate listings count
+  } catch {
+        // Intentionally silent: will attempt fallback for listings only.
       }
-      try {
-        const res = await fetchListings({ 'page-size': 1 });
-        const total = res.data.count || res.data.results?.length || null;
-        if (total) setStats(s => ({ ...s, listings: total }));
-      } catch {/* ignore */}
+      if (!havePrimary) {
+        try {
+          const res = await fetchListings({ page_size: 1 });
+          const total = res.data.count || res.data.results?.length || null;
+          if (total) setStats(s => ({ ...s, listings: total }));
+        } catch {/* ignore fallback failure */}
+      }
     };
     loadStats();
   }, []);
