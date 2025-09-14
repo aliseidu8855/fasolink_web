@@ -4,7 +4,6 @@ import NavBrand from './NavBrand';
 import NavActions from './NavActions';
 import SearchBar from './SearchBar';
 import CategoryMenu from './CategoryMenu';
-import MobileDrawer from './MobileDrawer';
 import './NavBar.css';
 
 // High-level orchestration component
@@ -20,8 +19,7 @@ const NavBar = ({ isScrolled }) => {
         </div>
         <NavActions isAuthenticated={isAuthenticated} />
       </div>
-      {/* Mobile drawer portal target */}
-      <MobileDrawer />
+      {/* MobileDrawer removed to simplify mobile UI (hamburger hidden) */}
     </header>
   );
 };

@@ -94,8 +94,9 @@
 @media (max-width: 900px) {
   .nav-actions { gap:.5rem; }
   .nav-brand-text { display:none; }
-  .nav-mobile-trigger { display:block; position:absolute; left:.5rem; }
-  .nav-inner { padding-left:2.5rem; }
+  /* Removed hamburger trigger; reset padding */
+  .nav-mobile-trigger { display:none; }
+  .nav-inner { padding-left:0; }
   .mobile-menu-toggle { display:flex; }
 }
 
