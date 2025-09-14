@@ -1,7 +1,17 @@
 .listings-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(140px, 45%, 220px), 1fr));
+  gap: 1.25rem;
+  align-items: stretch;
+}
+@media (min-width: 640px) {
+  .listings-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+}
+@media (min-width: 980px) {
+  .listings-grid { gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+}
+@media (min-width: 1280px) {
+  .listings-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
 }
 
 .error-message {

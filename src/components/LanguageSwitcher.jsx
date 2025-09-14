@@ -10,19 +10,17 @@ const LanguageSwitcher = () => {
   };
 
   return (
-    <div className="language-switcher">
-      <button 
-        onClick={() => changeLanguage('en')} 
+    <div className="language-switcher" aria-label="Sélecteur de langue">
+      <button
+        onClick={() => changeLanguage('fr')}
+        className={i18n.language === 'fr' ? 'active primary' : 'primary'}
+        aria-current={i18n.language === 'fr' ? 'true' : 'false'}
+      >🇫🇷 FR</button>
+      <button
+        onClick={() => changeLanguage('en')}
         className={i18n.language === 'en' ? 'active' : ''}
-      >
-        EN
-      </button>
-      <button 
-        onClick={() => changeLanguage('fr')} 
-        className={i18n.language === 'fr' ? 'active' : ''}
-      >
-        FR
-      </button>
+        aria-current={i18n.language === 'en' ? 'true' : 'false'}
+      >🇬🇧 EN</button>
     </div>
   );
 };

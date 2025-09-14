@@ -64,3 +64,12 @@
 [data-theme="dark"] .listing-card:hover { border-color:#3a444c; }
 [data-theme="dark"] .lc-location { color:#9ba3ab; }
 [data-theme="dark"] .lc-meta { color:#8a939c; }
+
+/* Small screen refinements */
+@media (max-width: 599px) {
+  .listing-card { padding:.65rem .6rem .8rem; border-radius:8px; }
+  .lc-title { font-size:.8rem; }
+  .lc-price { font-size:.95rem; }
+  .lc-media { border-radius:5px; }
+  .lc-badge { font-size:.5rem; padding:.25rem .45rem .22rem; }
+}

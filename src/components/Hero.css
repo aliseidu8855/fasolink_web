@@ -94,3 +94,11 @@
   .hero-search { border-radius: 20px; }
   .hero-search button { padding:0.55rem 1.1rem; font-size:0.85rem; }
 }
+
+@media (max-width: 899px) and (min-width: 600px) {
+  .hero-section { padding:4rem 0 3rem; }
+  .hero-title { font-size: clamp(2.1rem, 3.2vw, 2.6rem); }
+  .hero-search { max-width: 520px; }
+  .hero-stats { gap:1rem; }
+  .stat-item strong { font-size:1rem; }
+}

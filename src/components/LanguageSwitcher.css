@@ -18,3 +18,7 @@
   background-color: var(--rouge-faso);
   color: var(--blanc);
 }
+.language-switcher button.primary {
+  font-weight:700;
+}
+.language-switcher button { display:flex; align-items:center; gap:4px; }

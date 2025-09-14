@@ -27,7 +27,7 @@ const MobileBottomNav = () => {
   const navItems = [
     { to: '/', icon: <IoHomeOutline size={24} />, label: t('navigation:home','Home') },
     { to: '/listings', icon: <IoGridOutline size={24} />, label: t('navigation:categories','Categories') },
-    { action: handlePost, icon: <IoAddCircle size={46} className="mbn-post-icon" />, label: t('navigation:postAdShort','Post') },
+  { action: handlePost, icon: <IoAddCircle size={46} className="mbn-post-icon" />, label: t('navigation:postAdShort') },
     { to: '/messages', icon: <IoChatbubblesOutline size={24} />, label: t('navigation:messages','Messages') },
     { to: '/dashboard', icon: <IoPersonCircleOutline size={24} />, label: t('navigation:account','Account') }
   ];

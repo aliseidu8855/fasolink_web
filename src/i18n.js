@@ -21,9 +21,8 @@ import frDashboard from './locales/fr/dashboard.json';
 import frErrors from './locales/fr/errors.json';
 import frHome from './locales/fr/home.json';
 
-// Attempt to restore saved language first (undefined lets detector decide)
-let savedLang;
-try { savedLang = localStorage.getItem('appLanguage') || undefined; } catch { /* ignore */ }
+// Force French default: ignore any previously saved language for now
+try { localStorage.setItem('appLanguage','fr'); } catch { /* ignore */ }
 
 const resources = {
   en: {
@@ -55,8 +54,8 @@ i18n
     resources,
   ns: ['common', 'navigation', 'auth', 'listing', 'messaging', 'dashboard', 'errors', 'home'],
     defaultNS: 'common',
-    fallbackLng: 'en',
-    lng: savedLang, // if defined will override detection
+  fallbackLng: 'fr',
+  lng: 'fr', // always initialize French
     debug: true, // disable in production
     interpolation: { escapeValue: false },
     detection: {
@@ -74,8 +73,18 @@ i18n
   });
 
 // Persist language on change
+const setHtmlLang = (lng) => {
+  if (typeof document !== 'undefined') {
+    document.documentElement.lang = lng;
+  }
+};
+
 i18n.on('languageChanged', (lng) => {
   try { localStorage.setItem('appLanguage', lng); } catch { /* ignore */ }
+  setHtmlLang(lng);
 });
+
+// Set immediately after init
+setHtmlLang('fr');
 
 export default i18n;

@@ -33,6 +33,21 @@
   --shadow-md: 0 4px 10px -2px rgba(0,0,0,0.12);
   --shadow-lg: 0 8px 28px -6px rgba(0,0,0,0.18);
   --transition-base: .25s cubic-bezier(.4,.0,.2,1);
+  /* Spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  /* Fluid typography helpers */
+  --fluid-sm: clamp(0.75rem, 0.7rem + 0.4vw, 0.9rem);
+  --fluid-base: clamp(0.85rem, 0.8rem + 0.5vw, 1rem);
+  --fluid-lg: clamp(1rem, 0.95rem + 0.8vw, 1.25rem);
+  --fluid-xl: clamp(1.25rem, 1.1rem + 1.2vw, 1.75rem);
 }
 
 /* Dark mode (opt-in via data-theme="dark" on html or body) */
