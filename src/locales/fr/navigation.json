@@ -1,0 +1,18 @@
+{
+  "brand": "FasoLink",
+  "dashboard": "Tableau de bord",
+  "messages": "Messages",
+  "help": "Aide",
+  "postAd": "Publier une annonce",
+  "postAdShort": "Publier",
+  "myListings": "Mes annonces",
+  "logout": "Déconnexion",
+  "categories": "Catégories",
+  "searchPlaceholder": "Rechercher des annonces...",
+  "notifications": "Notifications",
+  "account": "Compte",
+  "signIn": "Connexion",
+  "register": "Inscription",
+  "searchMobileLabel": "Recherche"
+  ,"noResults": "Aucun résultat"
+}

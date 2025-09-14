@@ -1,0 +1,51 @@
+{
+  "hero": {
+    "title": "Find Anything Locally",
+    "subtitle": "Buy, sell and discover trusted services across Burkina Faso.",
+    "searchPlaceholder": "Search products, services...",
+    "quickBrowse": "Popular now",
+    "stats": {
+      "listings": "Active listings",
+      "users": "Trusted users",
+      "categories": "Categories"
+    }
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "steps": {
+      "browse": {
+        "title": "Browse",
+        "desc": "Explore categories or search for what you need."
+      },
+      "contact": {
+        "title": "Contact",
+        "desc": "Chat securely with sellers and service providers."
+      },
+      "deal": {
+        "title": "Make a Deal",
+        "desc": "Meet safely and complete your transaction."
+      }
+    }
+  },
+  "cta": {
+    "title": "Ready to post your first listing?",
+    "subtitle": "It only takes a minute to reach thousands of local buyers.",
+    "action": "Post an Ad"
+  },
+  "categoryStrip": {
+    "title": "Top Categories",
+    "viewAll": "View All"
+  },
+  "stats": {
+    "listings": "+5k listings",
+    "users": "+2k users",
+    "secure": "Safe & Simple"
+  },
+  "testimonials": {
+    "title": "What People Say"
+  },
+  "listings": {
+    "featuredSubtitle": "Curated picks and hot deals",
+    "recentSubtitle": "Freshly added by the community"
+  }
+}

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { fetchListings } from '../services/api';
 import ListingCard from './ListingCard';
 import './ListingRow.css';
 
-const ListingRow = ({ title, apiParams }) => {
+const ListingRow = ({ title, subtitle, apiParams, compact = false }) => {
   const [listings, setListings] = useState([]);
+  const { t } = useTranslation(['common','listing']);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,17 +26,29 @@ const ListingRow = ({ title, apiParams }) => {
     getListings();
   }, [title, apiParams]);
 
-  if (loading) return <p>Loading {title}...</p>;
+  const skeletonCards = Array.from({ length: 4 }).map((_,i)=>(
+    <div className="listing-card skeleton" key={i} aria-hidden="true">
+      <div className="lc-media sk-media" />
+      <div className="sk-lines">
+        <div className="sk-line" />
+        <div className="sk-line short" />
+        <div className="sk-line tiny" />
+      </div>
+    </div>
+  ));
 
   return (
-    <section className="listing-row-section container">
+    <section className="listing-row-section container" aria-labelledby={`lr-${title.replace(/\s+/g,'-').toLowerCase()}`}>
       <div className="section-header">
-        <h2 className="section-title">{title}</h2>
-        <Link to="/listings" className="view-all-link">View All</Link>
+        <div>
+          <h2 id={`lr-${title.replace(/\s+/g,'-').toLowerCase()}`} className="section-title">{title}</h2>
+          {subtitle && <p className="section-subtitle">{subtitle}</p>}
+        </div>
+        <Link to="/listings" className="view-all-link">{t('listing:viewAll', 'View All')}</Link>
       </div>
-      <div className="listing-grid">
-        {listings.map(listing => (
-          <ListingCard key={listing.id} listing={listing} />
+      <div className={`listing-grid${compact ? ' compact' : ''}`}>
+        {loading ? skeletonCards : listings.map(listing => (
+          <ListingCard key={listing.id} listing={listing} compact={compact} />
         ))}
       </div>
     </section>

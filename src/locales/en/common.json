@@ -1,0 +1,30 @@
+{
+  "loading": "Loading...",
+  "errorGeneric": "An unexpected error occurred.",
+  "invalidRequest": "Invalid request. Please refresh the page and try again.",
+  "justNow": "just now",
+  "hero": {
+    "title": "Buy & Sell in",
+    "country": "Burkina Faso",
+    "subtitle": "Your trusted local marketplace - Simple, Safe, Reliable",
+    "searchPlaceholder": "Search for items, cars, phones..."
+  },
+  "categories": {
+    "browse": "Browse Categories"
+  },
+  "footer": {
+    "tagline": "Your trusted marketplace for Burkina Faso.",
+    "quickLinks": "Quick Links",
+    "browseCategories": "Browse Categories",
+    "postAd": "Post an Ad",
+    "safetyTips": "Safety Tips",
+    "helpCenter": "Help Center",
+    "categories": "Categories",
+    "contact": "Contact",
+    "phone": "+226 XX XX XX XX",
+    "email": "support@fasolink.bf",
+    "address": "Ouagadougou, Burkina Faso",
+    "rights": "All rights reserved.",
+    "madeWith": "Made with ♥ for Burkina Faso"
+  }
+}

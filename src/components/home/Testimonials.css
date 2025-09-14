@@ -1,0 +1,12 @@
+.testimonials-section { padding:3.5rem 0 2.5rem; background:#fff; }
+.testimonials-title { text-align:center; font-size:1.9rem; margin:0 0 2.25rem; }
+.testimonials-grid { display:grid; gap:1.75rem; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); }
+.t-card { background:linear-gradient(135deg,#ffffff,#f8f9fa); border:1px solid #e1e3e6; padding:1.35rem 1.25rem 1.25rem; border-radius:20px; position:relative; overflow:hidden; box-shadow:0 2px 4px rgba(0,0,0,0.04); opacity:0; transform: translateY(30px); animation: tFade .85s forwards; }
+.t-card:nth-child(2) { animation-delay: .1s; }
+.t-card:nth-child(3) { animation-delay: .2s; }
+@keyframes tFade { to { opacity:1; transform: translateY(0); } }
+.t-text { font-size:.9rem; line-height:1.45; margin:0 0 1.1rem; font-style:italic; }
+.t-meta { display:flex; align-items:center; gap:.75rem; }
+.t-avatar { width:40px; height:40px; border-radius:50%; background: var(--vert-foret); display:inline-flex; align-items:center; justify-content:center; font-weight:700; color:#fff; }
+.t-name { font-size:.85rem; display:block; }
+.t-role { font-size:.65rem; text-transform:uppercase; letter-spacing:1px; color:#777; }

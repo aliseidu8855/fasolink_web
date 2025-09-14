@@ -1,0 +1,7 @@
+.cta-banner { padding:3.25rem 0; }
+.cta-inner { background:linear-gradient(100deg,var(--vert-foret), var(--rouge-faso)); color:#fff; padding:2.25rem 2rem; border-radius:26px; display:flex; flex-direction:column; gap:1.25rem; position:relative; overflow:hidden; }
+@media (min-width: 780px) { .cta-inner { flex-direction:row; justify-content:space-between; align-items:center; } }
+.cta-copy h2 { margin:0 0 .75rem; font-size:1.6rem; }
+.cta-copy p { margin:0; opacity:.92; max-width:620px; line-height:1.4; }
+.cta-btn { background:#fff; color:var(--rouge-faso); text-decoration:none; font-weight:600; padding:.85rem 1.6rem; border-radius: 40px; font-size:.95rem; box-shadow:0 4px 18px -4px rgba(0,0,0,0.25); transition:.3s; }
+.cta-btn:hover { transform:translateY(-2px); box-shadow:0 6px 24px -4px rgba(0,0,0,0.35); }

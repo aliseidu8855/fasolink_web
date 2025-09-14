@@ -1,0 +1,8 @@
+{
+  "welcome": "Bienvenue, {{username}} !",
+  "subtitle": "Voici les annonces que vous avez publiées. Vous pouvez les modifier ou les supprimer ici.",
+  "noListings": "Vous n'avez pas encore publié d'annonces.",
+  "loadingUser": "Chargement de l'utilisateur...",
+  "loadingDashboard": "Chargement de votre tableau de bord...",
+  "loadError": "Échec du chargement de vos annonces."
+}

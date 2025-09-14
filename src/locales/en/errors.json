@@ -1,0 +1,5 @@
+{
+  "ownListingConversation": "You cannot start a conversation on your own listing.",
+  "listingNotFound": "Failed to load listing details. The item may not exist.",
+  "unexpectedConversation": "An unexpected error occurred while trying to start the conversation. Please try again later."
+}

@@ -1,0 +1,9 @@
+.hiw-section { padding:3.5rem 0 2rem; background:#fafbfc; }
+.hiw-title { text-align:center; font-size:1.9rem; margin:0 0 2.5rem; letter-spacing:-.5px; }
+.hiw-grid { display:grid; gap:1.75rem; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); }
+.hiw-card { background:#fff; border:1px solid #e1e3e6; padding:1.5rem 1.25rem; border-radius:18px; position:relative; overflow:hidden; transition: transform .6s cubic-bezier(.4,.0,.2,1), box-shadow .4s, border-color .4s, background-color .4s; opacity:0; transform: translateY(40px) scale(.97); }
+.hiw-card.in-view { opacity:1; transform: translateY(0) scale(1); }
+.hiw-card:hover { box-shadow:0 10px 28px -6px rgba(0,0,0,0.18); transform: translateY(-4px); }
+.hiw-icon { font-size:2rem; margin-bottom:.75rem; }
+.hiw-card h3 { margin:.25rem 0 .5rem; font-size:1.1rem; }
+.hiw-card p { margin:0; font-size:.9rem; line-height:1.4; color:#555; }

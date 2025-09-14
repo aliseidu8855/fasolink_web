@@ -1,0 +1,8 @@
+{
+  "welcome": "Welcome, {{username}}!",
+  "subtitle": "Here are the ads you've posted. You can edit or delete them here.",
+  "noListings": "You haven't posted any ads yet.",
+  "loadingUser": "Loading user...",
+  "loadingDashboard": "Loading your dashboard...",
+  "loadError": "Failed to load your listings."
+}

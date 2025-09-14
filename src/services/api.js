@@ -24,7 +24,8 @@ export const fetchCategories = () => {
   return apiClient.get('/categories/');
 };
 
-// New function to fetch listings with optional query parameters
+// Generic listings fetcher supporting filters, ordering, pagination
+// params can include: page, page_size, category, min_price, max_price, negotiable, is_featured, min_rating, ordering, search, location
 export const fetchListings = (params = {}) => {
   return apiClient.get('/listings/', { params });
 };
@@ -40,12 +41,74 @@ export const loginUser = (credentials) => {
   return apiClient.post('/auth/login/', credentials);
 };
 
+// Current authenticated user (expects a backend endpoint returning id & username)
+export const fetchCurrentUser = () => {
+  return apiClient.get('/auth/me/');
+};
+
 export const createListing = (formData) => {
-  // formData must be a FormData object
   return apiClient.post('/listings/', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
+};
+
+export const fetchUserListings = () => {
+  return apiClient.get('/profile/my-listings/');
+};
+
+export const startConversation = (listingId) => {
+  return apiClient.post('/conversations/start/', { listing_id: listingId });
+};
+
+// Fetches all of a user's conversations
+export const fetchConversations = () => {
+  return apiClient.get('/conversations/');
+};
+
+// Fetches the details and messages of a single conversation
+export const fetchConversationById = (conversationId) => {
+  return apiClient.get(`/conversations/${conversationId}/`);
+};
+
+// Sends a new message in a conversation
+export const sendMessage = (conversationId, content) => {
+  return apiClient.post(`/conversations/${conversationId}/messages/`, { content });
+};
+
+// Paginated fetch of messages for a conversation
+// page (number) is optional (defaults to 1). Backend pagination param is 'page'.
+export const fetchConversationMessages = (conversationId, page = 1) => {
+  return apiClient.get(`/conversations/${conversationId}/messages/`, { params: { page } });
+};
+
+// Marks all unread messages in a conversation as read
+export const markConversationRead = (conversationId) => {
+  return apiClient.post(`/conversations/${conversationId}/mark-read/`);
+};
+
+// Export a conventional page size constant (keep in sync with backend pagination page size if needed)
+export const MESSAGE_PAGE_SIZE = 20;
+
+// Marketplace stats (listings/users/categories counts)
+export const fetchStats = () => {
+  return apiClient.get('/stats/');
+};
+
+// Helper to build ordering strings (prefix with - for descending)
+export const buildOrdering = ({ newestFirst, priceAsc, priceDesc, ratingDesc }) => {
+  if (priceAsc) return 'price';
+  if (priceDesc) return '-price';
+  if (ratingDesc) return '-rating';
+  if (newestFirst) return '-created_at';
+  return '-created_at';
+};
+
+// Infinite scroll convenience (returns next page when called)
+export const fetchListingsPage = async (page, baseParams = {}) => {
+  const params = { page, ...baseParams };
+  const res = await fetchListings(params);
+  return res.data; // expecting DRF pagination structure if pagination added on backend
 };
 

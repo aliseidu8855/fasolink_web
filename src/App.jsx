@@ -6,6 +6,9 @@ import ListingsPage from './pages/ListingsPage';
 import ListingDetailPage from './pages/ListingDetailPage';
 import CreateListingPage from './pages/CreateListingPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import DashboardPage from './pages/DashboardPage';
+import MessagesPage from './pages/MessagesPage';
+import HelpPage from './pages/HelpPage';
 
 function App() {
   return (
@@ -23,6 +26,22 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route 
+          path="/messages/:conversationId?" 
+          element={
+            <ProtectedRoute>
+              <MessagesPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/help" element={<HelpPage />} />
         </Route>
       </Routes>
     </Router>

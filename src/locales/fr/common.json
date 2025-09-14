@@ -1,0 +1,28 @@
+{
+  "loading": "Chargement...",
+  "errorGeneric": "Une erreur inattendue s'est produite.",
+  "hero": {
+    "title": "Trouvez la bonne solution, rapidement",
+    "subtitle": "Connectez-vous avec des professionnels et des services dans votre région.",
+    "cta": "Commencer"
+  },
+  "categories": {
+    "title": "Parcourir les catégories",
+    "empty": "Aucune catégorie disponible"
+  },
+  "footer": {
+    "tagline": "Votre marché de confiance pour le Burkina Faso.",
+    "quickLinks": "Liens rapides",
+    "browseCategories": "Parcourir les catégories",
+    "postAd": "Publier une annonce",
+    "safetyTips": "Conseils de sécurité",
+    "helpCenter": "Centre d'aide",
+    "categories": "Catégories",
+    "contact": "Contact",
+    "phone": "+226 XX XX XX XX",
+    "email": "support@fasolink.bf",
+    "address": "Ouagadougou, Burkina Faso",
+    "rights": "Tous droits réservés.",
+    "madeWith": "Fait avec ♥ pour le Burkina Faso"
+  }
+}

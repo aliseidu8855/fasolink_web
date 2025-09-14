@@ -1,0 +1,23 @@
+{
+  "messages": "Messages",
+  "searchPlaceholder": "Search conversations...",
+  "noConversations": "No conversations yet.",
+  "selectConversation": "Select a conversation to start chatting.",
+  "loginToViewMessages": "Please log in to view your messages.",
+  "loadOlder": "Load older messages",
+  "loadingChat": "Loading Chat...",
+  "loadingConversations": "Loading conversations...",
+  "loadingUser": "Loading user...",
+  "failedSend": "Failed to send message",
+  "retry": "Retry",
+  "placeholder": "Type your message...",
+  "safetyTipTitle": "Safety Tip:",
+  "safetyTipBody": "Always meet in a public place like a market or bank. Never send money before seeing the item.",
+  "unreadMany": "{{count}} unread",
+  "unreadOne": "1 unread",
+  "openList": "Conversations",
+  "closeList": "Close",
+  "back": "Back",
+  "backToList": "Back to conversations",
+  "conversations": "Conversations"
+}

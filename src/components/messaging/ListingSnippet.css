@@ -1,0 +1,31 @@
+.listing-snippet {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: #f8f9fa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 1rem;
+  max-width: 400px;
+  margin: 0.5rem auto; /* Center it in the chat */
+}
+.snippet-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.snippet-details {
+  flex-grow: 1;
+}
+.snippet-title {
+  font-weight: 600;
+}
+.snippet-price {
+  font-weight: 700;
+  color: var(--texte-sombre);
+}
+.snippet-location {
+  font-size: 14px;
+  color: #777;
+}

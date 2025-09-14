@@ -14,6 +14,8 @@
   font-weight: 700;
 }
 
+.section-subtitle { font-size: 0.85rem; color:#666; margin:.35rem 0 0; letter-spacing:.5px; text-transform:uppercase; font-weight:600; }
+
 .view-all-link {
   color: var(--rouge-faso);
   text-decoration: none;
@@ -25,3 +27,22 @@
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
 }
+
+/* Compact variant (denser) */
+.listing-grid.compact { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+
+/* Updated skeletons for new card layout */
+.listing-card.skeleton { padding:.75rem; border-radius:10px; border:1px solid #e1e3e6; background:#fff; display:flex; flex-direction:column; gap:.6rem; animation: skPulse 1.3s ease-in-out infinite alternate; }
+.listing-card.skeleton .sk-media, .listing-card.skeleton .lc-media { aspect-ratio:1/1; background:linear-gradient(90deg,#ececec,#f5f5f5,#ececec); background-size:200%; border-radius:6px; }
+.listing-card.skeleton .sk-lines { display:flex; flex-direction:column; gap:.45rem; }
+.listing-card.skeleton .sk-line { height:10px; background:#e3e5e7; border-radius:4px; }
+.listing-card.skeleton .sk-line.short { width:70%; }
+.listing-card.skeleton .sk-line.tiny { width:40%; }
+@keyframes skPulse { from { opacity:.6; } to { opacity:1; } }
+
+/* Skeleton */
+.listing-card.skeleton { border:1px solid #e1e3e6; background:#fff; border-radius:14px; padding:0; display:flex; flex-direction:column; overflow:hidden; animation: skPulse 1.4s linear infinite alternate; }
+.listing-card.skeleton .lc-image { background: linear-gradient(90deg,#ececec,#f5f5f5,#ececec); background-size:200%; height:160px; }
+.listing-card.skeleton .lc-line { height:14px; margin:12px 14px 0; border-radius:6px; background:#ececec; }
+.listing-card.skeleton .lc-line.short { width:60%; margin-bottom:14px; }
+@keyframes skPulse { from { opacity:.55; } to { opacity:1; } }

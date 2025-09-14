@@ -1,0 +1,18 @@
+{
+  "brand": "FasoLink",
+  "dashboard": "Dashboard",
+  "messages": "Messages",
+  "help": "Help",
+  "postAd": "Post Ad",
+  "postAdShort": "Post",
+  "myListings": "My Listings",
+  "logout": "Logout",
+  "categories": "Categories",
+  "searchPlaceholder": "Search listings...",
+  "notifications": "Notifications",
+  "account": "Account",
+  "signIn": "Sign In",
+  "register": "Register",
+  "searchMobileLabel": "Search"
+  ,"noResults": "No results"
+}

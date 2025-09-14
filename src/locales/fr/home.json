@@ -1,0 +1,51 @@
+{
+  "hero": {
+    "title": "Trouvez tout localement",
+    "subtitle": "Achetez, vendez et découvrez des services fiables partout au Burkina Faso.",
+    "searchPlaceholder": "Rechercher des produits, services...",
+    "quickBrowse": "Populaires",
+    "stats": {
+      "listings": "Annonces actives",
+      "users": "Utilisateurs fiables",
+      "categories": "Catégories"
+    }
+  },
+  "howItWorks": {
+    "title": "Comment ça marche",
+    "steps": {
+      "browse": {
+        "title": "Parcourez",
+        "desc": "Explorez les catégories ou cherchez ce dont vous avez besoin."
+      },
+      "contact": {
+        "title": "Contactez",
+        "desc": "Discutez en toute sécurité avec les vendeurs et prestataires."
+      },
+      "deal": {
+        "title": "Concluez",
+        "desc": "Rencontrez-vous en toute sécurité et finalisez votre transaction."
+      }
+    }
+  },
+  "cta": {
+    "title": "Prêt à publier votre première annonce ?",
+    "subtitle": "Il suffit d'une minute pour atteindre des milliers d'acheteurs locaux.",
+    "action": "Publier une annonce"
+  },
+  "categoryStrip": {
+    "title": "Catégories clés",
+    "viewAll": "Tout voir"
+  },
+  "stats": {
+    "listings": "+5k annonces",
+    "users": "+2k utilisateurs",
+    "secure": "Sûr & Simple"
+  },
+  "testimonials": {
+    "title": "Ce que disent les utilisateurs"
+  },
+  "listings": {
+    "featuredSubtitle": "Sélections et bonnes affaires",
+    "recentSubtitle": "Ajouts récents de la communauté"
+  }
+}

@@ -1,28 +1,30 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
-import './AuthPage.css';
+import './AuthForms.css';
 
-const AuthPage = () => {
+const AuthForms = () => {
   const [isLoginView, setIsLoginView] = useState(true);
+  const { t } = useTranslation(['auth']);
 
   return (
-    <div className="auth-page">
+    <div className="auth-forms">
       <div className="auth-container">
         {isLoginView ? (
           <>
             <LoginForm />
             <p className="toggle-view">
-              Don't have an account?{' '}
-              <span onClick={() => setIsLoginView(false)}>Sign Up</span>
+              {t('auth:noAccount','Don\'t have an account?')}{' '}
+              <span onClick={() => setIsLoginView(false)}>{t('auth:register')}</span>
             </p>
           </>
         ) : (
           <>
             <RegisterForm />
             <p className="toggle-view">
-              Already have an account?{' '}
-              <span onClick={() => setIsLoginView(true)}>Log In</span>
+              {t('auth:haveAccount','Already have an account?')}{' '}
+              <span onClick={() => setIsLoginView(true)}>{t('auth:login')}</span>
             </p>
           </>
         )}
@@ -31,4 +33,4 @@ const AuthPage = () => {
   );
 };
 
-export default AuthPage;
+export default AuthForms;

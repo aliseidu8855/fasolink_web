@@ -1,0 +1,10 @@
+.cat-strip { padding: 2rem 0 0.5rem; }
+.cat-strip-title { font-size:1rem; text-transform:uppercase; letter-spacing:1px; color:#666; margin:0 0 .75rem; font-weight:600; }
+.cat-pill-row { display:flex; flex-wrap:wrap; gap:.6rem; }
+.cat-pill { background:#fff; border:1px solid var(--color-border,#e1e3e6); padding:.55rem .95rem; border-radius:30px; font-size:.8rem; text-decoration:none; color:var(--color-text-primary,#333); font-weight:500; transition:background var(--transition-base), color var(--transition-base), border-color var(--transition-base); }
+.cat-pill:hover { background: var(--vert-foret); color:#fff; border-color: var(--vert-foret); }
+.cat-pill.skeleton { width:82px; height:32px; padding:0; border-radius:30px; background: linear-gradient(90deg,#ececec,#f5f5f5,#ececec); background-size:200%; animation: pillShimmer 1.4s infinite; border:1px solid #ddd; }
+.cat-pill.cat-more { background: var(--color-bg-muted,#f1f3f5); font-weight:600; }
+.cat-pill.cat-more:hover { background: var(--vert-foret); color:#fff; }
+
+@keyframes pillShimmer { 0%{background-position:0 0;} 100%{background-position:-200% 0;} }

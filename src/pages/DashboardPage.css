@@ -1,0 +1,18 @@
+.dashboard-page {
+  padding: 2rem 1rem;
+}
+
+.dashboard-title {
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-subtitle {
+  margin-bottom: 2rem;
+  color: #555;
+}
+
+.user-listings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}

@@ -1,0 +1,23 @@
+{
+  "messages": "Messages",
+  "searchPlaceholder": "Rechercher des conversations...",
+  "noConversations": "Pas encore de conversations.",
+  "selectConversation": "Sélectionnez une conversation pour commencer.",
+  "loginToViewMessages": "Connectez-vous pour voir vos messages.",
+  "loadOlder": "Charger les messages plus anciens",
+  "loadingChat": "Chargement du chat...",
+  "loadingConversations": "Chargement des conversations...",
+  "loadingUser": "Chargement de l'utilisateur...",
+  "failedSend": "Échec de l'envoi du message",
+  "retry": "Réessayer",
+  "placeholder": "Écrivez votre message...",
+  "safetyTipTitle": "Conseil de sécurité :",
+  "safetyTipBody": "Rencontrez toujours dans un lieu public comme un marché ou une banque. N'envoyez jamais d'argent avant d'avoir vu l'objet.",
+  "unreadMany": "{{count}} non lus",
+  "unreadOne": "1 non lu",
+  "openList": "Conversations",
+  "closeList": "Fermer",
+  "back": "Retour",
+  "backToList": "Retour aux conversations",
+  "conversations": "Conversations"
+}
