@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { PaperclipIcon, SendIcon } from '../icons/Icons.jsx';
 import { useTranslation } from 'react-i18next';
 import { fetchConversationById, sendMessage, fetchConversationMessages, markConversationRead, MESSAGE_PAGE_SIZE } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import ListingSnippet from './ListingSnippet';
-import { IoSend, IoAttach } from 'react-icons/io5';
 import './ChatWindow.css';
 
 const ChatWindow = ({ conversationId }) => {
@@ -212,14 +212,18 @@ const ChatWindow = ({ conversationId }) => {
         <div ref={messagesEndRef} />
       </div>
       <form className="message-input-area" onSubmit={handleSendMessage}>
-        <IoAttach className="attach-icon" />
+        <button type="button" className="attach-btn" aria-label={t('messaging:attach','Attach a file')}>
+          <PaperclipIcon size={18} strokeWidth={1.7} />
+        </button>
         <input
           type="text"
           placeholder={t('messaging:placeholder','Type your message...')}
           value={newMessage}
           onChange={e => setNewMessage(e.target.value)}
         />
-        <button type="submit" className="send-button"><IoSend /></button>
+        <button type="submit" className="send-button" aria-label={t('messaging:send','Send')}>
+          <SendIcon size={18} strokeWidth={1.7} />
+        </button>
       </form>
     </div>
   );

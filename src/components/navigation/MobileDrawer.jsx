@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { IoCloseOutline } from 'react-icons/io5';
 import { useAuth } from '../../context/AuthContext';
 import AuthForms from '../../pages/AuthForms';
 import { useModal } from '../../context/ModalContext';
@@ -93,7 +92,7 @@ const MobileDrawer = () => {
           <div className="mobile-drawer-panel" ref={panelRef}>
             <div className="mobile-drawer-header">
               <button ref={firstFocusableRef} className="close-btn" onClick={close} aria-label={t('closeMenu','Close menu')}>
-                <IoCloseOutline size={28} />
+                <span style={{fontSize:'20px', lineHeight:1}}>×</span>
               </button>
               <LanguageSwitcher />
             </div>

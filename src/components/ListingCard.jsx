@@ -34,16 +34,14 @@ const ListingCard = ({ listing, compact = false }) => {
 
   const badges = [];
   if (listing.is_featured) badges.push({ key:'featured', label: t('listing:badgeFeatured','Featured'), type:'featured' });
-  // New badge: within 48h of creation
+  // within 48h -> new
   if (listing.created_at) {
     const created = new Date(listing.created_at).getTime();
-    if (Date.now() - created < 1000*60*60*48) {
+    if (Date.now() - created < 1000 * 60 * 60 * 48) {
       badges.push({ key:'new', label: t('listing:badgeNew','New'), type:'new' });
     }
   }
-  if (listing.negotiable) {
-    badges.push({ key:'negotiable', label: t('listing:badgeNegotiable','Negotiable'), type:'negotiable' });
-  }
+  if (listing.negotiable) badges.push({ key:'negotiable', label: t('listing:badgeNegotiable','Negotiable'), type:'negotiable' });
 
   const relative = listing.created_at ? timeAgo(listing.created_at) : '';
   const sellerRating = listing.seller_rating;
@@ -70,7 +68,7 @@ const ListingCard = ({ listing, compact = false }) => {
         <div className="lc-meta">
           {relative && <span className="lc-time" aria-label="time">{relative}</span>}
           {relative && sellerRating && <span className="lc-dot" />}
-          {sellerRating && <span className="lc-rating" aria-label={t('listing:sellerRating','Seller rating')}>★ {Number(sellerRating).toFixed(1)}</span>}
+          {sellerRating && <span className="lc-rating" aria-label={t('listing:sellerRating','Seller rating')}>{Number(sellerRating).toFixed(1)}</span>}
         </div>
       </div>
     </Link>

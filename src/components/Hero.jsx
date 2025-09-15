@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import './Hero.css';
-import { IoSearch } from 'react-icons/io5';
 import { useTranslation } from 'react-i18next';
-import { fetchCategories, fetchListings, fetchStats } from '../services/api';
-import { Link, useNavigate } from 'react-router-dom';
+import { fetchCategories, fetchListings } from '../services/api';
+import { Link } from 'react-router-dom';
+import SearchBar from './navigation/SearchBar.jsx';
 
 // The hero now focuses on quick discovery: prominent search, quick category pills, and trust stats.
 const Hero = () => {
   const { t } = useTranslation(['home']);
-  const navigate = useNavigate();
-  const [query, setQuery] = useState('');
   const [topCategories, setTopCategories] = useState([]);
-  const [stats, setStats] = useState({ listings: null, users: null, categories: null });
+  const [featured, setFeatured] = useState([]);
+  // Simple runtime flag: set to false to completely disable fetching & rendering featured cards
+  const SHOW_FEATURED = false; // flip to true when ready for paid placement rollout
 
   useEffect(() => {
     // Load a few categories for hero pills
@@ -25,39 +25,24 @@ const Hero = () => {
     };
     loadCats();
 
-    // Fetch aggregated stats if endpoint exists; fallback to previous method if needed
-    const loadStats = async () => {
-      let havePrimary = false;
-      try {
-        const res = await fetchStats();
-        if (res.data) {
-          havePrimary = true;
-          setStats({
-            listings: res.data.listings ?? null,
-            users: res.data.users ?? null,
-            categories: res.data.categories ?? null
-          });
-        }
-  } catch {
-        // Intentionally silent: will attempt fallback for listings only.
-      }
-      if (!havePrimary) {
+    if (SHOW_FEATURED) {
+      // Load a pool of latest listings and pick 2 random for hero feature (lightweight)
+      const loadFeatured = async () => {
         try {
-          const res = await fetchListings({ page_size: 1 });
-          const total = res.data.count || res.data.results?.length || null;
-          if (total) setStats(s => ({ ...s, listings: total }));
-        } catch {/* ignore fallback failure */}
-      }
-    };
-    loadStats();
-  }, []);
+          const res = await fetchListings({ page_size: 12 });
+          const items = Array.isArray(res.data?.results) ? res.data.results : (Array.isArray(res.data) ? res.data : []);
+          if (items.length) {
+            const shuffled = [...items].sort(() => Math.random() - 0.5).slice(0, 2);
+            setFeatured(shuffled);
+          }
+        } catch { /* ignore listing load errors */ }
+      };
+      loadFeatured();
+    }
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    const trimmed = query.trim();
-    if (!trimmed) return;
-    navigate(`/listings?search=${encodeURIComponent(trimmed)}`);
-  };
+  }, [SHOW_FEATURED]);
+
+  // Search removed from hero; search happens in nav bar. Keep minimal CTA.
 
   return (
     <section className="hero-section" aria-labelledby="home-hero-heading">
@@ -69,17 +54,17 @@ const Hero = () => {
           </h1>
           <p className="hero-subtitle">{t('home:hero.subtitle')}</p>
 
-          <form className="hero-search" role="search" aria-label="Site" onSubmit={onSubmit}>
-            <IoSearch className="search-icon" aria-hidden="true" />
-            <input
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              type="text"
-              placeholder={t('home:hero.searchPlaceholder')}
-              aria-label={t('home:hero.searchPlaceholder')}
-            />
-            <button type="submit">{t('navigation:search', 'Search')}</button>
-          </form>
+          <div className="hero-cta-line">
+            <a className="hero-cta-btn primary" href="/listings/new">{t('home:hero.postAd', 'Publier une annonce')}</a>
+            <a className="hero-cta-btn secondary" href="/browse">{t('home:hero.browse', 'Parcourir les catégories')} →</a>
+          </div>
+          <div className="hero-embedded-search-wrapper">
+            <div className="hero-search-label" aria-hidden="true">{t('home:hero.searchLabel', 'Search listings')}</div>
+            <div className="hero-embedded-search hero-search-surface">
+              <SearchBar />
+            </div>
+          </div>
+          <div className="hero-mobile-search-slot" aria-hidden="true" />
 
           {topCategories.length > 0 && (
             <div className="quick-categories" aria-label={t('home:hero.quickBrowse')}>
@@ -94,42 +79,25 @@ const Hero = () => {
             </div>
           )}
 
-          <div className="hero-stats" aria-label="platform stats">
-            <div className="stat-item">
-              <strong>{stats.listings ? (stats.listings > 999 ? (stats.listings/1000).toFixed(1).replace(/\.0$/,'') + 'k+' : stats.listings) : t('home:stats.listings')}</strong>
-              <span>{t('home:hero.stats.listings')}</span>
+          {SHOW_FEATURED && featured.length > 0 && (
+            <div className="hero-featured" aria-label={t('home:hero.featured','Featured')}>
+              {featured.map(item => (
+                <Link key={item.id} to={`/listings/${item.id}`} className="hf-card">
+                  <div className="hf-thumb">
+                    {item.images?.length ? (
+                      <img src={item.images[0].image || item.images[0].url} alt={item.title} loading="lazy" />
+                    ) : (
+                      <div className="hf-thumb-fallback" />
+                    )}
+                  </div>
+                  <div className="hf-body">
+                    <h3 className="hf-title">{item.title?.slice(0,48) || 'Listing'}</h3>
+                    {item.price && <div className="hf-price">{item.price} {item.currency || 'XOF'}</div>}
+                  </div>
+                </Link>
+              ))}
             </div>
-            <div className="stat-item">
-              <strong>{stats.users ? (stats.users > 999 ? (stats.users/1000).toFixed(1).replace(/\.0$/,'') + 'k+' : stats.users) : t('home:stats.users')}</strong>
-              <span>{t('home:hero.stats.users')}</span>
-            </div>
-            <div className="stat-item">
-              <strong>{stats.categories ?? t('home:stats.secure')}</strong>
-              <span>{t('home:hero.stats.categories')}</span>
-            </div>
-          </div>
-        </div>
-        <div className="hero-visual" aria-hidden="true">
-          <svg className="hero-illustration" width="420" height="360" viewBox="0 0 420 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="heroGrad1" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#DE0000" stopOpacity="0.85" />
-                <stop offset="100%" stopColor="#009A00" stopOpacity="0.85" />
-              </linearGradient>
-              <filter id="heroShadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="8" stdDeviation="14" floodOpacity="0.18" />
-              </filter>
-            </defs>
-            <rect x="46" y="42" width="250" height="290" rx="26" fill="#fff" stroke="#E1E3E6" filter="url(#heroShadow)" />
-            <rect x="70" y="82" width="200" height="90" rx="14" fill="#F4F6F8" />
-            <rect x="70" y="186" width="160" height="14" rx="7" fill="#EAEDEF" />
-            <rect x="70" y="206" width="120" height="14" rx="7" fill="#EAEDEF" />
-            <rect x="70" y="232" width="200" height="70" rx="14" fill="#F7F9FA" />
-            <circle cx="340" cy="118" r="66" fill="url(#heroGrad1)" opacity="0.20" />
-            <circle cx="362" cy="248" r="40" fill="url(#heroGrad1)" opacity="0.28" />
-            <path d="M340 88c8 0 14 6 14 14s-6 14-14 14-14-6-14-14 6-14 14-14zm0 6a8 8 0 100 16 8 8 0 000-16z" fill="#fff" opacity="0.95" />
-            <path d="M362 226c6 0 10 4 10 10 0 7-10 16-10 16s-10-9-10-16c0-6 4-10 10-10z" fill="#fff" opacity="0.95" />
-          </svg>
+          )}
         </div>
       </div>
     </section>

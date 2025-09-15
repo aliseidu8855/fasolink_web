@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { fetchCategories } from '../../services/api';
-import { IoChevronDownOutline } from 'react-icons/io5';
 
 // Simple accessible dropdown skeleton for categories
 const CategoryMenu = () => {
@@ -37,8 +36,8 @@ const CategoryMenu = () => {
         aria-expanded={open}
         onClick={() => setOpen(o => !o)}
       >
-        <span>{t('categories')}</span>
-        <IoChevronDownOutline size={16} className={`chevron ${open ? 'rot' : ''}`} />
+  <span>{t('categories')}</span>
+  <span className={`chevron ${open ? 'rot' : ''}`} aria-hidden>▾</span>
       </button>
       {open && (
         <div className="cat-dropdown" role="menu">

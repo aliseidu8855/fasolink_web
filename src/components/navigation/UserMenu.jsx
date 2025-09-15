@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { IoLogOutOutline, IoPersonCircle, IoSettingsOutline, IoHelpCircleOutline } from 'react-icons/io5';
 import LanguageSwitcher from '../LanguageSwitcher';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -29,7 +28,18 @@ const UserMenu = () => {
         {user?.avatar ? (
           <img src={user.avatar} alt={user.username} className="avatar-thumb" />
         ) : (
-          <IoPersonCircle size={28} />
+          <span style={{
+            width:28,
+            height:28,
+            borderRadius:'50%',
+            background:'rgba(0,0,0,0.08)',
+            display:'flex',
+            alignItems:'center',
+            justifyContent:'center',
+            fontSize:'10px',
+            fontWeight:600,
+            color:'var(--brand-ink)'
+          }}>{(user?.username||'?').slice(0,1).toUpperCase()}</span>
         )}
         <span className="user-name-short">{user?.username || t('auth:username')}</span>
       </button>
@@ -41,8 +51,8 @@ const UserMenu = () => {
           <Link to="/dashboard" role="menuitem" className="user-dropdown-item" onClick={close}>{t('navigation:dashboard')}</Link>
           <Link to="/dashboard" role="menuitem" className="user-dropdown-item" onClick={close}>{t('navigation:myListings')}</Link>
           <Link to="/messages" role="menuitem" className="user-dropdown-item" onClick={close}>{t('navigation:messages')}</Link>
-          <Link to="/help" role="menuitem" className="user-dropdown-item" onClick={close}><IoHelpCircleOutline size={16} /> {t('navigation:help')}</Link>
-          <Link to="/settings" role="menuitem" className="user-dropdown-item" onClick={close}><IoSettingsOutline size={16} /> Settings</Link>
+          <Link to="/help" role="menuitem" className="user-dropdown-item" onClick={close}>{t('navigation:help')}</Link>
+          <Link to="/settings" role="menuitem" className="user-dropdown-item" onClick={close}>Settings</Link>
           <div className="user-dropdown-sep" />
           <div className="user-dropdown-item" style={{ cursor:'default', justifyContent:'space-between' }}>
             <span style={{ fontSize:'var(--font-size-xs)', opacity:.8 }}>{t('navigation:account')}</span>
@@ -50,7 +60,7 @@ const UserMenu = () => {
           </div>
           <div className="user-dropdown-sep" />
           <button role="menuitem" className="user-dropdown-item logout" onClick={() => { logout(); close(); }}>
-            <IoLogOutOutline /> {t('navigation:logout')}
+            {t('navigation:logout')}
           </button>
         </div>
       )}

@@ -55,17 +55,18 @@ const RegisterForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="form" noValidate>
       <h2>{t('auth:register')}</h2>
       <div className="form-status" aria-live="polite">
         {error && <p className="error-message">{error}</p>}
         {success && <p className="success-message">{t('auth:loggedInAs', { username })}</p>}
       </div>
-      <div className="form-group">
-        <label htmlFor="reg-username">{t('auth:username')}</label>
+      <div className="field-group">
+        <label className="field-label" htmlFor="reg-username">{t('auth:username')}</label>
         <input
           id="reg-username"
           ref={usernameRef}
+          className="input-control"
           type="text"
           autoComplete="username"
           value={username}
@@ -73,21 +74,23 @@ const RegisterForm = () => {
           required
         />
       </div>
-      <div className="form-group">
-        <label htmlFor="reg-email">{t('auth:email','Email Address')}</label>
+      <div className="field-group">
+        <label className="field-label" htmlFor="reg-email">{t('auth:email','Email Address')}</label>
         <input
           id="reg-email"
+          className="input-control"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
       </div>
-      <div className="form-group password-field">
-        <label htmlFor="reg-password">{t('auth:password')}</label>
+      <div className="field-group">
+        <label className="field-label" htmlFor="reg-password">{t('auth:password')}</label>
         <div className="password-wrapper">
           <input
             id="reg-password"
+            className="input-control"
             type={showPwd ? 'text':'password'}
             autoComplete="new-password"
             value={password}
@@ -100,11 +103,12 @@ const RegisterForm = () => {
         </div>
         {passwordStrength && <div className={`pwd-strength strength-${passwordStrength.toLowerCase()}`}>{passwordStrength}</div>}
       </div>
-      <div className="form-group password-field">
-        <label htmlFor="reg-confirm">{t('auth:confirmPassword')}</label>
+      <div className="field-group">
+        <label className="field-label" htmlFor="reg-confirm">{t('auth:confirmPassword')}</label>
         <div className="password-wrapper">
           <input
             id="reg-confirm"
+            className="input-control"
             type={showConfirm ? 'text':'password'}
             autoComplete="new-password"
             value={confirmPassword}

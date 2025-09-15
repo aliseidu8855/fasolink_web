@@ -1,5 +1,4 @@
 import React from 'react';
-import { IoMenuOutline } from 'react-icons/io5';
 
 // Provides a button to open the mobile navigation drawer. Accepts open state for aria attributes.
 const MobileMenuToggle = ({ onOpen, isOpen }) => {
@@ -11,7 +10,7 @@ const MobileMenuToggle = ({ onOpen, isOpen }) => {
       aria-expanded={isOpen ? 'true' : 'false'}
       onClick={onOpen}
     >
-      <IoMenuOutline size={26} />
+  <span style={{ fontWeight:600, fontSize:'var(--fs-sm)' }}>{isOpen ? '×' : '≡'}</span>
     </button>
   );
 };

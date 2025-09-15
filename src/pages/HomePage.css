@@ -1,0 +1,18 @@
+.home-main { padding: 1.5rem 0 2.5rem; }
+.home-section { margin: 0 0 2.75rem; }
+.home-section:last-child { margin-bottom: 0; }
+
+/* Responsive tighten */
+@media (max-width: 700px) {
+  .home-main { padding: 1rem 0 2rem; }
+  .home-section { margin-bottom: 2rem; }
+}
+
+@media (max-width: 480px) {
+  .home-main { padding: .75rem 0 1.6rem; }
+  .home-section { margin-bottom: 1.6rem; }
+}
+@media (max-width: 360px) {
+  .home-main { padding: .6rem 0 1.4rem; }
+  .home-section { margin-bottom: 1.3rem; }
+}

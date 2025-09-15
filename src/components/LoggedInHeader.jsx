@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { IoNotificationsOutline, IoMailOutline, IoLogOutOutline, IoPersonCircle } from 'react-icons/io5';
 import LanguageSwitcher from './LanguageSwitcher';
 import Button from './Button';
 import Logo from '../assets/logo.svg';
@@ -63,22 +62,28 @@ const LoggedInHeader = ({ isScrolled }) => {
           >
             + {t('navigation:postAd')}
           </Button>
-          <div className="icon-group">
-            <div className="icon-wrapper">
-              <IoNotificationsOutline size={24} />
-              <span className="notification-badge">2</span>
+            <div className="icon-group" style={{ display:'flex', gap:'0.5rem' }}>
+              <div className="icon-wrapper" style={{ position:'relative', fontSize:'var(--fs-xs)', fontWeight:600 }}>Notif<span className="notification-badge">2</span></div>
+              <Link to="/messages" className="icon-wrapper" style={{ fontSize:'var(--fs-xs)', fontWeight:600 }}>{t('navigation:messages')}</Link>
             </div>
-            <Link to="/messages" className="icon-wrapper">
-              <IoMailOutline size={24} />
-            </Link>
-          </div>
           <LanguageSwitcher />
           <div className="profile-menu-wrapper" ref={dropdownRef}>
             <button className="profile-trigger" onClick={toggle} aria-haspopup="true" aria-expanded={open}>
               {user?.avatar ? (
                 <img src={user.avatar} alt={user.username} className="profile-avatar-thumb" />
               ) : (
-                <IoPersonCircle size={30} />
+                <span style={{
+                  width:30,
+                  height:30,
+                  borderRadius:'50%',
+                  background:'rgba(0,0,0,0.08)',
+                  display:'flex',
+                  alignItems:'center',
+                  justifyContent:'center',
+                  fontSize:'11px',
+                  fontWeight:600,
+                  color:'var(--brand-ink)'
+                }}>{(user?.username||'?').slice(0,1).toUpperCase()}</span>
               )}
               <span className="profile-name-short">{user?.username || t('auth:username')}</span>
             </button>
@@ -90,7 +95,7 @@ const LoggedInHeader = ({ isScrolled }) => {
                 <Link to="/messages" className="dropdown-item" onClick={() => setOpen(false)}>{t('navigation:messages')}</Link>
                 <div className="dropdown-separator" />
                 <button className="dropdown-item logout" onClick={handleLogout}>
-                  <IoLogOutOutline /> {t('navigation:logout')}
+                  {t('navigation:logout')}
                 </button>
               </div>
             )}

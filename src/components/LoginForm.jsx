@@ -41,20 +41,20 @@ const LoginForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="form" noValidate>
       <h2>{t('auth:login')}</h2>
       <div className="form-status" aria-live="polite">
         {error && <p className="error-message">{error}</p>}
         {success && <p className="success-message">{t('auth:loggedInAs', { username })}</p>}
       </div>
-      <div className="form-group">
-        <label htmlFor="login-username">{t('auth:username')}</label>
-        <input id="login-username" ref={usernameRef} type="text" autoComplete="username" value={username} onChange={(e) => { setUsername(e.target.value); clearError(); }} required />
+      <div className="field-group">
+        <label className="field-label" htmlFor="login-username">{t('auth:username')}</label>
+        <input id="login-username" ref={usernameRef} className="input-control" type="text" autoComplete="username" value={username} onChange={(e) => { setUsername(e.target.value); clearError(); }} required />
       </div>
-      <div className="form-group password-field">
-        <label htmlFor="login-password">{t('auth:password')}</label>
+      <div className="field-group">
+        <label className="field-label" htmlFor="login-password">{t('auth:password')}</label>
         <div className="password-wrapper">
-          <input id="login-password" type={showPwd ? 'text':'password'} autoComplete="current-password" value={password} onChange={(e) => { setPassword(e.target.value); clearError(); }} required />
+          <input id="login-password" className="input-control" type={showPwd ? 'text':'password'} autoComplete="current-password" value={password} onChange={(e) => { setPassword(e.target.value); clearError(); }} required />
           <button type="button" className="show-hide" onClick={()=>setShowPwd(s=>!s)} aria-label={showPwd ? t('auth:hidePassword','Hide password') : t('auth:showPassword','Show password')}>
             {showPwd ? t('auth:hide','Hide') : t('auth:show','Show')}
           </button>

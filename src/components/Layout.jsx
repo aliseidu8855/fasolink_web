@@ -21,7 +21,7 @@ const Layout = () => {
     <div>
       <a href="#main-content" className="skip-link">Skip to content</a>
       <NavBar isScrolled={isScrolled} />
-      <main id="main-content" style={{ paddingTop: applyMainPadding ? '80px' : '0' }}>
+      <main id="main-content" style={{ paddingTop: applyMainPadding ? '58px' : '0' }}>
         <Outlet />
       </main>
   <Footer />

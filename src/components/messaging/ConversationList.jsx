@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { SearchIcon } from '../icons/Icons.jsx';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { fetchConversations } from '../../services/api';
 import { useAuth } from '../../context/AuthContext'; // To identify the other user
-import { IoSearch } from 'react-icons/io5';
 import formatRelativeTime from '../../utils/time';
 import './ConversationList.css';
 
@@ -51,8 +51,8 @@ const ConversationList = () => {
         <h2>{t('messaging:messages')}</h2>
       </div>
       <div className="search-bar">
-        <IoSearch className="search-icon" />
-        <input type="text" placeholder={t('messaging:searchPlaceholder')} />
+        <span className="search-icon-inline" aria-hidden="true"><SearchIcon size={16} strokeWidth={1.6} /></span>
+        <input type="text" placeholder={t('messaging:searchPlaceholder')} aria-label={t('messaging:search','Search')} />
       </div>
       <div className="conversations">
         {conversations.length > 0 ? conversations.map(convo => {

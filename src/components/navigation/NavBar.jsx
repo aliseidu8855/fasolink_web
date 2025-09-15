@@ -15,7 +15,7 @@ const NavBar = ({ isScrolled }) => {
         <div className="nav-left">
           <NavBrand />
           <CategoryMenu />
-          <SearchBar />
+          {/* SearchBar removed from nav; now only in hero for unified experience */}
         </div>
         <NavActions isAuthenticated={isAuthenticated} />
       </div>

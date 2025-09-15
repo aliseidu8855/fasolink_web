@@ -1,26 +1,37 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import './LanguageSwitcher.css';
 
 const LanguageSwitcher = () => {
   const { i18n } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
 
-  const changeLanguage = (lng) => {
-    i18n.changeLanguage(lng);
-  };
+  useEffect(() => {
+    const onDoc = (e) => { if (open && ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', onDoc);
+    return () => document.removeEventListener('mousedown', onDoc);
+  }, [open]);
+
+  const selectLng = (lng) => { i18n.changeLanguage(lng); setOpen(false); };
+  const current = i18n.language?.startsWith('fr') ? 'FR' : 'EN';
 
   return (
-    <div className="language-switcher" aria-label="Sélecteur de langue">
-      <button
-        onClick={() => changeLanguage('fr')}
-        className={i18n.language === 'fr' ? 'active primary' : 'primary'}
-        aria-current={i18n.language === 'fr' ? 'true' : 'false'}
-      >🇫🇷 FR</button>
-      <button
-        onClick={() => changeLanguage('en')}
-        className={i18n.language === 'en' ? 'active' : ''}
-        aria-current={i18n.language === 'en' ? 'true' : 'false'}
-      >🇬🇧 EN</button>
+    <div className="lang-switch" ref={ref}>
+      <button className="lang-trigger" aria-haspopup="listbox" aria-expanded={open} onClick={()=>setOpen(o=>!o)}>
+        <span className="lang-code">{current}</span>
+        <span className="caret" aria-hidden="true">▾</span>
+      </button>
+      {open && (
+        <ul className="lang-dropdown" role="listbox" aria-label="Select language">
+          <li>
+            <button type="button" role="option" aria-selected={current==='FR'} onClick={()=>selectLng('fr')} className={current==='FR'? 'active':''}>FR</button>
+          </li>
+          <li>
+            <button type="button" role="option" aria-selected={current==='EN'} onClick={()=>selectLng('en')} className={current==='EN'? 'active':''}>EN</button>
+          </li>
+        </ul>
+      )}
     </div>
   );
 };

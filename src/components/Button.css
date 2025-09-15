@@ -1,37 +1,59 @@
 .btn {
-  padding: 10px 24px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap: var(--btn-gap,0.5rem);
+  padding: var(--btn-pad-y-sm,0.4rem) var(--btn-pad-x-sm,0.85rem);
   border: 1px solid transparent;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: var(--btn-radius,8px);
+  font-size: var(--btn-font-sm,0.75rem);
+  line-height:1.1;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s;
+  min-height: 34px;
+}
+
+@media (min-width:640px){
+  .btn { font-size: var(--btn-font-md,0.875rem); padding: var(--btn-pad-y-md,0.55rem) var(--btn-pad-x-md,1rem); min-height:38px; }
 }
 
 .btn:hover {
   opacity: 0.9;
 }
 
-.btn-primary {
-  background-color: var(--rouge-faso);
-  color: var(--blanc);
-  border-color: var(--rouge-faso);
+.btn-primary { /* Solid dark */
+  background: var(--brand-ink);
+  color:#fff;
+  border-color: var(--brand-ink);
 }
 
-.btn-secondary {
-  background-color: var(--blanc);
-  color: var(--rouge-faso);
-  border-color: var(--rouge-faso);
+.btn-secondary { /* Teal outline */
+  background: transparent;
+  color: var(--brand-teal);
+  border-color: var(--brand-teal);
 }
 
-.btn-success {
-  background-color: var(--vert-foret);
-  color: var(--blanc);
-  border-color: var(--vert-foret);
+.btn-success { /* Green solid */
+  background: var(--brand-green);
+  color:#fff;
+  border-color: var(--brand-green);
 }
 
-.btn-neutral {
-  background-color: var(--gris-neutre);
-  color: var(--texte-sombre);
-  border-color: var(--gris-neutre);
+.btn-neutral { /* Peach subtle */
+  background: rgba(var(--brand-peach-rgb),0.18);
+  color: var(--brand-ink);
+  border-color: rgba(var(--brand-peach-rgb),0.4);
 }
+
+/* Interaction states */
+.btn-primary:hover, .btn-success:hover { box-shadow: 0 2px 6px -2px rgba(0,0,0,0.25); }
+.btn-primary:hover { background: rgba(var(--brand-ink-rgb),0.92); }
+.btn-secondary:hover { background: rgba(var(--brand-teal-rgb),0.12); }
+.btn-success:hover { background:#35ad83; }
+.btn-neutral:hover { background: rgba(var(--brand-peach-rgb),0.28); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline:2px solid var(--brand-teal); outline-offset:2px; }
+
+/* Compact variant utility (optional future) */
+.btn.is-compact { padding: var(--btn-pad-y-sm,0.35rem) var(--btn-pad-x-sm,0.7rem); font-size: var(--fs-xs); min-height:30px; }

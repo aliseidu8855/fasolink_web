@@ -1,32 +1,64 @@
+/* Overlay */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  z-index: 1000;
+  inset: 0;
+  background: rgba(0,0,0,0.55); /* Removed blur effect */
+  z-index: 90; /* below navbar assumed > 100 or adjust accordingly */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 2vh 1rem; /* allow breathing room on very small screens */
+  animation: overlayFade .25s ease;
 }
 
+@keyframes overlayFade { from { opacity:0; } to { opacity:1; } }
+
+/* Content container */
 .modal-content {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: var(--blanc);
-  padding: 2rem;
-  border-radius: 8px;
-  z-index: 1001;
-  width: 90%;
-  max-width: 450px;
+  position: relative; /* centered by flex parent */
+  background: #ffffff; /* solid background to replace glass effect */
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 18px;
+  width: clamp(300px, 90%, 460px);
+  padding: 1.05rem 1.05rem 1.2rem;
+  z-index: 91;
+  box-shadow: 0 6px 20px -4px rgba(0,0,0,0.25), 0 14px 34px -8px rgba(0,0,0,0.32);
+  color: var(--brand-ink);
+  display:flex;
+  flex-direction:column;
+  gap:0.85rem;
+  animation: modalFade .22s ease;
+  max-height: 82vh;
+  overflow: hidden;
 }
 
+@keyframes modalFade { from { opacity:0; } to { opacity:1; } }
+
+.modal-content > *:first-child { margin-top: .25rem; }
+
+/* Close button */
 .modal-close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #888;
+  position:absolute;
+  top:.55rem;
+  right:.6rem;
+  width:32px;
+  height:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(var(--brand-ink-rgb),0.06);
+  border:1px solid rgba(var(--brand-ink-rgb),0.12);
+  border-radius: 10px;
+  cursor:pointer;
+  color: var(--brand-ink);
+  font-weight:600;
+  transition: background .25s ease, border-color .25s ease, transform .25s ease;
 }
+.modal-close-button:hover { background: rgba(var(--brand-ink-rgb),0.12); }
+.modal-close-button:active { transform: scale(.92); }
+.modal-close-button:focus-visible { outline:2px solid var(--brand-teal); outline-offset:2px; }
+
+/* Dark mode */
+[data-theme="dark"] .modal-content { background: #171a1c; border-color: rgba(255,255,255,0.12); color:#F4F6F8; }
+[data-theme="dark"] .modal-close-button { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color:#F4F6F8; }
+[data-theme="dark"] .modal-close-button:hover { background: rgba(255,255,255,0.15); }

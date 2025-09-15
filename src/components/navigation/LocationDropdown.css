@@ -1,0 +1,108 @@
+/* Amazon-style Location Dropdown */
+.location-dropdown-root {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  z-index: 130;
+  font-size: var(--font-size-xs);
+  font-family: inherit;
+}
+.location-dropdown-panel {
+  display: flex;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px -4px rgba(0, 0, 0, 0.25),
+    0 10px 32px -8px rgba(0, 0, 0, 0.28);
+  min-width: 260px;
+  /* Removed vertical slide for a static, instant appearance */
+  animation: fadeIn .14s ease;
+}
+
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+.location-dropdown-col {
+  width: 260px;
+  max-height: 360px;
+  overflow: auto;
+  
+}
+.location-dropdown-col + .location-dropdown-col {
+  border-left: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.location-option {
+  width: 100%;
+  text-align: left;
+  padding: 7px 10px 6px;
+  border: 0;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font: inherit;
+  position: relative;
+  transition: background .15s ease;
+}
+.location-option .small {
+  font-size: 10px;
+  opacity: 0.6;
+  line-height: 1.1;
+}
+.location-option:hover { background: rgba(var(--brand-mint-rgb), 0.12); }
+.location-option.active,
+.location-option[aria-selected="true"] { background: var(--brand-mint); color:#fff; }
+.location-option.active .small,
+.location-option[aria-selected="true"] .small {
+  opacity: 0.9;
+}
+.location-option .arrow { position:absolute; right:6px; top:50%; transform:translateY(-50%); font-size:11px; opacity:0.45; }
+.location-option .count { position:absolute; right:18px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.06); color:#444; font-size:9px; padding:2px 5px; border-radius:12px; font-weight:600; }
+.location-option.active .arrow { opacity:0.9; }
+.location-option:focus-visible { outline:2px solid var(--brand-mint); outline-offset:2px; }
+
+.location-dropdown-empty {
+  padding: 1rem;
+  font-size: var(--font-size-xs);
+  opacity: 0.7;
+}
+.location-dropdown-back {
+  padding: 6px 10px;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.04);
+  border: 0;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-size: 11px;
+}
+.location-dropdown-back:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.location-dropdown-applied { display:flex; align-items:center; gap:4px; padding:6px 8px; font-size:10px; background:rgba(var(--brand-gold-rgb),0.25); border-top:1px solid rgba(var(--brand-gold-rgb),0.55); }
+
+/* Trigger badge inside search bar can reuse existing styling; minimal additions below */
+.location-trigger-badge { display:inline-flex; align-items:center; gap:4px; font-size:10px; background:rgba(var(--brand-mint-rgb),0.20); color:var(--brand-ink); padding:2px 6px; border-radius:12px; }
+.location-trigger-badge .sep {
+  opacity: 0.4;
+}
+
+/* Accent styling for search category trigger (applied in SearchBar) */
+.search-cat-select.active { border-color: var(--brand-mint) !important; box-shadow:0 0 0 1px var(--brand-mint) inset; }
+.search-cat-select .sc-applied { background:rgba(var(--brand-mint-rgb),0.20); padding:2px 6px; border-radius:10px; font-size:10px; font-weight:600; line-height:1; }
+.search-cat-select .sc-applied.town { background:rgba(var(--brand-gold-rgb),0.30); }
+
+@media (max-width: 640px) {
+  .location-dropdown-col {
+    max-height: 300px;
+  }
+  .location-dropdown-panel {
+    min-width: 220px;
+  }
+  .location-dropdown-col {
+    width: 220px;
+  }
+}

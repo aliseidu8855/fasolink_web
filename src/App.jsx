@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import ListingsPage from './pages/ListingsPage';
 import ListingDetailPage from './pages/ListingDetailPage';
 import CreateListingPage from './pages/CreateListingPage';
+import BrowsePage from './pages/BrowsePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardPage from './pages/DashboardPage';
 import MessagesPage from './pages/MessagesPage';
@@ -42,6 +43,7 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/help" element={<HelpPage />} />
+          <Route path="/browse" element={<BrowsePage />} />
         </Route>
       </Routes>
     </Router>

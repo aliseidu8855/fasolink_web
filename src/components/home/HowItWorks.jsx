@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import './HowItWorks.css';
 
@@ -9,30 +9,15 @@ const HowItWorks = () => {
     { key: 'contact', icon: '💬' },
     { key: 'deal', icon: '🤝' }
   ];
-  const sectionRef = useRef(null);
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const cards = Array.from(el.querySelectorAll('.hiw-card'));
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-view');
-          obs.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.35 });
-    cards.forEach(c => obs.observe(c));
-    return () => obs.disconnect();
-  }, []);
+  // Motion/scroll reveal removed for a calmer professional presentation.
 
   return (
-    <section ref={sectionRef} className="hiw-section" aria-labelledby="how-it-works">
+  <section className="hiw-section" aria-labelledby="how-it-works">
       <div className="container">
         <h2 id="how-it-works" className="hiw-title">{t('home:howItWorks.title')}</h2>
         <div className="hiw-grid">
-          {steps.map((s,i) => (
-            <div key={s.key} className="hiw-card" style={{ transitionDelay: `${i*70}ms` }}>
+          {steps.map((s) => (
+            <div key={s.key} className="hiw-card">
               <div className="hiw-icon" aria-hidden="true">{s.icon}</div>
               <h3>{t(`home:howItWorks.steps.${s.key}.title`)}</h3>
               <p>{t(`home:howItWorks.steps.${s.key}.desc`)}</p>

@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { SearchIcon } from '../icons/Icons.jsx';
+import { BF_LOCATIONS } from '../../data/locations.js';
+// Replaced modal with inline Amazon-style dropdown
+import LocationDropdown from './LocationDropdown.jsx';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { IoSearchOutline, IoCloseOutline } from 'react-icons/io5';
 import { fetchListings } from '../../services/api';
 
 // Clean, debounced search with suggestions + mobile overlay.
@@ -16,6 +19,10 @@ const SearchBar = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggest, setShowSuggest] = useState(false);
   const [highlight, setHighlight] = useState(-1);
+  // Location selector state (supports ?loc=regionCode or regionCode:Town%20Name)
+  const [locationOpen, setLocationOpen] = useState(false); // dropdown open
+  const [selectedRegion, setSelectedRegion] = useState(null); // region object
+  const [selectedTown, setSelectedTown] = useState(null); // string
   const [recent, setRecent] = useState(() => {
     try {
       const raw = localStorage.getItem('recentSearches');
@@ -25,11 +32,61 @@ const SearchBar = () => {
   const abortRef = useRef(null);
   const mobileInputRef = useRef(null);
   const formRef = useRef(null);
+  const locButtonRef = useRef(null);
+
+  const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+
+  // Load persisted location (if no loc in URL) once
+  useEffect(() => {
+    if (params.get('loc')) return; // URL overrides
+    try {
+      const raw = localStorage.getItem('persistLocation');
+      if (raw) {
+        const { regionCode, townSlug } = JSON.parse(raw);
+        if (regionCode) {
+          const region = BF_LOCATIONS.find(r=>r.code===regionCode);
+          if (region) {
+            setSelectedRegion(region);
+            if (townSlug) {
+              const match = region.towns.find(t=> slugify(t) === townSlug);
+              if (match) setSelectedTown(match);
+            }
+          }
+        }
+      }
+  } catch { /* ignore persisted load errors */ }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Parse loc param on mount & when URL changes
+  useEffect(() => {
+    const p = new URLSearchParams(location.search);
+    const locVal = p.get('loc');
+    if (!locVal) { setSelectedRegion(null); setSelectedTown(null); return; }
+    const [rCode, rawTown] = locVal.split(':');
+    const region = BF_LOCATIONS.find(r => r.code === rCode);
+    if (!region) { setSelectedRegion(null); setSelectedTown(null); return; }
+    if (rawTown) {
+      const townSlug = decodeURIComponent(rawTown).toLowerCase();
+      const matched = region.towns.find(t => slugify(t) === townSlug) || null;
+      if (matched) { setSelectedRegion(region); setSelectedTown(matched); return; }
+    }
+    setSelectedRegion(region);
+    setSelectedTown(null);
+  }, [location.search]);
 
   const submit = (e) => {
     e?.preventDefault();
     const trimmed = query.trim();
-    navigate({ pathname: '/', search: trimmed ? `?q=${encodeURIComponent(trimmed)}` : '' });
+  // Build search params including location
+    const sp = new URLSearchParams();
+    if (trimmed) sp.set('q', trimmed);
+    if (selectedRegion) {
+      const locValue = selectedTown ? `${selectedRegion.code}:${slugify(selectedTown)}` : selectedRegion.code;
+      sp.set('loc', locValue);
+    }
+    const searchStr = sp.toString();
+    navigate({ pathname: '/', search: searchStr ? `?${searchStr}` : '' });
     if (trimmed) {
       setRecent(prev => {
         const next = [trimmed, ...prev.filter(p => p !== trimmed)].slice(0,6);
@@ -99,6 +156,26 @@ const SearchBar = () => {
     }
   };
 
+  // Remove inline panel keyboard state resets since modal handles isolation
+
+  const toggleLocation = () => {
+    setLocationOpen(o => !o);
+    setShowSuggest(false);
+  };
+
+  const clearLocation = (e) => {
+    e?.stopPropagation();
+    setSelectedRegion(null);
+    setSelectedTown(null);
+  };
+
+
+  const regionLabel = () => {
+    if (!selectedRegion) return t('allBurkina','All Burkina Faso');
+    if (selectedTown) return `${selectedTown}`; // keep concise
+    return selectedRegion.region;
+  };
+
   const selectSuggestion = (s) => {
     if (s && s.id) {
       navigate(`/listings/${s.id}`);
@@ -128,16 +205,33 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="nav-search-wrapper">
+    <div className="nav-search-wrapper amazon-style">
       <form
         ref={formRef}
-        className="nav-search-form"
+        className="nav-search-form amazon-search"
         onSubmit={submit}
         role="search"
         aria-label={t('searchMobileLabel')}
         onKeyDown={onKeyDown}
       >
-        <IoSearchOutline size={18} aria-hidden />
+        <div
+          ref={locButtonRef}
+          className={`search-cat-select ${selectedRegion ? 'active' : ''}`}
+          role="button"
+          tabIndex={0}
+          aria-haspopup="listbox"
+          aria-expanded={locationOpen}
+          onClick={() => toggleLocation()}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleLocation(); } else if (['ArrowDown','ArrowUp'].includes(e.key)) { e.preventDefault(); setLocationOpen(true); } }}
+        >
+          <span className="sc-label">{regionLabel()}</span>
+          {selectedRegion && (
+            <span className={`sc-applied ${selectedTown? 'town':''}`}>{selectedTown ? selectedRegion.code+':' + selectedTown.split(' ')[0] : selectedRegion.code}</span>
+          )}
+          {selectedRegion && <span role="button" tabIndex={-1} className="sc-clear" aria-label={t('clear','Clear')} onClick={(e) => { e.stopPropagation(); clearLocation(); }}>×</span>}
+          <span className="sc-caret" aria-hidden="true">▾</span>
+        </div>
+        <div className="sc-divider" aria-hidden="true" />
         <input
           className="nav-search-input"
           value={query}
@@ -147,7 +241,10 @@ const SearchBar = () => {
           aria-label={t('searchPlaceholder')}
           autoComplete="off"
         />
-        <button type="submit" className="nav-search-submit">{t('searchMobileLabel')}</button>
+        <button type="submit" className="nav-search-submit peach" aria-label={t('searchMobileLabel')}>
+          <SearchIcon size={18} strokeWidth={1.8} />
+        </button>
+  {/* Dropdown appears anchored to region trigger */}
         {showSuggest && (
           <div className="search-suggestions" role="listbox">
             {query.length >=2 && suggestions.length === 0 && (
@@ -186,12 +283,12 @@ const SearchBar = () => {
         )}
       </form>
       <button className="nav-search-icon-btn" aria-label={t('searchMobileLabel')} onClick={() => setMobileOpen(true)}>
-        <IoSearchOutline size={22} />
+        <SearchIcon size={18} strokeWidth={1.9} />
       </button>
       {mobileOpen && (
         <div className="search-overlay" role="dialog" aria-modal="true">
           <button className="search-close-btn" aria-label="Close" onClick={() => setMobileOpen(false)}>
-            <IoCloseOutline size={26} />
+            {t('close','Fermer')}
           </button>
           <form onSubmit={submit} role="search" aria-label={t('searchMobileLabel')} style={{ flex: 1 }}>
             <input
@@ -203,9 +300,28 @@ const SearchBar = () => {
               autoComplete="off"
             />
           </form>
-          <button onClick={submit} className="nav-search-submit">{t('searchMobileLabel')}</button>
+          <button onClick={submit} className="nav-search-submit" aria-label={t('searchMobileLabel')}>
+            <SearchIcon size={18} strokeWidth={1.9} />
+          </button>
         </div>
       )}
+      <LocationDropdown
+        open={locationOpen}
+        onClose={() => setLocationOpen(false)}
+        anchorRef={locButtonRef}
+        currentValue={{ regionCode: selectedRegion?.code || null, townSlug: selectedTown ? slugify(selectedTown) : null }}
+        t={t}
+        onApply={(r, town, slug) => {
+          setSelectedRegion(r || null);
+          setSelectedTown(town || null);
+          try { if (r) localStorage.setItem('persistLocation', JSON.stringify({ regionCode: r.code, townSlug: town ? slugify(town): null })); else localStorage.removeItem('persistLocation'); } catch { /* ignore persist errors */ }
+          const trimmed = query.trim();
+          const sp = new URLSearchParams();
+          if (trimmed) sp.set('q', trimmed);
+          if (slug) sp.set('loc', slug);
+          navigate({ pathname: '/', search: sp.toString() ? `?${sp.toString()}` : '' });
+        }}
+      />
     </div>
   );
 };

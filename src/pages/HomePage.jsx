@@ -1,28 +1,30 @@
 import React from 'react';
 import Hero from '../components/Hero';
 import ListingRow from '../components/ListingRow';
-import CategoryStrip from '../components/home/CategoryStrip';
 import HowItWorks from '../components/home/HowItWorks';
-import CTABanner from '../components/home/CTABanner';
+import './HomePage.css';
 
 const HomePage = () => {
   return (
     <>
       <Hero />
-      <CategoryStrip />
-      <ListingRow
-        title="Featured Listings"
-        subtitle="Curated picks and hot deals"
-        apiParams={{ is_featured: true, ordering: '-created_at' }}
-      />
-      <HowItWorks />
-      <ListingRow
-        title="Recent Listings"
-        subtitle="Freshly added by the community"
-        apiParams={{ ordering: '-created_at' }}
-        compact
-      />
-      <CTABanner />
+      <main className="home-main" id="main-content">
+        <div className="home-section">
+          <ListingRow
+            title="Recent Listings"
+            subtitle="Freshly added by the community"
+            apiParams={{ ordering: '-created_at' }}
+            compact
+            browseLink="/browse"
+            browseLabel="Browse categories"
+            lazySecondHalf
+          />
+        </div>
+        <div className="home-section">
+          <HowItWorks />
+        </div>
+        {/** CTA banner intentionally removed. Re-enable by importing CTABanner and adding here. */}
+      </main>
     </>
   );
 };

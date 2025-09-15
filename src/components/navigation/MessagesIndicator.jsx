@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { IoMailOutline } from 'react-icons/io5';
 import { fetchConversations } from '../../services/api';
 import { useTranslation } from 'react-i18next';
 
@@ -37,7 +36,7 @@ const MessagesIndicator = () => {
 
   return (
     <Link to="/messages" className="nav-icon-btn" aria-label={t('messages')} data-unread={unread > 0 || undefined}>
-      <IoMailOutline size={22} />
+      <span style={{ fontSize:'var(--fs-xs)', fontWeight:600 }}>{t('messages')}</span>
       {unread > 0 && <span className="badge badge-unread" aria-label={`${unread} unread`}>{unread}</span>}
     </Link>
   );

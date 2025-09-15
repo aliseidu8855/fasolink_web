@@ -15,6 +15,15 @@
   "account": "Account",
   "signIn": "Sign In",
   "register": "Register",
-  "searchMobileLabel": "Search"
-  ,"noResults": "No results"
+  "searchMobileLabel": "Search",
+  "noResults": "No results",
+  "allBurkina": "All Burkina Faso",
+  "apply": "Apply",
+  "close": "Close",
+  "selectRegion": "Select a region",
+  "clear": "Clear",
+  "chooseLocation": "Choose a location",
+  "searchLocation": "Find region or town...",
+  "regions": "Regions",
+  "towns": "Towns"
 }
