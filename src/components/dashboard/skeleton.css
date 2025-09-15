@@ -1,0 +1,21 @@
+.skeleton-block {
+  display:block;
+  height: var(--s-h, 16px);
+  width: var(--s-w, 100%);
+  border-radius: var(--s-r, 6px);
+  background: linear-gradient(90deg, rgba(140,140,140,0.18), rgba(140,140,140,0.28), rgba(140,140,140,0.18));
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.2s linear infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-card { position:relative; overflow:hidden; }
+.listing-card.skeleton { border:1px solid var(--border,#e0e0e0); background:#fff; }
+@media (prefers-color-scheme: dark) {
+  .skeleton-block { background: linear-gradient(90deg, rgba(80,80,80,0.25), rgba(100,100,100,0.35), rgba(80,80,80,0.25)); }
+  .listing-card.skeleton { background:#181818; border-color:#2a2a2a; }
+}

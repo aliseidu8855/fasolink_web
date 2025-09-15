@@ -37,4 +37,56 @@
   "noRatings": "Pas encore de notes",
   "priceNegotiable": "Prix négociable",
   "yourListing": "Votre annonce"
+  ,"listingsPage": {
+    "title": "Parcourir les annonces",
+    "searchLabel": "Rechercher des annonces",
+    "searchPlaceholder": "Rechercher produits, marques...",
+    "showFilters": "Filtres",
+    "hideFilters": "Masquer",
+    "filtersAria": "Filtres",
+    "resultsAria": "Résultats",
+    "resultsCount": "{{count}} résultats",
+    "empty": "Aucune annonce trouvée",
+    "error": "Échec du chargement des annonces",
+    "retry": "Réessayer",
+    "viewCompact": "Vue compacte",
+    "viewGrid": "Vue grille",
+    "backToTop": "Haut de page",
+    "loading": "Chargement…"
+  }
+  ,"pagination": {
+    "prev": "Précédent",
+    "next": "Suivant",
+    "page": "Page {{page}}",
+    "pageOf": "Page {{page}} sur {{total}}"
+  },
+  "buyBoxAria": "Actions de l'annonce",
+  "bulletFeatures": "Caractéristiques clés",
+  "specifications": "Spécifications",
+  "specCategory": "Catégorie",
+  "specLocation": "Localisation",
+  "specPosted": "Posté",
+  "specSeller": "Vendeur",
+  "specId": "ID d'annonce",
+  "sellerInfo": "Informations sur le vendeur",
+  "sellerRatingAria": "Note du vendeur {{rating}} sur 5",
+  "relatedItems": "Articles similaires",
+  "carouselNav": "Navigation du carrousel",
+  "carouselPrev": "Précédent",
+  "carouselNext": "Suivant"
+  ,"reviews": "Avis"
+  ,"noReviewsYet": "Pas encore d'avis"
+  ,"share": "Partager"
+  ,"shareCopied": "Lien copié !"
+  ,"favorite": "Enregistrer"
+  ,"favorited": "Enregistré"
+  ,"unfavoriteAria": "Retirer des favoris"
+  ,"favoriteAria": "Enregistrer cette annonce"
+  ,"relatedEmpty": "Aucun article similaire"
+  ,"relatedError": "Impossible de charger les articles similaires"
+  ,"imageCount": "Image {{current}} sur {{total}}"
+  ,"quickMessages": "Messages rapides"
+  ,"presetAvailable": "Est-ce toujours disponible ?"
+  ,"presetLastPrice": "Quel est votre dernier prix ?"
+  ,"presetNegotiate": "On peut négocier ?"
 }

@@ -1,0 +1,64 @@
+{
+  "nav": {
+    "overview": "Vue d'ensemble",
+    "listings": "Mes annonces",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "logout": "Déconnexion"
+  },
+  "layout": {
+    "brand": "Mon Compte",
+    "collapse": {
+      "expand": "Développer la barre latérale",
+      "collapse": "Réduire la barre latérale"
+    }
+  },
+  "overview": {
+    "title": "Bienvenue {{username}}",
+    "subtitle": "Vue d'ensemble de votre activité.",
+    "stats": {
+      "active": "Actives",
+      "total": "Total",
+      "views": "Vues (à venir)",
+      "messages": "Messages (à venir)"
+    }
+  },
+  "listings": {
+    "title": "Vos annonces",
+    "new": "+ Nouvelle annonce",
+    "empty": "Aucune annonce pour l'instant.",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "deleteConfirm": "Supprimer l'annonce \"{{title}}\" ?",
+    "deleteError": "Erreur lors de la suppression"
+  },
+  "profile": {
+    "title": "Profil",
+    "username": "Nom d'utilisateur",
+    "email": "Email",
+    "edit": "Modifier",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saveError": "Erreur de sauvegarde"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "coming": "Section paramètres à venir. Bientôt vous pourrez gérer les préférences, notifications et plus."
+  },
+  "modal": {
+    "newTitle": "Nouvelle annonce",
+    "editTitle": "Modifier l'annonce",
+    "fields": {
+      "title": "Titre",
+      "price": "Prix (CFA)",
+      "description": "Description"
+    },
+    "hint": "Images, catégorie et autres champs seront ajoutés bientôt.",
+    "cancel": "Annuler",
+    "create": "Créer",
+    "update": "Mettre à jour",
+    "saving": "Enregistrement…",
+    "saveError": "Erreur lors de la sauvegarde"
+  }
+}

@@ -37,4 +37,56 @@
   "noRatings": "No ratings yet",
   "priceNegotiable": "Negotiable",
   "yourListing": "Your listing"
+  ,"listingsPage": {
+    "title": "Browse Listings",
+    "searchLabel": "Search listings",
+    "searchPlaceholder": "Search products, brands...",
+    "showFilters": "Filters",
+    "hideFilters": "Hide Filters",
+    "filtersAria": "Filters",
+    "resultsAria": "Results",
+    "resultsCount": "{{count}} results",
+    "empty": "No listings found",
+    "error": "Failed to load listings",
+    "retry": "Retry",
+    "viewCompact": "Compact view",
+    "viewGrid": "Grid view",
+    "backToTop": "Back to top",
+    "loading": "Loading…"
+  }
+  ,"pagination": {
+    "prev": "Previous",
+    "next": "Next",
+    "page": "Page {{page}}",
+    "pageOf": "Page {{page}} of {{total}}"
+  },
+  "buyBoxAria": "Listing actions",
+  "bulletFeatures": "Key features",
+  "specifications": "Specifications",
+  "specCategory": "Category",
+  "specLocation": "Location",
+  "specPosted": "Posted",
+  "specSeller": "Seller",
+  "specId": "Listing ID",
+  "sellerInfo": "Seller information",
+  "sellerRatingAria": "Seller rating {{rating}} of 5",
+  "relatedItems": "Related items",
+  "carouselNav": "Carousel navigation",
+  "carouselPrev": "Previous",
+  "carouselNext": "Next"
+  ,"reviews": "Reviews"
+  ,"noReviewsYet": "No reviews yet"
+  ,"share": "Share"
+  ,"shareCopied": "Link copied!"
+  ,"favorite": "Save"
+  ,"favorited": "Saved"
+  ,"unfavoriteAria": "Remove from saved"
+  ,"favoriteAria": "Save this listing"
+  ,"relatedEmpty": "No related items found"
+  ,"relatedError": "Couldn't load related items"
+  ,"imageCount": "Image {{current}} of {{total}}"
+  ,"quickMessages": "Quick messages"
+  ,"presetAvailable": "Is this still available?"
+  ,"presetLastPrice": "What is your last price?"
+  ,"presetNegotiate": "Can we negotiate?"
 }

@@ -9,6 +9,7 @@ import enAuth from './locales/en/auth.json';
 import enListing from './locales/en/listing.json';
 import enMessaging from './locales/en/messaging.json';
 import enDashboard from './locales/en/dashboard.json';
+import enDashboardExtended from './locales/en/dashboard/extended.json';
 import enErrors from './locales/en/errors.json';
 import enHome from './locales/en/home.json';
 
@@ -18,6 +19,7 @@ import frAuth from './locales/fr/auth.json';
 import frListing from './locales/fr/listing.json';
 import frMessaging from './locales/fr/messaging.json';
 import frDashboard from './locales/fr/dashboard.json';
+import frDashboardExtended from './locales/fr/dashboard/extended.json';
 import frErrors from './locales/fr/errors.json';
 import frHome from './locales/fr/home.json';
 
@@ -31,7 +33,7 @@ const resources = {
     auth: enAuth,
     listing: enListing,
     messaging: enMessaging,
-    dashboard: enDashboard,
+  dashboard: { ...enDashboard, ...enDashboardExtended },
     errors: enErrors,
     home: enHome,
   },
@@ -41,7 +43,7 @@ const resources = {
     auth: frAuth,
     listing: frListing,
     messaging: frMessaging,
-    dashboard: frDashboard,
+  dashboard: { ...frDashboard, ...frDashboardExtended },
     errors: frErrors,
     home: frHome,
   }

@@ -23,6 +23,10 @@ const GuestHeader = ({ isScrolled }) => {
           <img src={logo} alt={t('navigation:brand')} />
           <span>{t('navigation:brand')}</span>
         </Link>
+        <nav className="guest-nav" aria-label="Main">
+          <Link to="/listings" className="nav-link">{t('navigation:browse','Browse')}</Link>
+          <Link to="/help" className="nav-link">{t('navigation:help')}</Link>
+        </nav>
         <div className="header-actions">
           <LanguageSwitcher />
           <Button onClick={handleAuthClick} variant="primary">

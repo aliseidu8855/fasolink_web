@@ -50,6 +50,7 @@ const LoggedInHeader = ({ isScrolled }) => {
           </Link>
           <nav className="main-nav">
             <NavLink to="/dashboard">{t('navigation:dashboard')}</NavLink>
+            <NavLink to="/listings">{t('navigation:browse','Browse')}</NavLink>
             <NavLink to="/messages">{t('navigation:messages')}</NavLink>
             <NavLink to="/help">{t('navigation:help')}</NavLink>
           </nav>

@@ -34,6 +34,20 @@ export const fetchListingById = (id) => {
   return apiClient.get(`/listings/${id}/`);
 };
 
+// Related listings (simple heuristic: same category, exclude current id, first page, adjustable limit)
+export const fetchRelatedListings = (categoryId, excludeId, limit = 12) => {
+  const params = { category: categoryId, page: 1, page_size: limit + 1 };
+  return apiClient.get('/listings/', { params }).then(res => {
+    let results = res.data.results || res.data;
+    if (Array.isArray(results)) {
+      results = results.filter(r => r.id !== excludeId).slice(0, limit);
+    } else {
+      results = [];
+    }
+    return results;
+  });
+};
+
 export const registerUser = (userData) => {
   return apiClient.post('/auth/register/', userData);
 };
@@ -56,6 +70,24 @@ export const createListing = (formData) => {
 
 export const fetchUserListings = () => {
   return apiClient.get('/profile/my-listings/');
+};
+
+export const updateListing = (id, formData) => {
+  return apiClient.patch(`/listings/${id}/`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+};
+
+export const deleteListing = (id) => {
+  return apiClient.delete(`/listings/${id}/`);
+};
+
+export const updateProfile = (data) => {
+  return apiClient.patch('/auth/me/', data);
+};
+
+export const fetchDashboardStats = () => {
+  return apiClient.get('/dashboard/stats/');
 };
 
 export const startConversation = (listingId) => {

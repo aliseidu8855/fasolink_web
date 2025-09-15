@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchListingById, startConversation } from '../services/api';
+import { fetchListingById, startConversation, fetchRelatedListings, sendMessage } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useModal } from '../context/ModalContext';
 import AuthForms from './AuthForms';
 import ListingImageGallery from '../components/ListingImageGallery';
 import Button from '../components/Button';
+import ListingBuyBox from '../components/listing/ListingBuyBox';
+import ListingCoreInfo from '../components/listing/ListingCoreInfo';
+import ListingSpecsTable from '../components/listing/ListingSpecsTable';
+import SellerInfoPanel from '../components/listing/SellerInfoPanel';
+import RelatedListingsCarousel from '../components/listing/RelatedListingsCarousel';
 import './ListingDetailPage.css';
 
 // Helper to format the CFA currency
@@ -25,6 +30,10 @@ const ListingDetailPage = () => {
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [related, setRelated] = useState([]);
+  const [relatedLoading, setRelatedLoading] = useState(false);
+  const [relatedError, setRelatedError] = useState(null);
+  const [showPresets, setShowPresets] = useState(false);
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
   const { openModal } = useModal();
@@ -46,21 +55,52 @@ const ListingDetailPage = () => {
     if (listingId) getListing();
   }, [listingId, t]);
 
-  const handleMessageSeller = async () => {
+  // Lazy-load related listings via IntersectionObserver
+  useEffect(()=>{
+    let observer; let cancelled=false;
+    const anchor = document.getElementById('ld-related-anchor');
+    if (anchor && 'IntersectionObserver' in window) {
+      observer = new IntersectionObserver(async entries => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && listing && listing.category && !cancelled && !relatedLoading && related.length===0) {
+            setRelatedLoading(true); setRelatedError(null);
+            try {
+              const rel = await fetchRelatedListings(listing.category, listing.id, 12);
+              setRelated(rel);
+              if (!rel.length) setRelatedError('empty');
+            } catch { setRelatedError('error'); }
+            finally { setRelatedLoading(false); }
+          }
+        }
+      }, { rootMargin: '200px 0px' });
+      observer.observe(anchor);
+    }
+    return ()=>{ cancelled=true; if (observer) observer.disconnect(); };
+  }, [listing, related.length, relatedLoading]);
+
+  const handleMessageSeller = async (preset=null) => {
     if (!isAuthenticated) {
-      // If user is not logged in, open the login modal and stop.
       openModal(<AuthForms />);
       return;
     }
     try {
       const response = await startConversation(listing.id);
-      // Navigate (both for new and existing). Could add toast indicating reused conversation.
-      navigate(`/messages/${response.data.id}`);
+      const convoId = response.data.id;
+      if (preset) {
+        try { await sendMessage(convoId, preset); } catch(e){ console.warn('Preset send failed', e); }
+      }
+      navigate(`/messages/${convoId}`);
     } catch (err) {
       console.error('Could not start conversation', err);
       alert(t('errors:unexpectedConversation'));
     }
   };
+
+  const messagePresets = useMemo(()=>[
+    t('listing:presetAvailable','Is this still available?'),
+    t('listing:presetLastPrice','What is your last price?'),
+    t('listing:presetNegotiate','Can we negotiate?')
+  ], [t]);
 
   // JSON-LD generation
   const buildJsonLd = (l) => {
@@ -70,25 +110,35 @@ const ListingDetailPage = () => {
       "ratingValue": Number(l.seller_rating).toFixed(1),
       "reviewCount": l.seller_rating_count || 1
     } : undefined;
-    return {
+    const images = (l.images || []).map(img => img.image).filter(Boolean);
+    const breadcrumb = {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": window.location.origin + "/"},
+        {"@type": "ListItem", "position": 2, "name": "Listings", "item": window.location.origin + "/listings"},
+        {"@type": "ListItem", "position": 3, "name": l.title, "item": window.location.href}
+      ]
+    };
+    const product = {
       "@context": "https://schema.org",
       "@type": "Product",
+      "sku": String(l.id),
+      "productID": String(l.id),
       "name": l.title,
       "description": l.description?.slice(0, 500),
-      "category": l.category, // backend category id; could be expanded to name
-      "image": (l.images && l.images[0]) ? l.images[0].image : undefined,
+      "category": l.category,
+      ...(images.length ? { image: images } : {}),
       "offers": {
         "@type": "Offer",
         "price": l.price,
         "priceCurrency": "XOF",
-        "availability": "https://schema.org/InStock"
+        "availability": "https://schema.org/InStock",
+        "url": window.location.href
       },
-      "seller": {
-        "@type": "Organization",
-        "name": l.user
-      },
+      "seller": {"@type": "Organization", "name": l.user},
       ...(sellerRating ? { aggregateRating: sellerRating } : {})
     };
+    return { "@graph": [ product, breadcrumb ] };
   };
 
   if (loading) return <p className="container">{t('common:loading')}</p>;
@@ -96,11 +146,10 @@ const ListingDetailPage = () => {
   if (!listing) return null;
 
   const jsonLd = buildJsonLd(listing);
-  const sellerRating = listing.seller_rating;
   const isOwnListing = user?.username === listing.user;
 
   return (
-    <div className="container listing-detail-page">
+    <div className="container listing-detail-page" role="main">
       {jsonLd && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       )}
@@ -109,77 +158,48 @@ const ListingDetailPage = () => {
           <ListingImageGallery images={listing.images} />
         </div>
         <div className="detail-main">
-          <h1 className="detail-title">{listing.title}</h1>
-          <div className="badges-row">
-            {listing.is_featured && <span className="badge badge-featured">{t('listing:badgeFeatured','Featured')}</span>}
-            {listing.negotiable && <span className="badge badge-negotiable">{t('listing:badgeNegotiable','Negotiable')}</span>}
-            {/* New badge within 48h */}
-            {listing.created_at && (Date.now() - new Date(listing.created_at).getTime()) < 48*3600*1000 && (
-              <span className="badge badge-new">{t('listing:badgeNew','New')}</span>
-            )}
-          </div>
-          <div className="rating-row">
-            {sellerRating ? (
-              <div className="rating-stars" aria-label={`Seller rating ${sellerRating} out of 5`}>
-                <span className="rating-value">{Number(sellerRating).toFixed(1)}</span>
-                <span className="stars-bar">
-                  {Array.from({length:5}).map((_,i)=>{
-                    const val = Number(sellerRating);
-                    const full = i+1 <= Math.floor(val);
-                    const half = !full && (val - i) >= 0.5;
-                    return <span key={i} className={`star ${full?'full':half?'half':''}`}>★</span>;
-                  })}
-                </span>
-                <span className="rating-context">{t('listing:sellerRating','Seller rating')}</span>
-                {typeof listing.seller_rating_count === 'number' && listing.seller_rating_count > 0 && (
-                  <span className="rating-count">({listing.seller_rating_count})</span>
-                )}
-              </div>
-            ) : <span className="rating-placeholder">{t('listing:noRatings','No ratings yet')}</span>}
-          </div>
-          <div className="price-block">
-            <span className="price-main">{formatPrice(listing.price)} CFA</span>
-            {listing.negotiable && <span className="price-note">{t('listing:priceNegotiable','Negotiable')}</span>}
-          </div>
-          <div className="meta-grid">
-            <div>
-              <div className="meta-label">{t('listing:seller','Seller')}</div>
-              <div className="meta-value">{listing.user}</div>
-            </div>
-            <div>
-              <div className="meta-label">{t('listing:locationLabel','Location')}</div>
-              <div className="meta-value">{listing.location}</div>
-            </div>
-            <div>
-              <div className="meta-label">{t('listing:posted','Posted')}</div>
-              <div className="meta-value">{new Date(listing.created_at).toLocaleDateString()}</div>
-            </div>
-            {sellerRating && (
-              <div>
-                <div className="meta-label">{t('listing:sellerRating','Seller rating')}</div>
-                <div className="meta-value">{Number(sellerRating).toFixed(1)}</div>
-              </div>
-            )}
-          </div>
-          <div className="description-section">
-            <h2 className="section-heading">{t('listing:description')}</h2>
-            <p className="detail-description">{listing.description}</p>
-          </div>
+          <ListingCoreInfo listing={listing} />
+          <ListingSpecsTable listing={listing} />
+          <SellerInfoPanel listing={listing} />
         </div>
         <div className="detail-actions">
-          <div className="action-card">
-            <div className="action-price">{formatPrice(listing.price)} CFA</div>
-            {listing.negotiable && <div className="action-negotiable">{t('listing:priceNegotiable','Negotiable')}</div>}
-            {!isOwnListing && (
-              <Button variant="primary" onClick={handleMessageSeller}>{t('listing:messageSeller')}</Button>
-            )}
-            {isOwnListing && (
-              <div className="owner-note">{t('listing:yourListing','Your listing')}</div>
-            )}
-            <div className="action-meta-small">{t('listing:soldBy',{user: listing.user})}</div>
-            <div className="action-meta-small">{t('listing:location',{location: listing.location})}</div>
-          </div>
+          <ListingBuyBox
+            listing={listing}
+            onMessageSeller={handleMessageSeller}
+            isOwn={isOwnListing}
+            formatPrice={formatPrice}
+          />
+          {!isOwnListing && (
+            <div className="ld-presets">
+              <button type="button" className="ld-presets-toggle" onClick={()=>setShowPresets(s=>!s)} aria-expanded={showPresets}>
+                {t('listing:quickMessages','Quick messages')}
+              </button>
+              {showPresets && (
+                <ul className="ld-presets-list" role="list">
+                  {messagePresets.map((p,i)=>(
+                    <li key={i}><button type="button" className="ld-preset-btn" onClick={()=>handleMessageSeller(p)}>{p}</button></li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
         </div>
+      </div>
+      <div className="detail-lower">
+        {relatedLoading && <p className="ld-related-loading" aria-live="polite">{t('common:loading')}</p>}
+        <div id="ld-related-anchor" style={{height:1}} />
+        {!relatedLoading && related.length > 0 && <RelatedListingsCarousel listings={related} />}
+        {!relatedLoading && related.length === 0 && relatedError === 'empty' && (
+          <p className="ld-related-empty">{t('listing:relatedEmpty','No related items found')}</p>
+        )}
+        {!relatedLoading && relatedError === 'error' && (
+          <p className="ld-related-error">{t('listing:relatedError','Couldn\'t load related items')}</p>
+        )}
+        {/* Reviews placeholder */}
+        <section className="ld-reviews" aria-labelledby="ld-reviews-h">
+          <h2 id="ld-reviews-h" className="ld-section-h">{t('listing:reviews','Reviews')}</h2>
+          <p className="ld-reviews-empty">{t('listing:noReviewsYet','No reviews yet')}</p>
+        </section>
       </div>
       {/* Mobile sticky CTA bar */}
       <div className="mobile-sticky-cta" role="complementary">

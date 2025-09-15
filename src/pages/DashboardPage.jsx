@@ -1,65 +1,107 @@
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { fetchUserListings } from '../services/api';
-import ListingCard from '../components/ListingCard'; // We can reuse our existing card!
-import './DashboardPage.css';
+import { fetchUserListings, fetchDashboardStats, deleteListing } from '../services/api';
+import DashboardLayout from '../components/dashboard/DashboardLayout';
+import DashboardOverview from '../components/dashboard/DashboardOverview';
+import DashboardListingsPanel from '../components/dashboard/DashboardListingsPanel';
+import DashboardProfilePanel from '../components/dashboard/DashboardProfilePanel';
+import DashboardSettingsPanel from '../components/dashboard/DashboardSettingsPanel';
+import DashboardSkeleton from '../components/dashboard/Skeleton';
+import ListingModal from '../components/dashboard/ListingModal';
+import '../components/dashboard/dashboard.css';
+import { useTranslation } from 'react-i18next';
 
+// New dashboard page leveraging modular layout & panels
 const DashboardPage = () => {
-  const { user } = useAuth();
-  const { t } = useTranslation(['dashboard','common']);
+  const { user, logout } = useAuth();
+  const { t } = useTranslation('dashboard');
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [dashStats, setDashStats] = useState(null);
   const [error, setError] = useState(null);
+  const [active, setActive] = useState('overview');
+  const [showListingModal, setShowListingModal] = useState(false);
+  const [editingListing, setEditingListing] = useState(null);
 
+  // Fetch user listings when authenticated
   useEffect(() => {
-    // Wait until we actually have a user before fetching
     if (!user) return;
-
-    let isCancelled = false;
-    const getListings = async () => {
+    let cancelled = false;
+    const run = async () => {
       try {
         setLoading(true);
-        const response = await fetchUserListings();
-        if (!isCancelled) {
-          setListings(response.data.results || response.data);
+        const [listingsResp, statsResp] = await Promise.all([
+          fetchUserListings(),
+          fetchDashboardStats()
+        ]);
+        if (!cancelled) {
+          setListings(listingsResp.data.results || listingsResp.data || []);
+          setDashStats(statsResp.data);
         }
-      } catch (err) {
-        if (!isCancelled) {
-          setError(t('dashboard:loadError'));
-        }
-        console.error(err);
+      } catch (e) {
+  if (!cancelled) setError(t('listings.loadError','Load error'));
+        console.error(e);
       } finally {
-        if (!isCancelled) setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
-
-    getListings();
-    return () => { isCancelled = true; };
+    run();
+    return () => { cancelled = true; };
   }, [user, t]);
 
-  if (!user) {
-    return <p className="container">{t('dashboard:loadingUser')}</p>;
+  const stats = useMemo(() => {
+    const total = listings.length;
+    const activeCount = listings.filter(l => l.is_active !== false).length;
+    return {
+      total,
+      active: activeCount,
+      views: dashStats?.views ?? 0,
+      messages: dashStats?.messages ?? 0
+    };
+  }, [listings, dashStats]);
+
+  if (!user) return <p className="container">{t('authRequired','Connexion requise…')}</p>;
+  if (loading && listings.length === 0) {
+    return (
+      <DashboardLayout active={active} onNavigate={setActive} onLogout={logout}>
+        <DashboardSkeleton />
+      </DashboardLayout>
+    );
   }
-  if (loading) return <p className="container">{t('dashboard:loadingDashboard')}</p>;
   if (error) return <p className="container error-message">{error}</p>;
 
+  let panel = null;
+  const handleNew = () => { setEditingListing(null); setShowListingModal(true); };
+  const handleCreated = (created) => { setListings(ls => [created, ...ls]); };
+  const handleUpdated = (updated) => { setListings(ls => ls.map(l => l.id === updated.id ? updated : l)); };
+  const handleEdit = (l) => { setEditingListing(l); setShowListingModal(true); };
+  const handleDelete = async (l) => {
+    if (!window.confirm(t('listings.deleteConfirm',{ title: l.title }))) return;
+    try {
+      await deleteListing(l.id);
+      setListings(ls => ls.filter(x => x.id !== l.id));
+    } catch (e) {
+      console.error(e);
+      alert(t('listings.deleteError'));
+    }
+  };
+
+  if (active === 'overview') panel = <DashboardOverview stats={stats} user={user} />;
+  else if (active === 'listings') panel = <DashboardListingsPanel listings={listings} loading={loading} onNew={handleNew} onEdit={handleEdit} onDelete={handleDelete} />;
+  else if (active === 'profile') panel = <DashboardProfilePanel user={user} onUpdate={()=>{ /* optimistic local update of auth user */ }} />;
+  else if (active === 'settings') panel = <DashboardSettingsPanel />;
+
   return (
-    <div className="container dashboard-page">
-  <h1 className="dashboard-title">{t('dashboard:welcome', { username: user?.username || 'User' })}</h1>
-    <p className="dashboard-subtitle">{t('dashboard:subtitle')}</p>
-      
-      <div className="user-listings-grid">
-        {listings.length > 0 ? (
-          listings.map(listing => (
-            // We can enhance ListingCard later to include edit/delete buttons
-            <ListingCard key={listing.id} listing={listing} />
-          ))
-        ) : (
-          <p>{t('dashboard:noListings')}</p>
-        )}
-      </div>
-    </div>
+    <DashboardLayout active={active} onNavigate={setActive} onLogout={logout}>
+      {panel}
+      <ListingModal
+        open={showListingModal}
+        existing={editingListing}
+        onClose={() => setShowListingModal(false)}
+        onCreated={handleCreated}
+        onUpdated={handleUpdated}
+      />
+    </DashboardLayout>
   );
 };
 

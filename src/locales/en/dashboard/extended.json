@@ -1,0 +1,64 @@
+{
+  "nav": {
+    "overview": "Overview",
+    "listings": "My Listings",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "layout": {
+    "brand": "My Account",
+    "collapse": {
+      "expand": "Expand sidebar",
+      "collapse": "Collapse sidebar"
+    }
+  },
+  "overview": {
+    "title": "Welcome {{username}}",
+    "subtitle": "Overview of your activity.",
+    "stats": {
+      "active": "Active",
+      "total": "Total",
+      "views": "Views (coming)",
+      "messages": "Messages (coming)"
+    }
+  },
+  "listings": {
+    "title": "Your listings",
+    "new": "+ New listing",
+    "empty": "No listings yet.",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Delete the listing \"{{title}}\"?",
+    "deleteError": "Error deleting listing"
+  },
+  "profile": {
+    "title": "Profile",
+    "username": "Username",
+    "email": "Email",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving…",
+    "saveError": "Save error"
+  },
+  "settings": {
+    "title": "Settings",
+    "coming": "Settings section coming soon. Soon you'll manage preferences, notifications and more."
+  },
+  "modal": {
+    "newTitle": "New listing",
+    "editTitle": "Edit listing",
+    "fields": {
+      "title": "Title",
+      "price": "Price (CFA)",
+      "description": "Description"
+    },
+    "hint": "Images, category and other fields will be added soon.",
+    "cancel": "Cancel",
+    "create": "Create",
+    "update": "Update",
+    "saving": "Saving…",
+    "saveError": "Error saving listing"
+  }
+}

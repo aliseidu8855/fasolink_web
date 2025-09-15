@@ -15,18 +15,8 @@ object-fit: cover;
 display: flex;
 gap: 1rem;
 }
-.thumbnail-image {
-width: 80px;
-height: 80px;
-object-fit: cover;
-border-radius: 8px;
-cursor: pointer;
-border: 2px solid transparent;
-transition: border-color 0.2s;
-}
-.thumbnail-image:hover {
-border-color: var(--rouge-faso);
-}
-.thumbnail-image.active {
-border-color: var(--rouge-faso);
-}
+.thumbnail-image-btn { background:none; padding:0; border:2px solid transparent; border-radius:10px; cursor:pointer; line-height:0; position:relative; }
+.thumbnail-image-btn:focus-visible { outline:2px solid #0052cc; outline-offset:2px; }
+.thumbnail-image { width:80px; height:80px; object-fit:cover; border-radius:8px; display:block; }
+.thumbnail-image-btn.active, .thumbnail-image-btn:hover { border-color: var(--rouge-faso); }
+.img-count-badge { position:absolute; top:.6rem; right:.6rem; background:rgba(0,0,0,.55); color:#fff; padding:.25rem .55rem; font-size:.65rem; border-radius:20px; letter-spacing:.5px; }
