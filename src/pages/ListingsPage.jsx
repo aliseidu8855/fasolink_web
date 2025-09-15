@@ -6,7 +6,7 @@ import ListingCard from '../components/ListingCard';
 import SortBar from '../components/SortBar';
 import { fetchListingsPage } from '../services/api';
 import '../components/dashboard/dashboard.css';
-import './listingsPage.css';
+import './ListingsPage.css';
 
 // Debounce helper (simple)
 const useDebouncedValue = (value, delay) => {
