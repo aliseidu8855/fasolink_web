@@ -1,8 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useModal } from '../context/ModalContext';
-import AuthForms from '../pages/AuthForms';
 import Button from './Button';
 import LanguageSwitcher from './LanguageSwitcher';
 import logo from '../assets/logo.svg';
@@ -10,10 +8,9 @@ import './Header.css'; // We will share some base styles
 
 const GuestHeader = ({ isScrolled }) => {
   const { t } = useTranslation(['navigation']);
-  const { openModal } = useModal();
-
+  // Modal removed; route-based auth now
   const handleAuthClick = () => {
-    openModal(<AuthForms />);
+    window.location.href = '/auth?mode=login';
   };
 
   return (
@@ -30,7 +27,7 @@ const GuestHeader = ({ isScrolled }) => {
         <div className="header-actions">
           <LanguageSwitcher />
           <Button onClick={handleAuthClick} variant="primary">
-            {t('navigation:postAd')}
+            {t('navigation:signIn','Sign in')}
           </Button>
         </div>
       </div>

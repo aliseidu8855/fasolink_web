@@ -3,8 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import MessagesIndicator from './MessagesIndicator';
 import UserMenu from './UserMenu';
-import { useModal } from '../../context/ModalContext';
-import AuthForms from '../../pages/AuthForms';
+// Removed modal-based auth; now we navigate to dedicated /auth route
 import Button from '../Button';
 import LanguageSwitcher from '../LanguageSwitcher';
 
@@ -12,11 +11,12 @@ const NavActions = ({ isAuthenticated }) => {
   const { t } = useTranslation('navigation');
   const location = useLocation();
   const navigate = useNavigate();
-  const { openModal } = useModal();
+  // const { openModal } = useModal(); (legacy)
 
   const handlePost = () => {
     if (!isAuthenticated) {
-      openModal(<AuthForms initialTab="register" />);
+      // Preserve destination intent so user returns after auth if desired (optional enhancement)
+      navigate('/auth?mode=register&next=/create-listing');
       return;
     }
     navigate('/create-listing');
@@ -37,7 +37,11 @@ const NavActions = ({ isAuthenticated }) => {
       {isAuthenticated ? (
         <UserMenu />
       ) : (
-        <Button variant="secondary" onClick={() => openModal(<AuthForms />)} className="signin-btn">
+        <Button
+          variant="secondary"
+          onClick={() => navigate('/auth?mode=login')}
+          className="signin-btn"
+        >
           {t('signIn')}
         </Button>
       )}

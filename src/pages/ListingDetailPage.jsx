@@ -3,8 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchListingById, startConversation, fetchRelatedListings, sendMessage } from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { useModal } from '../context/ModalContext';
-import AuthForms from './AuthForms';
+// Removed modal-based auth import; use route navigation instead
 import ListingImageGallery from '../components/ListingImageGallery';
 import Button from '../components/Button';
 import ListingBuyBox from '../components/listing/ListingBuyBox';
@@ -36,7 +35,6 @@ const ListingDetailPage = () => {
   const [showPresets, setShowPresets] = useState(false);
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
-  const { openModal } = useModal();
 
   useEffect(() => {
     const getListing = async () => {
@@ -80,7 +78,9 @@ const ListingDetailPage = () => {
 
   const handleMessageSeller = async (preset=null) => {
     if (!isAuthenticated) {
-      openModal(<AuthForms />);
+      // Redirect to auth page with next pointing back here plus action anchor
+      const next = encodeURIComponent(window.location.pathname + window.location.search + '#message-seller');
+      navigate(`/auth?mode=login&next=${next}`);
       return;
     }
     try {

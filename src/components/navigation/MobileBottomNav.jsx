@@ -2,8 +2,6 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
-import { useModal } from '../../context/ModalContext';
-import AuthForms from '../../pages/AuthForms';
 import './MobileBottomNav.css';
 import { HomeIcon, CategoryIcon, MessageBubbleIcon, UserIcon, PlusCircleIcon } from '../icons/Icons.jsx';
 
@@ -12,16 +10,15 @@ import { HomeIcon, CategoryIcon, MessageBubbleIcon, UserIcon, PlusCircleIcon } f
 const MobileBottomNav = () => {
   const { t } = useTranslation(['navigation']);
   const { isAuthenticated, captureIntendedPath } = useAuth();
-  const { openModal } = useModal();
   const navigate = useNavigate();
 
   const handlePost = () => {
     if (!isAuthenticated) {
       captureIntendedPath('/create-listing');
-      openModal(<AuthForms />);
-    } else {
-      navigate('/create-listing');
+      navigate('/auth?mode=login&next=/create-listing');
+      return;
     }
+    navigate('/create-listing');
   };
 
   const navItems = [

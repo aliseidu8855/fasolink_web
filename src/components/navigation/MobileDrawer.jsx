@@ -3,8 +3,7 @@ import { createPortal } from 'react-dom';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
-import AuthForms from '../../pages/AuthForms';
-import { useModal } from '../../context/ModalContext';
+// Auth modal removed; using /auth route now
 import LanguageSwitcher from '../LanguageSwitcher';
 import MobileMenuToggle from './MobileMenuToggle';
 
@@ -20,7 +19,7 @@ const lockBody = (locked) => {
 const MobileDrawer = () => {
   const { t } = useTranslation('navigation');
   const { isAuthenticated } = useAuth();
-  const { openModal } = useModal();
+  // const { openModal } = useModal(); (legacy)
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const firstFocusableRef = useRef(null);
@@ -105,7 +104,7 @@ const MobileDrawer = () => {
               {isAuthenticated ? (
                 <Link to="/create-listing" className="mobile-action-primary" onClick={close}>+ {t('postAd')}</Link>
               ) : (
-                <button className="mobile-action-primary" onClick={() => { openModal(<AuthForms />); close(); }}>{t('signIn')}</button>
+                <Link to="/auth?mode=login" className="mobile-action-primary" onClick={close}>{t('signIn')}</Link>
               )}
             </div>
             <div className="mobile-drawer-footer">

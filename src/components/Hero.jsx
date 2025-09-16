@@ -63,12 +63,12 @@ const Hero = () => {
           </h1>
           <p className="hero-subtitle">{t('home:hero.subtitle')}</p>
 
-          <div className="hero-cta-line">
+          {/* <div className="hero-cta-line">
             <a className="hero-cta-btn primary" href="/listings/new">{t('home:hero.postAd')}</a>
             <a className="hero-cta-btn secondary" href="/browse">{t('home:hero.browse')} →</a>
-          </div>
+          </div> */}
           <div className="hero-embedded-search-wrapper" data-mobile-slot>
-            <div className="hero-search-label">{t('home:hero.searchLabel')}</div>
+            {/* <div className="hero-search-label">{t('home:hero.searchLabel')}</div> */}
             <div className="hero-embedded-search hero-search-surface">
               <SearchBar />
             </div>
