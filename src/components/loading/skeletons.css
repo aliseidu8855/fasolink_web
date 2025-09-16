@@ -1,0 +1,4 @@
+.sk-block { display:block; background:linear-gradient(90deg,#f1f2f3 0%,#eceef0 40%,#f1f2f3 80%); background-size:200% 100%; animation:skpulse 1.4s ease-in-out infinite; }
+@keyframes skpulse { 0%{ background-position:200% 0;} 100%{ background-position:-200% 0;} }
+.page-skeleton { padding:1.5rem clamp(.75rem,3vw,1.25rem); }
+.sk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:1rem; }

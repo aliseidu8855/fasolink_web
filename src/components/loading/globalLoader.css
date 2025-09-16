@@ -1,0 +1,5 @@
+.global-loader { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:var(--color-bg-primary, #fafbfc); z-index:2000; }
+.global-loader .gl-bar { position:absolute; top:0; left:0; height:3px; width:100%; background:linear-gradient(90deg,var(--color-brand,#e4002b),rgba(228,0,43,0)); animation:glbar 1.2s linear infinite; }
+@keyframes glbar { 0%{ transform:translateX(-100%);} 50%{ transform:translateX(0);} 100%{ transform:translateX(100%);} }
+.gl-spinner { width:46px; height:46px; border-radius:50%; border:4px solid #e2e5e9; border-top-color: var(--color-brand,#e4002b); animation: glspin .8s linear infinite; }
+@keyframes glspin { to { transform:rotate(360deg);} }

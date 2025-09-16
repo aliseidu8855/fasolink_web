@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import ConversationList from '../components/messaging/ConversationList';
@@ -14,6 +14,7 @@ const MessagesPage = () => {
 
   const [isMobile, setIsMobile] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const chatScrollRef = useRef(null);
 
   useEffect(() => {
     const handler = () => {
@@ -36,6 +37,19 @@ const MessagesPage = () => {
       setSidebarOpen(true);
     }
   }, [isMobile, conversationId]);
+
+  // Scroll to top when conversation changes
+  useEffect(()=>{
+    if (conversationId) {
+      // Try specific chat wrapper first
+      const target = chatScrollRef.current || document.querySelector('.chat-wrapper');
+      if (target) {
+        target.scrollTop = 0;
+      }
+      // Fallback ensure window scroll also resets
+      window.scrollTo({ top:0, behavior:'auto' });
+    }
+  }, [conversationId]);
 
   return (
     <div className="messages-page-wrapper" data-mobile={isMobile}>
@@ -77,7 +91,9 @@ const MessagesPage = () => {
                     <button className="back-btn" onClick={() => setSidebarOpen(true)} aria-label={t('messaging:backToList')}>&larr; {t('messaging:back')}</button>
                   </div>
                 )}
-                <ChatWindow conversationId={conversationId} />
+                <div ref={chatScrollRef} className="chat-scroll-anchor">
+                  <ChatWindow conversationId={conversationId} />
+                </div>
               </div>
             ) : (
               <div className="messages-placeholder" role="status">{t('messaging:selectConversation')}</div>
