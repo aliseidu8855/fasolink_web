@@ -34,18 +34,24 @@ The remaining sections detail messaging architecture, i18n, typography, and plan
 
 ### Messaging Architecture (Current State)
 
-The messaging UI is built on top of a REST polling approach:
+The messaging UI uses a lightweight REST + polling model with a centralized context for efficiency and accessibility:
 
-1. Conversation list endpoint returns for each conversation:
-   - participants (array of usernames)
-   - listing metadata (title)
-   - last_message, last_message_timestamp
-   - unread_count (messages from the other participant not yet read)
-2. Chat window fetches paginated messages (`/conversations/:id/messages/?page=N`).
-3. Messages are polled every 5 seconds only while the tab is visible (page visibility API) to reduce unnecessary network usage.
-4. Read receipts are applied via `POST /conversations/:id/mark-read/` which marks all unread messages from the other participant as read. The frontend invokes this automatically after new messages arrive.
-5. Optimistic UI: Outgoing messages are appended immediately with a `pending` flag and replaced with the server version when confirmed. Failures are flagged and can be retried.
-6. Pagination loads OLDER messages on demand ("Load older" button) prepending them without losing the scroll position for newer context.
+Core flow:
+1. `MessagingProvider` (context) performs visibility-aware polling of `/conversations/` every 5s, exposing `conversations`, `unreadTotal`, and `refresh()`.
+2. Conversation list (`ConversationList`) consumes context (no internal polling) and supports instant client-side filtering.
+3. Chat window (`ChatWindow`) retrieves paginated messages (`/conversations/:id/messages/?page=N`) and merges newer messages by polling only page 1 (avoid re-loading older pages).
+4. Scroll preservation logic keeps the viewport stable when older pages are prepended.
+5. Read receipts: `POST /conversations/:id/mark-read/` automatically fires when unread messages from the other participant are present.
+6. Optimistic send: Temporary `temp-*` message appended with `pending` flag, replaced on success, flagged `failed` with retry on error.
+7. Offline handling: An offline banner appears; send button disabled until reconnected (messages not queued yet, but pattern in place).
+8. Accessibility: Message list `role="log"` + `aria-live="polite"`; each bubble is an `article` with contextual `aria-label`. Buttons include descriptive aria labels.
+9. Unified unread badge: Header `MessagesIndicator` consumes context `unreadTotal` (no duplicate polling).
+
+Pagination Strategy:
+* Newer messages appended at bottom to preserve natural chat reading order.
+* Older messages loaded manually (button) with scroll offset compensation to avoid visual jump.
+
+Potential next steps (if upgrading to realtime): Replace both polling loops with a WebSocket channel broadcasting new messages + read events; keep context shape stable so components do not need refactoring.
 
 ### Future Enhancements (Planned / Suggested)
 

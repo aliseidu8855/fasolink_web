@@ -12,6 +12,7 @@ import enDashboard from './locales/en/dashboard.json';
 import enDashboardExtended from './locales/en/dashboard/extended.json';
 import enErrors from './locales/en/errors.json';
 import enHome from './locales/en/home.json';
+import enCreateListing from './locales/en/createListing.json';
 
 import frCommon from './locales/fr/common.json';
 import frNavigation from './locales/fr/navigation.json';
@@ -22,6 +23,7 @@ import frDashboard from './locales/fr/dashboard.json';
 import frDashboardExtended from './locales/fr/dashboard/extended.json';
 import frErrors from './locales/fr/errors.json';
 import frHome from './locales/fr/home.json';
+import frCreateListing from './locales/fr/createListing.json';
 
 // Force French default: ignore any previously saved language for now
 try { localStorage.setItem('appLanguage','fr'); } catch { /* ignore */ }
@@ -36,6 +38,7 @@ const resources = {
   dashboard: { ...enDashboard, ...enDashboardExtended },
     errors: enErrors,
     home: enHome,
+    createListing: enCreateListing,
   },
   fr: {
     common: frCommon,
@@ -46,6 +49,7 @@ const resources = {
   dashboard: { ...frDashboard, ...frDashboardExtended },
     errors: frErrors,
     home: frHome,
+    createListing: frCreateListing,
   }
 };
 
@@ -54,7 +58,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-  ns: ['common', 'navigation', 'auth', 'listing', 'messaging', 'dashboard', 'errors', 'home'],
+  ns: ['common', 'navigation', 'auth', 'listing', 'messaging', 'dashboard', 'errors', 'home', 'createListing'],
     defaultNS: 'common',
   fallbackLng: 'fr',
   lng: 'fr', // always initialize French

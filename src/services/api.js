@@ -78,6 +78,11 @@ export const fetchLocationSuggestions = (q) => {
   return apiClient.get('/locations-suggest/', { params: { q } });
 };
 
+// Fetch full distinct locations list (capped server-side)
+export const fetchAllLocations = () => {
+  return apiClient.get('/locations-suggest/', { params: { all: 1 } });
+};
+
 export const fetchUserListings = () => {
   return apiClient.get('/profile/my-listings/');
 };
@@ -153,4 +158,3 @@ export const fetchListingsPage = async (page, baseParams = {}) => {
   const res = await fetchListings(params);
   return res.data; // expecting DRF pagination structure if pagination added on backend
 };
-

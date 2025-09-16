@@ -57,10 +57,7 @@
   color: #555;
 }
 
-.profile-details li.verified {
-  color: var(--vert-foret);
-  font-weight: 600;
-}
+.profile-details li.verified { color: var(--color-brand); font-weight:600; }
 
 .profile-actions {
   display: grid;
@@ -104,11 +101,4 @@
   font-size: 14px;
 }
 
-.view-all-listings {
-  display: block;
-  text-align: center;
-  color: var(--rouge-faso);
-  font-weight: 600;
-  text-decoration: none;
-  margin-top: 1rem;
-}
+.view-all-listings { display:block; text-align:center; color: var(--color-brand); font-weight:600; text-decoration:none; margin-top:1rem; }

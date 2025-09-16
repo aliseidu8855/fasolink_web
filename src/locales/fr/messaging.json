@@ -19,5 +19,18 @@
   "closeList": "Fermer",
   "back": "Retour",
   "backToList": "Retour aux conversations",
-  "conversations": "Conversations"
+  "conversations": "Conversations",
+  "avatarAlt": "Avatar de {{user}}",
+  "conversationWith": "Conversation avec {{user}}",
+  "loadOlderAria": "Charger des messages plus anciens",
+  "youSaid": "Vous avez dit : {{content}}",
+  "userSaid": "{{user}} a dit : {{content}}",
+  "retrySend": "Réessayer",
+  "messageInputLabel": "Saisissez un message",
+  "sendMessageAria": "Envoyer le message",
+  "offlineNotice": "Vous êtes hors ligne. Les messages seront envoyés lorsque vous serez de retour.",
+  "unreadTotal": "{{count}} non lus au total",
+  "refresh": "Rafraîchir",
+  "refreshList": "Rafraîchir les conversations",
+  "noMatches": "Aucun résultat"
 }

@@ -2,14 +2,13 @@ import { useEffect, useRef } from 'react';
 import ListingCard from './ListingCard';
 import '../components/ListingsGrid.css';
 import './ListingCard.css';
+import { Skeleton } from './ui/Skeleton';
 
 const SkeletonCard = ({ compact }) => (
-  <div className={`listing-card skeleton${compact ? ' compact' : ''}`} aria-hidden="true">
-    <div className="lc-media shimmer" />
-    <div className="lc-body">
-      <div className="sk-line sk-title shimmer" />
-      <div className="sk-line sk-price shimmer" />
-      <div className="sk-line sk-loc shimmer" />
+  <div className={`listing-card listing-card-skel${compact ? ' compact' : ''}`} aria-hidden="true">
+    <Skeleton variant="rect" height={compact ? 120 : 160} radius={10} />
+    <div style={{ display:'flex', flexDirection:'column', gap:'.45rem', marginTop:'.5rem' }}>
+      <Skeleton variant="text" lines={3} />
     </div>
   </div>
 );

@@ -1,0 +1,15 @@
+.cl-combobox{position:relative;display:flex;flex-direction:column;gap:.35rem}
+.cl-combobox-label{font-weight:600;font-size:.9rem}
+.cl-combobox-control{position:relative}
+.cl-combobox-button{width:100%;display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid #d1d5db;border-radius:6px;padding:.55rem .65rem;font-size:.95rem;cursor:pointer}
+.cl-combobox-button:focus{outline:2px solid #2563eb55;outline-offset:1px;border-color:#2563eb}
+.cl-combobox-control.open .cl-combobox-button{border-bottom-left-radius:0;border-bottom-right-radius:0}
+.cl-caret{font-size:.8rem;opacity:.7}
+.cl-combobox-pop{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #d1d5db;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;z-index:40;box-shadow:0 4px 16px -2px rgba(0,0,0,.12);padding:.4rem .45rem .5rem}
+.cl-combobox-input{width:100%;border:1px solid #d1d5db;border-radius:4px;padding:.45rem .5rem;font-size:.85rem;margin-bottom:.4rem}
+.cl-combobox-input:focus{outline:2px solid #2563eb44;border-color:#2563eb}
+.cl-combobox-list{list-style:none;margin:0;padding:0;overflow:auto}
+.cl-option{padding:.45rem .5rem;font-size:.85rem;border-radius:4px;cursor:pointer}
+.cl-option.active{background:#2563eb;color:#fff}
+.cl-option.selected{font-weight:600}
+.cl-empty{padding:.5rem .5rem;font-size:.75rem;color:#6b7280}

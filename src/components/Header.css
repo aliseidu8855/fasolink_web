@@ -28,7 +28,7 @@ height: 40px;
 .logo span {
 font-size: 22px;
 font-weight: 700;
-color: var(--rouge-faso);
+color: var(--color-brand);
 }
 /* ... the rest of the styles for nav, icons, etc. remain the same ... */
 .header-left, .header-right {
@@ -53,11 +53,11 @@ border-bottom: 2px solid transparent;
 transition: border-color 0.2s;
 }
 .main-nav a:hover {
-border-color: var(--rouge-faso);
+border-color: var(--color-brand);
 }
 .main-nav a.active {
-color: var(--rouge-faso);
-border-color: var(--rouge-faso);
+color: var(--color-brand);
+border-color: var(--color-brand);
 }
 .icon-group {
 display: flex;
@@ -73,7 +73,7 @@ color: #555;
 position: absolute;
 top: -5px;
 right: -8px;
-background-color: var(--rouge-faso);
+background-color: var(--color-brand);
 color: var(--blanc);
 border-radius: 50%;
 width: 18px;
@@ -100,7 +100,7 @@ font-weight: bold;
 	color: var(--texte-sombre);
 }
 .profile-trigger:focus {
-	outline: 2px solid var(--vert-foret);
+	outline: 2px solid var(--color-focus-ring);
 	outline-offset: 2px;
 }
 .profile-dropdown {
@@ -137,7 +137,7 @@ font-weight: bold;
 	background: #f5f5f5;
 }
 .dropdown-item.logout {
-	color: var(--rouge-faso);
+color: var(--color-brand);
 	display: flex;
 	align-items: center;
 	gap: 0.4rem;
@@ -160,8 +160,8 @@ font-weight: bold;
 .post-ad-btn.active,
 .post-ad-btn.post-ad-btn-active {
 	background: transparent;
-	color: var(--rouge-faso);
-	border: 2px solid var(--rouge-faso);
+	color: var(--color-brand);
+	border: 2px solid var(--color-brand);
 }
 
 /* Skip link accessibility */

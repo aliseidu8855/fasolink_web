@@ -43,7 +43,7 @@
 }
 
 .error-message {
-  color: var(--rouge-faso);
+  color: var(--color-brand);
   background-color: #fee2e2;
   padding: 0.75rem;
   border-radius: 8px;
@@ -57,7 +57,7 @@
 }
 
 .toggle-view span {
-  color: var(--rouge-faso);
+  color: var(--color-brand);
   font-weight: 600;
   cursor: pointer;
 }

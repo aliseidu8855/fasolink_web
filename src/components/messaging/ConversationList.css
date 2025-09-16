@@ -54,7 +54,7 @@
 }
 
 .convo-item.active {
-  background-color: var(--vert-foret);
+  background-color: var(--color-brand);
   color: var(--blanc);
 }
 
@@ -123,13 +123,17 @@
 
 .unread-badge {
   display: inline-block;
-  background-color: var(--vert-foret);
+  background-color: var(--color-brand);
   color: #fff;
   font-size: 10px;
   padding: 2px 6px;
   border-radius: 10px;
   margin-left: 6px;
 }
+
+/* Skeleton state for conversation items */
+.convo-item.skeleton { cursor: default; }
+.convo-item.skeleton:hover { background: transparent; }
 
 .loading-pane, .no-conversations {
   padding: 2rem;

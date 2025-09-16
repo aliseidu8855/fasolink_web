@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { fetchListings } from '../services/api';
 import ListingCard from './ListingCard';
 import './ListingRow.css';
+import { Skeleton } from './ui/Skeleton';
 
 const ListingRow = ({ title, subtitle, apiParams, compact = false, browseLink, browseLabel = 'Browse categories', lazySecondHalf = false }) => {
   const [listings, setListings] = useState([]);
@@ -47,13 +48,11 @@ const ListingRow = ({ title, subtitle, apiParams, compact = false, browseLink, b
     return () => obs.disconnect();
   }, [lazySecondHalf, revealed]);
 
-  const skeletonCards = Array.from({ length: 4 }).map((_,i)=>(
-    <div className="listing-card skeleton" key={i} aria-hidden="true">
-      <div className="lc-media sk-media" />
-      <div className="sk-lines">
-        <div className="sk-line" />
-        <div className="sk-line short" />
-        <div className="sk-line tiny" />
+  const skeletonCards = Array.from({ length: 4 }).map((_, i) => (
+    <div className="listing-card listing-card-skel" key={i} aria-hidden="true">
+      <Skeleton variant="rect" height={compact ? 120 : 160} radius={8} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '.45rem' }}>
+        <Skeleton variant="text" lines={3} />
       </div>
     </div>
   ));

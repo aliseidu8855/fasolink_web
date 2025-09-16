@@ -45,7 +45,7 @@
   border: 1px solid #cbd5e1;
   border-radius: 20px;
   padding: 4px 14px;
-  font-size: 12px;
+  font-size: .7rem;
   cursor: pointer;
 }
 .load-older-btn:disabled {
@@ -65,34 +65,18 @@
   align-self: flex-end;
 }
 .message-bubble-wrapper.sent .message-bubble {
-  background-color: var(--vert-foret);
+  background-color: var(--color-brand);
   color: var(--blanc);
   border-bottom-right-radius: 4px;
 }
-.message-bubble-wrapper.received {
-  align-self: flex-start;
-}
-.message-bubble-wrapper.received .message-bubble {
-  background-color: #f1f1f1;
-  border-bottom-left-radius: 4px;
-}
-.message-bubble.failed {
-  background-color: #ffe5e5;
-  border: 1px solid #ff9d9d;
-}
+.message-bubble-wrapper.received { align-self:flex-start; }
+.message-bubble-wrapper.received .message-bubble { background-color:#f1f1f1; border-bottom-left-radius:4px; }
+.message-bubble.failed { background: var(--color-bg-danger-soft); border:1px solid var(--color-danger-border); color: var(--color-danger); }
 .message-bubble-wrapper .message-bubble.pending::after {
   content: ' …';
   opacity: 0.6;
 }
-.retry-btn {
-  background: none;
-  border: none;
-  color: var(--rouge-faso);
-  cursor: pointer;
-  font-size: 12px;
-  margin-left: 6px;
-  text-decoration: underline;
-}
+.retry-btn { background:none; border:none; color:var(--color-brand); cursor:pointer; font-size:12px; margin-left:6px; text-decoration:underline; }
 .message-input-area {
   display: flex;
   align-items: center;
@@ -107,24 +91,8 @@
   padding: 0.75rem 1rem;
   border-radius: 18px;
 }
-.message-input-area input:focus {
-  outline: none;
-}
-.attach-icon {
-  font-size: 24px;
-  color: #777;
-  cursor: pointer;
-}
-.send-button {
-  background-color: var(--vert-foret);
-  color: var(--blanc);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 20px;
-}
+.message-input-area input:focus { outline:2px solid var(--color-focus-ring); }
+.attach-icon { font-size:24px; color:#777; }
+.send-button { background-color: var(--color-brand); color: var(--blanc); border:none; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:20px; }
+
+/* Ensure file ends with newline and no stray syntax issues */

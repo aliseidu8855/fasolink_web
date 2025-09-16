@@ -14,6 +14,4 @@
   .listings-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
 }
 
-.error-message {
-  color: var(--rouge-faso);
-}
+.error-message { color: var(--color-brand); }

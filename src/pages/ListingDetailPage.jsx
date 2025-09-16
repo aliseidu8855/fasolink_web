@@ -186,16 +186,27 @@ const ListingDetailPage = () => {
             formatPrice={formatPrice}
           />
           {!isOwnListing && (
-            <div className="ld-presets">
-              <button type="button" className="ld-presets-toggle" onClick={()=>setShowPresets(s=>!s)} aria-expanded={showPresets}>
+            <div className="ld-presets" id="quick-messages">
+              <button 
+                type="button" 
+                className="ld-presets-toggle" 
+                onClick={()=>setShowPresets(s=>!s)} 
+                aria-expanded={showPresets}
+                aria-controls="ld-presets-panel"
+              >
                 {t('listing:quickMessages','Quick messages')}
               </button>
               {showPresets && (
-                <ul className="ld-presets-list" role="list">
+                <div id="ld-presets-panel" className="ld-presets-chips" role="group" aria-label={t('listing:quickMessages','Quick messages')}>
                   {messagePresets.map((p,i)=>(
-                    <li key={i}><button type="button" className="ld-preset-btn" onClick={()=>handleMessageSeller(p)}>{p}</button></li>
+                    <button 
+                      key={i} 
+                      type="button" 
+                      className="ld-chip" 
+                      onClick={()=>handleMessageSeller(p)}
+                    >{p}</button>
                   ))}
-                </ul>
+                </div>
               )}
             </div>
           )}

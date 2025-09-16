@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchSpecsMetadata, fetchLocationSuggestions } from '../services/api';
+import { fetchSpecsMetadata, fetchCategories, createListing } from '../services/api';
 import { useNavigate } from 'react-router-dom';
-import { createListing, fetchCategories } from '../services/api';
 import Button from '../components/Button';
+import Stepper from '../components/Stepper';
+import ImageUploader from '../components/ImageUploader';
+import { BF_LOCATIONS } from '../data/locations.js';
 import './CreateListingPage.css';
 
 const PRIMARY_CATEGORIES = ['Phones','Cars','Real Estate','Electronics'];
@@ -38,7 +40,7 @@ const CATEGORY_HIERARCHY = {
     }
   }
 };
-const steps = ['category','core','specs','review'];
+const STEP_KEYS = ['category','core','specs','review'];
 
 export default function CreateListingPage(){
   const { t } = useTranslation(['createListing','common']);
@@ -52,19 +54,38 @@ export default function CreateListingPage(){
   const [price,setPrice]=useState('');
   const [negotiable,setNegotiable]=useState(false);
   const [desc,setDesc]=useState('');
-  const [locQuery,setLocQuery]=useState('');
-  const [loc,setLoc]=useState('');
-  const [locSuggestions,setLocSuggestions]=useState([]);
+  const [loc,setLoc]=useState(''); // stored listing location string (region or town)
+  const [selectedRegionCode,setSelectedRegionCode]=useState('');
+  const [selectedTown,setSelectedTown]=useState('');
+  const [contactPhone,setContactPhone]=useState('');
+  // removed allLocations (using curated BF_LOCATIONS)
   const [specMeta,setSpecMeta]=useState([]);
   const [specValues,setSpecValues]=useState({});
-  const [images,setImages]=useState([]);
+  const [images,setImages]=useState([]); // File[]
   const [submitting,setSubmitting]=useState(false);
   const [submitError,setSubmitError]=useState(null);
+  const [fieldErrors,setFieldErrors]=useState({}); // backend field -> messages[]
+  const [specErrors,setSpecErrors]=useState({}); // spec key -> message
   const [createdId,setCreatedId]=useState(null);
+  const firstErrorRef = useRef(null);
 
   useEffect(()=>{ fetchCategories().then(r=> setAllCats(r.data)); },[]);
   useEffect(()=>{ if(catName){ fetchSpecsMetadata(catName).then(r=> setSpecMeta(r.data.specs||[])).catch(()=> setSpecMeta([])); } else setSpecMeta([]); },[catName]);
-  useEffect(()=>{ if(locQuery.length>1){ fetchLocationSuggestions(locQuery).then(r=> setLocSuggestions(r.data.results||[])); } else setLocSuggestions([]); },[locQuery]);
+  // Load distinct locations once (empty query) when entering core step or on mount
+  // Build curated list from BF_LOCATIONS (region + towns) instead of backend distinct list
+  // (curated list derived directly where needed, no variable retained)
+
+  // Sync combined location string for submission (prefer town then region)
+  useEffect(()=> {
+    if(selectedTown){
+      setLoc(selectedTown);
+    } else if(selectedRegionCode){
+      const region = BF_LOCATIONS.find(r=> r.code===selectedRegionCode);
+      setLoc(region? region.region : '');
+    } else {
+      setLoc('');
+    }
+  },[selectedTown, selectedRegionCode]);
 
   // primaryCats no longer directly used; hierarchy uses static mapping
 
@@ -120,14 +141,83 @@ export default function CreateListingPage(){
   };
   const currentCatId = allCats.find(c=> c.name===catName)?.id;
 
-  const requiredSpecsValid = specMeta.filter(s=> s.required).every(s=> (specValues[s.key]||'').toString().trim()!=='');
-  const canNext = step==='category' ? !!catName : step==='core' ? (title.trim().length>4 && price && loc) : step==='specs' ? requiredSpecsValid : true;
+  const requiredSpecsValid = specMeta.filter(s=> s.required).every(s=> {
+    const v = specValues[s.key];
+    return (v!==undefined && v!==null && v!=='' && !(typeof v==='string' && v.trim()===''));
+  });
+  const canNext = step==='category'
+    ? !!catName
+    : step==='core'
+      ? (title.trim().length>4 && price && loc && desc.trim().length>0)
+      : step==='specs'
+        ? requiredSpecsValid
+        : true;
 
-  const goNext = () => { if(!canNext) return; setStep(p=> steps[steps.indexOf(p)+1]); };
-  const goPrev = () => setStep(p=> steps[steps.indexOf(p)-1] || 'category');
+  // First error message for aria-live
+  const firstErrorMessage = useMemo(()=>{
+    if(step==='core'){
+      if(!title || title.trim().length<=4) return t('createListing:title') + ' ' + t('createListing:required');
+      if(!price) return t('createListing:price') + ' ' + t('createListing:required');
+      if(!loc) return t('createListing:location') + ' ' + t('createListing:required');
+    }
+    if(step==='specs'){
+      const missing = specMeta.find(s=> s.required && (specValues[s.key]===undefined || specValues[s.key]===''));
+      if(missing) return missing.name + ' ' + t('createListing:required');
+    }
+    if(step==='category' && !catName) return t('createListing:category') + ' ' + t('createListing:required');
+    return '';
+  },[step, title, price, loc, catName, specMeta, specValues, t]);
+
+  const handleAttemptNext = () => {
+    if(canNext){ goNext(); return; }
+    setTimeout(()=> { firstErrorRef.current?.focus(); }, 30);
+    // Announce error message by updating live region (state already derived)
+  };
+
+  // Debounce price normalization (strip leading zeros)
+  useEffect(()=>{
+    if(!price) return;
+    const h = setTimeout(()=> {
+      setPrice(p=> {
+        if(!p) return p;
+        // keep decimal part, normalize leading zeros
+        const norm = p.replace(/^0+(?=\d)/,'');
+        return norm || p;
+      });
+    }, 300);
+    return ()=> clearTimeout(h);
+  },[price]);
+
+  const goNext = () => { if(!canNext) return; setStep(p=> STEP_KEYS[STEP_KEYS.indexOf(p)+1]); };
+  const goPrev = () => setStep(p=> STEP_KEYS[STEP_KEYS.indexOf(p)-1] || 'category');
+
+  const stepItems = useMemo(()=> [
+    { key:'category', label: t('createListing.step_category','Category') },
+    { key:'core', label: t('createListing.step_core','Core') },
+    { key:'specs', label: t('createListing.step_specs','Specs') },
+    { key:'review', label: t('createListing.step_review','Review') }
+  ],[t]);
+
+  const currentStepIndex = STEP_KEYS.indexOf(step);
+  const handleStepSelect = (key) => {
+    const idx = STEP_KEYS.indexOf(key);
+    if(idx === -1) return;
+    // Allow going back freely, disallow jumping ahead unless all prior steps valid
+    if(idx < currentStepIndex) setStep(key);
+  };
 
   const onSubmit = async () => {
-    setSubmitting(true); setSubmitError(null);
+    if(!currentCatId){
+      setFieldErrors({ category: t('createListing:required') });
+      setStep('category');
+      return;
+    }
+    if(!desc.trim()){
+      setFieldErrors(prev=> ({...prev, description: t('createListing:required')}));
+      setStep('core');
+      return;
+    }
+    setSubmitting(true); setSubmitError(null); setFieldErrors({}); setSpecErrors({});
     try {
       const fd = new FormData();
       fd.append('title', title); fd.append('price', price); fd.append('description', desc); fd.append('location', loc); fd.append('category', currentCatId || ''); fd.append('negotiable', negotiable?'true':'false');
@@ -140,16 +230,41 @@ export default function CreateListingPage(){
       const res = await createListing(fd);
       setCreatedId(res.data.id);
       setStep('review');
-    } catch(e){ setSubmitError(e.response?.data || 'Failed'); }
+    } catch(e){
+      const data = e.response?.data;
+      if(data && typeof data === 'object'){
+        const fe = {}; const se = {};
+        Object.entries(data).forEach(([k,v])=> {
+          if(k==='attributes' && Array.isArray(v)){
+            // attributes errors may come as list-level; show generic
+            se._generic = Array.isArray(v)? v.join(' '): String(v);
+          } else if(k==='non_field_errors'){
+            fe._non = Array.isArray(v)? v.join(' '): String(v);
+          } else {
+            // core field or maybe spec key
+            if(specMeta.find(s=> s.key===k)) se[k] = Array.isArray(v)? v[0]: String(v);
+            else fe[k] = Array.isArray(v)? v[0]: String(v);
+          }
+        });
+  setFieldErrors(fe); setSpecErrors(se); setSubmitError(null);
+  if(fe.category){ setStep('category'); }
+  else if(fe.title || fe.price || fe.location || fe.description || fe.contact_phone){ setStep('core'); }
+  else if(Object.keys(se).length>0){ setStep('specs'); }
+      } else {
+        setSubmitError(data || 'Failed');
+      }
+    }
     finally { setSubmitting(false); }
   };
 
   return (
     <div className="container create-listing-page" role="main">
-      <h1 className="cl-title">{t('createListing.postAd','Post a new listing')}</h1>
-      <div className="cl-progress" aria-label={t('createListing.steps','Steps')}>
-        {steps.map(s=> <span key={s} className={`cl-prog-step${steps.indexOf(s)<=steps.indexOf(step)?' active':''}`}>{t(`createListing.step_${s}`, s)}</span>)}
-      </div>
+  <h1 className="cl-title">{t('createListing:postAd')}</h1>
+      <div className="cl-layout">
+  <aside className="cl-side-stepper" aria-label={t('createListing:steps')}>
+          <Stepper steps={stepItems} current={step} onSelect={handleStepSelect} />
+        </aside>
+        <div className="cl-main">
       {step==='category' && (
         <section className="cl-panel" aria-labelledby="cl-cat-h">
           <div className="cl-cat-bar">
@@ -183,59 +298,127 @@ export default function CreateListingPage(){
       {step==='core' && (
         <section className="cl-panel" aria-labelledby="cl-core-h">
           <h2 id="cl-core-h">{t('createListing.coreDetails','Core details')}</h2>
-          <div className="cl-field"><label>{t('createListing.title','Title')}*</label><input value={title} onChange={e=> setTitle(e.target.value)} /></div>
-          <div className="cl-field"><label>{t('createListing.price','Price')}*</label><input value={price} onChange={e=> setPrice(e.target.value.replace(/[^0-9.]/g,''))} /></div>
-            <div className="cl-field"><label>{t('createListing.location','Location')}*</label>
-              <input value={locQuery} onChange={e=> { setLocQuery(e.target.value); setLoc(e.target.value); }} aria-autocomplete="list" aria-expanded={locSuggestions.length>0} />
-              {locSuggestions.length>0 && <ul className="cl-suggest" role="listbox">{locSuggestions.map(s=> <li key={s}><button type="button" onClick={()=>{ setLoc(s); setLocQuery(s); setLocSuggestions([]); }}>{s}</button></li>)}</ul>}
+          <div className="cl-field">
+            <label htmlFor="cl-title">{t('createListing:title')}*</label>
+            <input id="cl-title" value={title} aria-invalid={title.trim().length<=4 || undefined} ref={title.trim().length<=4 && !firstErrorRef.current ? firstErrorRef : undefined} onChange={e=> setTitle(e.target.value)} />
+            <small className="cl-hint">5+ chars</small>
+            {fieldErrors.title && <span className="cl-err-msg" role="alert">{fieldErrors.title}</span>}
+          </div>
+          <div className="cl-field">
+            <label htmlFor="cl-price">{t('createListing:price')}*</label>
+            <div className="cl-input-adorn">
+              <input id="cl-price" value={price} aria-invalid={!price || undefined} ref={!price && !firstErrorRef.current ? firstErrorRef : undefined} onChange={e=> setPrice(e.target.value.replace(/[^0-9.]/g,''))} inputMode="decimal" min="0" step="0.01" />
+              <span className="cl-adorn">CFA</span>
             </div>
+            <small className="cl-hint">Numeric</small>
+            {fieldErrors.price && <span className="cl-err-msg" role="alert">{fieldErrors.price}</span>}
+          </div>
+          <div className="cl-field">
+            <label>{t('createListing:location')}*</label>
+            <div className="cl-loc-row">
+              <select value={selectedRegionCode} onChange={e=> { setSelectedRegionCode(e.target.value); setSelectedTown(''); }}>
+                <option value="">{t('createListing:selectRegion')}</option>
+                {BF_LOCATIONS.map(r=> <option key={r.code} value={r.code}>{r.region}</option>)}
+              </select>
+              <select value={selectedTown} onChange={e=> setSelectedTown(e.target.value)} disabled={!selectedRegionCode}>
+                <option value="">{t('createListing:selectTown')}</option>
+                {selectedRegionCode && BF_LOCATIONS.find(r=> r.code===selectedRegionCode)?.towns.map(tw=> <option key={tw} value={tw}>{tw}</option>)}
+              </select>
+            </div>
+            <p className="cl-field-hint">{t('createListing:locationHint')}</p>
+            {fieldErrors.location && <span className="cl-err-msg" role="alert">{fieldErrors.location}</span>}
+          </div>
+          <div className="cl-field"><label htmlFor="cl-phone">{t('createListing:contactPhone')}</label><input id="cl-phone" value={contactPhone} onChange={e=> setContactPhone(e.target.value)} placeholder={t('createListing:contactPhonePlaceholder')} />{fieldErrors.contact_phone && <span className="cl-err-msg" role="alert">{fieldErrors.contact_phone}</span>}</div>
           <div className="cl-field cl-check"><label><input type="checkbox" checked={negotiable} onChange={e=> setNegotiable(e.target.checked)} /> {t('createListing.negotiable','Negotiable')}</label></div>
-          <div className="cl-field"><label>{t('createListing.description','Description')}</label><textarea rows={5} value={desc} onChange={e=> setDesc(e.target.value)} /></div>
-          <div className="cl-field"><label>{t('createListing.images','Images')}</label><input type="file" multiple accept="image/*" onChange={e=> setImages(Array.from(e.target.files||[]))} /></div>
+          <div className="cl-field">
+            <label htmlFor="cl-desc">{t('createListing.description','Description')}*</label>
+            <textarea id="cl-desc" rows={5} value={desc} aria-invalid={!desc.trim() || undefined} onChange={e=> setDesc(e.target.value)} maxLength={2000} />
+            <small className="cl-hint">Required</small>
+            {fieldErrors.description && <span className="cl-err-msg" role="alert">{fieldErrors.description}</span>}
+            {!fieldErrors.description && !desc.trim() && <span className="cl-err-msg" role="alert">{t('createListing:required')}</span>}
+          </div>
+          <div className="cl-field">
+            <ImageUploader value={images} onChange={setImages} label={t('createListing:images')} max={5} />
+            <span className="visually-hidden" aria-live="polite">{t('createListing:imagesHelp')}</span>
+          </div>
         </section>
       )}
       {step==='specs' && (
         <section className="cl-panel" aria-labelledby="cl-specs-h">
-          <h2 id="cl-specs-h">{t('createListing.specifications','Specifications')}</h2>
+           <h2 id="cl-specs-h">{t('createListing:specifications')}</h2>
           <div className="cl-spec-grid">
             {specMeta.map(m=> {
-              const v = specValues[m.key] || ''; const invalid = m.required && !v;
-              return <div key={m.key} className={`cl-spec-field${invalid?' invalid':''}`}>
-                <label>{m.name}{m.required && ' *'}</label>
-                <input value={v} onChange={e=> setSpecValues(o=> ({...o,[m.key]: e.target.value}))} aria-required={m.required||undefined} />
-                {invalid && <span className="cl-err-msg">{t('createListing.required','Required')}</span>}
-              </div>;
+              const v = specValues[m.key];
+              const invalid = m.required && (v===undefined || v===null || v==='');
+              const commonLabel = <label>{m.name}{m.required && ' *'}</label>;
+              const setVal = (val) => setSpecValues(o=> ({...o,[m.key]: val}));
+              let field = null;
+              switch(m.type){
+                case 'number':
+                  field = <input type="number" aria-invalid={invalid || undefined} value={v || ''} onChange={e=> setVal(e.target.value)} aria-required={m.required||undefined} />; break;
+                case 'select':
+                  field = (
+                    <select aria-invalid={invalid || undefined} value={v || ''} onChange={e=> setVal(e.target.value)} aria-required={m.required||undefined}>
+                      <option value="">{t('createListing:selectOption')}</option>
+                      {(m.options||[]).map(opt=> <option key={opt} value={opt}>{opt}</option>)}
+                    </select>
+                  );
+                  break;
+                case 'boolean':
+                  field = (
+                    <label className="cl-boolean-field">
+                      <input type="checkbox" checked={!!v} onChange={e=> setVal(e.target.checked)} /> {m.name}{m.required && ' *'}
+                    </label>
+                  );
+                  break;
+                default: // text
+                  field = <input type="text" aria-invalid={invalid || undefined} value={v || ''} onChange={e=> setVal(e.target.value)} aria-required={m.required||undefined} />;
+              }
+              const backendErr = specErrors[m.key];
+              return (
+                <div key={m.key} className={`cl-spec-field${(invalid || backendErr)?' invalid':''}`}>
+                  {m.type==='boolean' ? field : (<>{commonLabel}{field}</>)}
+                  {invalid && <span className="cl-err-msg">{t('createListing:required')}</span>}
+                  {!invalid && backendErr && <span className="cl-err-msg" role="alert">{backendErr}</span>}
+                </div>
+              );
             })}
+            {specErrors._generic && <div className="cl-err-msg" role="alert">{specErrors._generic}</div>}
           </div>
         </section>
       )}
       {step==='review' && (
         <section className="cl-panel" aria-labelledby="cl-review-h">
-          <h2 id="cl-review-h">{t('createListing.review','Review & submit')}</h2>
+           <h2 id="cl-review-h">{t('createListing:review')}</h2>
           {createdId ? (
             <div className="cl-success-box">
-              <p>{t('createListing.success','Listing created successfully!')}</p>
-              <Button onClick={()=> nav(`/listings/${createdId}`)}>{t('createListing.viewListing','View listing')}</Button>
+              <p>{t('createListing:success')}</p>
+              <Button onClick={()=> nav(`/listings/${createdId}`)}>{t('createListing:viewListing')}</Button>
             </div>
           ) : (
             <div className="cl-summary">
-              <p><strong>{t('createListing.category','Category')}:</strong> {catName}</p>
-              <p><strong>{t('createListing.title','Title')}:</strong> {title}</p>
-              <p><strong>{t('createListing.price','Price')}:</strong> {price}</p>
-              <p><strong>{t('createListing.location','Location')}:</strong> {loc}</p>
-              <p><strong>{t('createListing.negotiable','Negotiable')}:</strong> {negotiable? t('common:yes','Yes'): t('common:no','No')}</p>
-              <p><strong>{t('createListing.description','Description')}:</strong> {desc}</p>
-              <div><strong>{t('createListing.specifications','Specifications')}:</strong><ul>{Object.entries(specValues).map(([k,v])=> <li key={k}>{k}: {v}</li>)}</ul></div>
-              {submitError && <div className="cl-error-box">{t('createListing.submitError','Submit failed')}: {JSON.stringify(submitError)}</div>}
+              <p><strong>{t('createListing:category')}:</strong> {catName}</p>
+              <p><strong>{t('createListing:title')}:</strong> {title}</p>
+              <p><strong>{t('createListing:price')}:</strong> {price}</p>
+              <p><strong>{t('createListing:location')}:</strong> {loc}</p>
+              {contactPhone && <p><strong>{t('createListing:contactPhone')}:</strong> {contactPhone}</p>}
+              <p><strong>{t('createListing:negotiable')}:</strong> {negotiable? t('common:yes'): t('common:no')}</p>
+              <p><strong>{t('createListing:description')}:</strong> {desc}</p>
+              <div><strong>{t('createListing:specifications')}:</strong><ul>{Object.entries(specValues).map(([k,v])=> <li key={k}>{k}: {v}</li>)}</ul></div>
+              {submitError && <div className="cl-error-box">{t('createListing:submitError')}: {JSON.stringify(submitError)}</div>}
+              {fieldErrors._non && <div className="cl-error-box" role="alert">{fieldErrors._non}</div>}
             </div>
           )}
         </section>
       )}
       <div className="cl-nav-row">
-        {step!=='category' && step!=='review' && <Button onClick={goPrev} variant="secondary">{t('createListing.back','Back')}</Button>}
-        {['category','core','specs'].includes(step) && <Button disabled={!canNext} onClick={goNext}>{t('createListing.next','Next')}</Button>}
-        {step==='review' && !createdId && <Button onClick={onSubmit} disabled={submitting}>{submitting? t('common:loading','Loading...'): t('createListing.submit','Submit')}</Button>}
+        {step!=='category' && step!=='review' && <Button onClick={goPrev} variant="secondary">{t('createListing:back')}</Button>}
+  {['category','core','specs'].includes(step) && <Button disabled={!canNext} onClick={handleAttemptNext}>{t('createListing:next')}</Button>}
+        {step==='review' && !createdId && <Button onClick={onSubmit} disabled={submitting}>{submitting? t('common:loading'): t('createListing:submit')}</Button>}
       </div>
+      <div className="cl-live-region" aria-live="polite" aria-atomic="true" style={{position:'absolute', left:'-9999px', height:'1px', width:'1px', overflow:'hidden'}}>{!canNext && firstErrorMessage}</div>
+        </div>{/* end cl-main */}
+      </div>{/* end cl-layout */}
     </div>
   );
 }

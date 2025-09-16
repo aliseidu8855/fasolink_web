@@ -9,6 +9,7 @@ import BrowsePage from './pages/BrowsePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardPage from './pages/DashboardPage';
 import MessagesPage from './pages/MessagesPage';
+import { MessagingProvider } from './context/MessagingContext';
 import HelpPage from './pages/HelpPage';
 
 function App() {
@@ -36,12 +37,15 @@ function App() {
             }
           />
           <Route 
-          path="/messages/:conversationId?" 
-          element={
-            <ProtectedRoute>
-              <MessagesPage />
-            </ProtectedRoute>
-          } />
+            path="/messages/:conversationId?" 
+            element={
+              <ProtectedRoute>
+                <MessagingProvider>
+                  <MessagesPage />
+                </MessagingProvider>
+              </ProtectedRoute>
+            } 
+          />
           <Route path="/help" element={<HelpPage />} />
           <Route path="/browse" element={<BrowsePage />} />
         </Route>

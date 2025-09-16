@@ -28,13 +28,7 @@
   gap: 1rem;
   padding: clamp(0.75rem, 2vw, 1.5rem);
 }
-.lp-header {
-  background: var(--dash-panel, #fff);
-  border: 1px solid var(--dash-border, #e3e3e6);
-  border-radius: 14px;
-  padding: 1rem 1.25rem 1.1rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-}
+.lp-header { background:var(--color-bg-surface,#fff); border:1px solid var(--color-border,#e1e3e6); border-radius:14px; padding:1rem 1.25rem 1.1rem; box-shadow:0 1px 2px rgba(0,0,0,0.06); }
 .lp-header-row {
   display: flex;
   flex-wrap: wrap;
@@ -92,16 +86,7 @@
   gap: 1.25rem;
   align-items: start;
 }
-.lp-filters {
-  background: var(--dash-panel, #fff);
-  border: 1px solid var(--dash-border, #e3e3e6);
-  border-radius: 14px;
-  padding: 1rem 0.9rem 1.25rem;
-  position: sticky;
-  top: 1rem;
-  max-height: calc(100vh - 2rem);
-  overflow: auto;
-}
+.lp-filters { background:var(--color-bg-surface,#fff); border:1px solid var(--color-border,#e1e3e6); border-radius:14px; padding:1rem .9rem 1.25rem; position:sticky; top:1rem; max-height:calc(100vh - 2rem); overflow:auto; }
 .lp-results {
   display: flex;
   flex-direction: column;
@@ -241,34 +226,11 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .lp-header,
-  .lp-filters {
-    background: #18181a;
-    border-color: #2a2a2e;
-  }
-  .lp-title {
-    color: var(--color-heritage-200, #f6d1d2);
-  }
-  .lp-error {
-    background: #2d1a1a;
-    border-color: #5d2c2c;
-  }
-  .lp-search {
-    background: #111;
-    color: #eee;
-    border-color: #333;
-  }
-  .lp-view-toggle {
-    background: #18181a;
-    color: #ddd;
-    border-color: #333;
-  }
-  .lp-view-toggle.compact {
-    background: var(--color-heritage-700, #7b1113);
-    border-color: var(--color-heritage-700, #7b1113);
-    color: #fff;
-  }
-  .lp-back-top {
-    background: var(--color-heritage-700, #7b1113);
-  }
+  .lp-header, .lp-filters { background:#1d1f22; border-color:#2c3238; }
+  .lp-title { color:#fff; }
+  .lp-error { background:#2a1818; border-color:#523232; }
+  .lp-search { background:#151618; color:#eee; border-color:#333; }
+  .lp-view-toggle { background:#1d1f22; color:#ddd; border-color:#343a40; }
+  .lp-view-toggle.compact { background:var(--color-brand); border-color:var(--color-brand); color:#fff; }
+  .lp-back-top { background:var(--color-brand); }
 }

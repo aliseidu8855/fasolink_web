@@ -7,6 +7,6 @@
 @keyframes tFade { to { opacity:1; transform: translateY(0); } }
 .t-text { font-size:.9rem; line-height:1.45; margin:0 0 1.1rem; font-style:italic; }
 .t-meta { display:flex; align-items:center; gap:.75rem; }
-.t-avatar { width:40px; height:40px; border-radius:50%; background: var(--vert-foret); display:inline-flex; align-items:center; justify-content:center; font-weight:700; color:#fff; }
+.t-avatar { width:40px; height:40px; border-radius:50%; background: var(--color-brand); display:inline-flex; align-items:center; justify-content:center; font-weight:700; color:#fff; }
 .t-name { font-size:.85rem; display:block; }
 .t-role { font-size:.65rem; text-transform:uppercase; letter-spacing:1px; color:#777; }

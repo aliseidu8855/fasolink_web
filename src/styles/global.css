@@ -7,8 +7,9 @@
 
 /* 1. Color Palette from Style Guide */
 :root {
+  /* Legacy base (will be phased out) */
   --rouge-faso: #DE0000;
-  --vert-foret: #009A00;
+  --vert-foret: #009A00; /* legacy green (avoid using directly; use semantic tokens) */
   --jaune-soleil: #FCD20C;
   --arriere-plan: #F8F9FA;
   --texte-sombre: #333333;
@@ -43,16 +44,32 @@
   --color-text-secondary: #555;
   --color-text-faint: #777;
   /* Map new palette to semantic tokens (phase 1) */
-  --color-accent: var(--brand-mint);
-  --color-accent-alt: var(--brand-gold);
+  --color-brand: var(--brand-heritage-red);
+  --color-brand-rgb: var(--brand-heritage-red-rgb);
+  --color-brand-emphasis: #B80000; /* deeper for active states */
+  --color-brand-hover: #C70000;
+  --color-accent: var(--brand-gold); /* secondary accent */
+  --color-accent-soft: #FFF6E0;
+  --color-accent-alt: var(--brand-mint);
   --color-success: var(--brand-mint);
   --color-danger: var(--brand-heritage-red);
-  --color-brand: var(--brand-heritage-red);
-  --color-brand-hover: #C70000;
+  --color-danger-bg: #FFE5E5;
+  --color-danger-border: #F5B3B3;
   --color-link: var(--color-brand);
   --color-link-hover: var(--color-brand-hover);
   --color-cta-bg: var(--color-brand);
   --color-cta-text: #FFFFFF;
+  --color-focus-ring: var(--color-brand);
+  --color-divider: #E4E7EB;
+  --color-bg-elevated: #FFFFFF;
+  --color-bg-alt: #FAFCFD;
+  --color-bg-danger-soft: #FFF1F1;
+  --color-bg-brand-soft: #FFF1F1;
+  /* Skeleton semantic colors */
+  --skeleton-base: #ECEDEF;
+  --skeleton-highlight: #F5F6F7;
+  --skeleton-dark-base: #2A2F33;
+  --skeleton-dark-highlight: #3A4147;
   --color-text-strong: var(--brand-ink);
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -207,7 +224,17 @@ h6, .h6 { font-size: var(--fs-md); line-height: var(--lh-normal); font-weight: v
 }
 
 /* Focus ring utility */
-.focus-ring:focus-visible { outline: 2px solid var(--vert-foret); outline-offset:2px; border-radius:4px; }
+.focus-ring:focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset:2px; border-radius:4px; }
+
+/* Generic focus outline for interactive elements (opt-in classless) */
+:where(a,button,input,textarea,select)[data-focus="brand"]:focus-visible { outline:2px solid var(--color-focus-ring); outline-offset:2px; }
+
+/* Unified skeleton utility (will be used by Skeleton component) */
+.skel { position:relative; display:block; background:linear-gradient(90deg,var(--skeleton-base),var(--skeleton-highlight),var(--skeleton-base)); background-size:200% 100%; animation: skel-shimmer 1.25s linear infinite; border-radius:4px; color:transparent; -webkit-user-select:none; user-select:none; }
+@media (prefers-reduced-motion: reduce) {
+  .skel { animation:none; background:var(--skeleton-base); }
+}
+@keyframes skel-shimmer { 0% { background-position:200% 0; } 100% { background-position:-200% 0; } }
 
 /* Smooth transitions for interactive elements */
 a, button { transition: color var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base); }

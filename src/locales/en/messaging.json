@@ -19,5 +19,18 @@
   "closeList": "Close",
   "back": "Back",
   "backToList": "Back to conversations",
-  "conversations": "Conversations"
+  "conversations": "Conversations",
+  "avatarAlt": "Avatar of {{user}}",
+  "conversationWith": "Conversation with {{user}}",
+  "loadOlderAria": "Load older messages",
+  "youSaid": "You said: {{content}}",
+  "userSaid": "{{user}} said: {{content}}",
+  "retrySend": "Retry",
+  "messageInputLabel": "Type a message",
+  "sendMessageAria": "Send message",
+  "offlineNotice": "You are offline. Messages will send when you are back online.",
+  "unreadTotal": "{{count}} unread total",
+  "refresh": "Refresh",
+  "refreshList": "Refresh conversations",
+  "noMatches": "No matches"
 }

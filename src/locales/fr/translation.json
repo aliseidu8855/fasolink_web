@@ -26,6 +26,7 @@
     "negotiable": "Négociable",
     "description": "Description",
     "images": "Images",
+  "locationPlaceholder": "Sélectionnez un lieu",
     "specifications": "Spécifications",
     "required": "Obligatoire",
     "review": "Revoir & soumettre",
