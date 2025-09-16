@@ -7,8 +7,15 @@
 }
 @media (max-width:1180px){ .detail-grid { grid-template-columns:1fr 1fr 300px; gap:1.35rem; } }
 @media (max-width:1080px){ .detail-grid { grid-template-columns:1fr 1fr; gap:1.25rem; } .detail-actions { grid-column:span 2; } }
-/* Earlier single-column collapse */
-@media (max-width:860px){ .detail-grid { grid-template-columns:1fr; } .detail-actions { position:static; order:3; } }
+/* Earlier single-column collapse (ensure only one column) */
+@media (max-width:920px){
+  .detail-grid { grid-template-columns:1fr !important; }
+  .detail-actions { position:static; order:3; }
+}
+/* Defensive rule for very small widths where previous grid declarations might persist */
+@media (max-width:760px){
+  .detail-grid { display:block; }
+}
   .mobile-sticky-cta { display:none; }
 .detail-gallery { background:var(--surface,#fff); border-radius:12px; padding:.85rem; box-shadow:0 2px 8px rgba(0,0,0,.05); }
 .detail-main { background:var(--surface,#fff); border-radius:12px; padding:1.15rem 1.25rem 1.35rem; box-shadow:0 2px 8px rgba(0,0,0,.05); display:flex; flex-direction:column; gap:1.6rem; }

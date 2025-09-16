@@ -24,16 +24,46 @@ export default function AuthPage() {
     setParams(params, { replace:true })
   }
 
+  // Lazy load provider handlers (placeholder logic)
+  const [loadingProvider, setLoadingProvider] = useState(null);
+  const handleProvider = async (provider) => {
+    try {
+      setLoadingProvider(provider);
+      if (provider === 'google') {
+        const mod = await import(/* webpackChunkName: "auth-google" */ '../services/auth/googleStub.js');
+        await mod.startGoogle();
+      } else if (provider === 'facebook') {
+        const mod = await import(/* webpackChunkName: "auth-facebook" */ '../services/auth/facebookStub.js');
+        await mod.startFacebook();
+      }
+    } catch (e) {
+      console.warn('Provider auth failed (stub)', e);
+    } finally {
+      setLoadingProvider(null);
+    }
+  };
+
   return (
     <div className="auth-page-wrapper">
       <div className="auth-shell" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <div className="sheet-handle" aria-hidden="true"><span /></div>
         <h1 id="auth-title" className="auth-title">{mode === 'login' ? t('auth:login') : t('auth:register')}</h1>
         <div className="social-row">
-          <button className="social-btn google" aria-label={t('auth:continueGoogle','Continue with Google')}>
-            <span className="ico">G</span> Google
+          <button
+            className="social-btn google"
+            aria-label={t('auth:continueGoogle','Continue with Google')}
+            disabled={loadingProvider==='google'}
+            onClick={()=>handleProvider('google')}
+          >
+            <span className="ico">G</span> {loadingProvider==='google' ? t('auth:loading','...') : 'Google'}
           </button>
-          <button className="social-btn facebook" aria-label={t('auth:continueFacebook','Continue with Facebook')}>
-            <span className="ico">f</span> Facebook
+          <button
+            className="social-btn facebook"
+            aria-label={t('auth:continueFacebook','Continue with Facebook')}
+            disabled={loadingProvider==='facebook'}
+            onClick={()=>handleProvider('facebook')}
+          >
+            <span className="ico">f</span> {loadingProvider==='facebook' ? t('auth:loading','...') : 'Facebook'}
           </button>
         </div>
         <div className="separator"><span>{t('auth:or','or')}</span></div>

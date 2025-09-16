@@ -18,3 +18,11 @@
   .thumbnail-wrapper { gap:.5rem; }
   .img-count-badge { font-size:.55rem; padding:.2rem .45rem; }
 }
+/* Ultra narrow phones: maintain square main image for better fit */
+@media (max-width:420px){
+  .main-image-wrapper { aspect-ratio:1/1; }
+  .thumbnail-image { width:56px; height:56px; }
+}
+@media (max-width:340px){
+  .thumbnail-image { width:50px; height:50px; }
+}
