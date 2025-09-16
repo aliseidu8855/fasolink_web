@@ -10,5 +10,41 @@
   },
   "categories": {
     "browse": "Browse Categories"
+  },
+  "createListing": {
+    "postAd": "Post a new listing",
+    "steps": "Steps",
+    "step_category": "Category",
+    "step_core": "Details",
+    "step_specs": "Specs",
+    "step_review": "Review",
+    "chooseCategory": "Choose a category",
+    "coreDetails": "Core details",
+    "title": "Title",
+    "price": "Price",
+    "location": "Location",
+    "negotiable": "Negotiable",
+    "description": "Description",
+    "images": "Images",
+    "specifications": "Specifications",
+    "required": "Required",
+    "review": "Review & submit",
+    "success": "Listing created successfully!",
+    "viewListing": "View listing",
+    "category": "Category",
+    "submit": "Submit",
+    "next": "Next",
+    "back": "Back",
+    "submitError": "Submit failed"
+  },
+  "createListing.drilldown": {
+    "chooseSub": "Choose a subcategory",
+    "back": "Back",
+    "all": "All"
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "loading": "Loading..."
   }
 }

@@ -61,8 +61,18 @@ export default function ListingBuyBox({ listing, onMessageSeller, isOwn, formatP
     <aside className="ld-buybox" aria-label={t('listing:buyBoxAria','Listing actions')}>
       <div className="ld-buybox-card">
         <div className="ld-price-row">
-          <span className="ld-price-main">{formatPrice(listing.price)} CFA</span>
-          {listing.negotiable && <span className="ld-price-neg">{t('listing:priceNegotiable','Negotiable')}</span>}
+          <span
+            className="ld-price-main"
+            id="ld-price-main"
+            aria-describedby={listing.negotiable ? 'ld-price-neg' : undefined}
+          >
+            {formatPrice(listing.price)} CFA
+          </span>
+          {listing.negotiable && (
+            <span className="ld-price-neg" id="ld-price-neg">
+              {t('listing:priceNegotiable','Negotiable')}
+            </span>
+          )}
         </div>
         <div className="ld-action-row">
           {!isOwn && (

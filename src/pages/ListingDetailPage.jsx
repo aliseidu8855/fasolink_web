@@ -119,6 +119,20 @@ const ListingDetailPage = () => {
         {"@type": "ListItem", "position": 3, "name": l.title, "item": window.location.href}
       ]
     };
+    // Contact action for messaging seller
+    const contactAction = {
+      "@type": "ContactAction",
+      "name": "Message Seller",
+      "description": "Contact the seller about this item",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": window.location.href + "#message-seller",
+        "actionApplication": {
+          "@type": "WebApplication",
+          "name": "FasoLink"
+        }
+      }
+    };
     const product = {
       "@context": "https://schema.org",
       "@type": "Product",
@@ -133,9 +147,11 @@ const ListingDetailPage = () => {
         "price": l.price,
         "priceCurrency": "XOF",
         "availability": "https://schema.org/InStock",
-        "url": window.location.href
+        "url": window.location.href,
+        ...(l.negotiable ? { priceSpecification: { "@type": "PriceSpecification", "valueAddedTaxIncluded": false } } : {})
       },
       "seller": {"@type": "Organization", "name": l.user},
+      "potentialAction": [contactAction],
       ...(sellerRating ? { aggregateRating: sellerRating } : {})
     };
     return { "@graph": [ product, breadcrumb ] };

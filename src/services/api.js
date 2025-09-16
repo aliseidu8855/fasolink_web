@@ -68,6 +68,16 @@ export const createListing = (formData) => {
   });
 };
 
+// Specs metadata for dynamic form fields per category
+export const fetchSpecsMetadata = (categoryName) => {
+  return apiClient.get('/specs-metadata/', { params: { category: categoryName } });
+};
+
+// Location suggestions (basic substring search)
+export const fetchLocationSuggestions = (q) => {
+  return apiClient.get('/locations-suggest/', { params: { q } });
+};
+
 export const fetchUserListings = () => {
   return apiClient.get('/profile/my-listings/');
 };

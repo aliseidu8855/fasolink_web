@@ -10,5 +10,41 @@
   },
   "categories": {
     "browse": "Parcourir les catégories"
+  },
+  "createListing": {
+    "postAd": "Publier une nouvelle annonce",
+    "steps": "Étapes",
+    "step_category": "Catégorie",
+    "step_core": "Détails",
+    "step_specs": "Spécifications",
+    "step_review": "Revue",
+    "chooseCategory": "Choisir une catégorie",
+    "coreDetails": "Détails principaux",
+    "title": "Titre",
+    "price": "Prix",
+    "location": "Lieu",
+    "negotiable": "Négociable",
+    "description": "Description",
+    "images": "Images",
+    "specifications": "Spécifications",
+    "required": "Obligatoire",
+    "review": "Revoir & soumettre",
+    "success": "Annonce créée avec succès !",
+    "viewListing": "Voir l'annonce",
+    "category": "Catégorie",
+    "submit": "Soumettre",
+    "next": "Suivant",
+    "back": "Retour",
+    "submitError": "Échec de l'envoi"
+  },
+  "createListing.drilldown": {
+    "chooseSub": "Choisir une sous-catégorie",
+    "back": "Retour",
+    "all": "Toutes"
+  },
+  "common": {
+    "yes": "Oui",
+    "no": "Non",
+    "loading": "Chargement..."
   }
 }
