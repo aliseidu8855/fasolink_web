@@ -41,8 +41,10 @@ const LoginForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="form" noValidate>
-      <h2>{t('auth:login')}</h2>
+  <div className="auth-panel">
+  <form onSubmit={handleSubmit} className="form scroll-area" noValidate aria-labelledby="login-title" aria-describedby="login-desc">
+      <h2 id="login-title" style={{marginTop:0}}>{t('auth:login')}</h2>
+      <p id="login-desc" className="visually-hidden">{t('auth:login')} {t('auth:username')} & {t('auth:password')} {t('auth:required','required')}</p>
       <div className="form-status" aria-live="polite">
         {error && <p className="error-message">{error}</p>}
         {success && <p className="success-message">{t('auth:loggedInAs', { username })}</p>}
@@ -60,8 +62,15 @@ const LoginForm = () => {
           </button>
         </div>
       </div>
-      <Button type="submit" variant="primary" disabled={submitting}>{submitting ? t('common:loading','Loading...') : t('auth:login')}</Button>
+      <button type="submit" className="btn btn-auth-primary" disabled={submitting} style={{marginTop:'0.25rem'}}>
+        {submitting ? t('common:loading','Loading...') : t('auth:login')}
+      </button>
+      <div className="auth-divider" aria-hidden="true"></div>
+      <div className="auth-alt-actions">
+        <button type="button" className="auth-link-btn" data-auth-switch="register">{t('auth:noAccount','No account yet? Create one')}</button>
+      </div>
     </form>
+    </div>
   );
 };
 

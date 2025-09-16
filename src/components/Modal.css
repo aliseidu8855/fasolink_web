@@ -2,26 +2,28 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.55); /* Removed blur effect */
-  z-index: 90; /* below navbar assumed > 100 or adjust accordingly */
+  background: rgba(0,0,0,0.55);
+  z-index: 900; /* Elevated above other UI including PWA prompts */
   display:flex;
   align-items:center;
   justify-content:center;
-  padding: 2vh 1rem; /* allow breathing room on very small screens */
+  padding: 2vh 1rem;
   animation: overlayFade .25s ease;
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
 }
 
 @keyframes overlayFade { from { opacity:0; } to { opacity:1; } }
 
 /* Content container */
 .modal-content {
-  position: relative; /* centered by flex parent */
-  background: #ffffff; /* solid background to replace glass effect */
+  position: relative;
+  background: #ffffff;
   border: 1px solid rgba(0,0,0,0.12);
   border-radius: 18px;
   width: clamp(300px, 90%, 460px);
   padding: 1.05rem 1.05rem 1.2rem;
-  z-index: 91;
+  z-index: 901;
   box-shadow: 0 6px 20px -4px rgba(0,0,0,0.25), 0 14px 34px -8px rgba(0,0,0,0.32);
   color: var(--brand-ink);
   display:flex;
@@ -30,6 +32,30 @@
   animation: modalFade .22s ease;
   max-height: 82vh;
   overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+/* Mobile sheet variant */
+@media (max-width: 640px) {
+  .modal-overlay { align-items:flex-end; padding:0; }
+  .modal-content {
+    width:100%;
+    max-width:none;
+    height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    max-height: none;
+    border-radius: 28px 28px 0 0;
+    padding: clamp(.9rem, 3.2vw, 1.25rem) clamp(.9rem, 3.2vw, 1.25rem) calc(1.25rem + env(safe-area-inset-bottom));
+    border:1px solid rgba(0,0,0,0.15);
+    box-shadow: 0 -2px 12px -4px rgba(0,0,0,0.18), 0 0 24px -6px rgba(0,0,0,0.28);
+    animation: slideUp .32s cubic-bezier(.33,.85,.45,.99);
+    gap: clamp(.75rem, 2.2vw, 1rem);
+  }
+  @keyframes slideUp { from { transform: translateY(18px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+  .modal-close-button { top: .55rem; right: .6rem; }
+  .modal-content h2, .modal-content h3 { margin-top:.25rem; }
+  .modal-content .form { gap: clamp(.75rem, 2.5vw, 1rem); }
+  .modal-content .input-control { font-size: var(--fs-base); padding: .75rem .9rem; }
+  .modal-content button.btn { width:100%; font-size: var(--fs-sm); padding:.85rem 1rem; }
 }
 
 @keyframes modalFade { from { opacity:0; } to { opacity:1; } }
@@ -62,3 +88,7 @@
 [data-theme="dark"] .modal-content { background: #171a1c; border-color: rgba(255,255,255,0.12); color:#F4F6F8; }
 [data-theme="dark"] .modal-close-button { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color:#F4F6F8; }
 [data-theme="dark"] .modal-close-button:hover { background: rgba(255,255,255,0.15); }
+
+/* Scrollable content region inside modal (auth forms) */
+.modal-content .scroll-area { overflow:auto; padding-right:.25rem; }
+.modal-content .scroll-area:focus-visible { outline:none; }
