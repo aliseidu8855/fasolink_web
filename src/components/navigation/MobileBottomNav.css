@@ -22,9 +22,4 @@
 }
 @supports(padding: max(0px)) { .mobile-bottom-nav { padding-bottom: max(env(safe-area-inset-bottom), 0px); } }
 
-/* Dark mode tweaks (if color vars present) */
-@media (prefers-color-scheme: dark) {
-  .mobile-bottom-nav { background: var(--color-surface,#1f1f1f); border-top-color: rgba(255,255,255,0.12); }
-  .mbn-btn { color: var(--color-text-muted,#aaa); }
-  .mbn-btn.active, .mbn-btn:hover { color: var(--color-text,#fff); }
-}
+/* Dark mode removed (temporary light-only mode) */

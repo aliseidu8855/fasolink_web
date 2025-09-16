@@ -225,12 +225,4 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .lp-header, .lp-filters { background:#1d1f22; border-color:#2c3238; }
-  .lp-title { color:#fff; }
-  .lp-error { background:#2a1818; border-color:#523232; }
-  .lp-search { background:#151618; color:#eee; border-color:#333; }
-  .lp-view-toggle { background:#1d1f22; color:#ddd; border-color:#343a40; }
-  .lp-view-toggle.compact { background:var(--color-brand); border-color:var(--color-brand); color:#fff; }
-  .lp-back-top { background:var(--color-brand); }
-}
+/* Dark mode overrides removed intentionally (temporary light-only mode) */

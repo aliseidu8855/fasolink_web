@@ -163,15 +163,4 @@
   .dash-listings-grid { grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); }
 }
 
-@media (prefers-color-scheme: dark) {
-  .dashboard-shell { background:#141416; color:#e6e6ea; }
-  .dashboard-shell .sidebar { box-shadow:2px 0 6px -2px rgba(0,0,0,.55); background:linear-gradient(180deg, rgba(var(--color-brand-rgb,222,0,0),0.85) 0%, rgba(var(--color-brand-rgb,222,0,0),0.7) 100%); }
-  .dash-stat-card { background:#1d1f22; border-color:#2c3238; box-shadow:0 1px 0 rgba(255,255,255,.04), 0 2px 6px -2px rgba(0,0,0,.6); }
-  .dash-stat-card.mint { border-color:#b84d00; background:linear-gradient(180deg,#281616 0%, #221515 100%); }
-  .dash-stat-card.gold { border-color:#c58a00; background:linear-gradient(180deg,#2e2412 0%, #271f10 100%); }
-  .dash-stat-card.forest { border-color:#b84d00; background:linear-gradient(180deg,#241a18 0%, #1f1614 100%); }
-  .dash-stat-card.clay { border-color:#d16519; background:linear-gradient(180deg,#2e1e17 0%, #251812 100%); }
-  .profile-form input { background:#151618; color:#eee; border-color:#333; }
-  .text-btn { color:var(--color-brand); }
-  .text-btn.danger { color:#ff5f5f; }
-}
+/* Dark mode temporarily disabled (prefers-color-scheme overrides removed) */

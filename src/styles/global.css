@@ -106,33 +106,8 @@
   --btn-gap: 0.5rem;
 }
 
-/* Dark mode (opt-in via data-theme="dark" on html or body) */
-[data-theme="dark"] {
-  --color-bg-primary: #101214;
-  --color-bg-surface: #1B1E22;
-  --color-bg-muted: #252A30;
-  --color-border: #2F363D;
-  --color-text-primary: #F4F6F8;
-  --color-text-secondary: #C6CBD2;
-  --color-text-faint: #9099A3;
-  --shadow-xs: 0 1px 2px rgba(0,0,0,0.5);
-  --shadow-sm: 0 2px 6px -1px rgba(0,0,0,0.55);
-  --shadow-md: 0 4px 14px -3px rgba(0,0,0,0.6);
-  --shadow-lg: 0 10px 34px -6px rgba(0,0,0,0.65);
-  --arriere-plan: #101214;
-  --texte-sombre: #F2F4F6;
-  background-color: var(--color-bg-primary);
-  color: var(--color-text-primary);
-  /* Brand semantic adjustments */
-  --color-brand: #DE3A3A; /* slightly lighter for dark contrast */
-  --color-brand-hover: #F04747;
-  --color-accent: #48B58A;
-  --color-accent-alt: #E7B200;
-  --color-success: #48B58A;
-  --color-danger: #FF4A4A;
-  --color-link: var(--color-brand);
-  --color-link-hover: var(--color-brand-hover);
-}
+/* Dark mode disabled: data-theme="dark" override removed intentionally */
+html { color-scheme: light; }
 
 /* 2. Typography (Amazon-inspired scale & weights) */
 /* Amazon uses a pragmatic system with modest size steps, strong contrast on headings, normal body ~14px-16px, emphasis via weight 700/800 sparingly. */

@@ -13,10 +13,4 @@
 .btn.ghost:hover { background:#e5e6e9; }
 .lm-error { color:#b00020; font-size:.8rem; margin:.25rem 0 0; }
 .lm-hint { margin:.25rem 0 0; font-size:.65rem; opacity:.6; letter-spacing:.5px; text-transform:uppercase; }
-@media (prefers-color-scheme: dark) { 
-  .listing-modal { background:#18191b; box-shadow:0 10px 34px -14px rgba(0,0,0,.8), 0 4px 12px -6px rgba(0,0,0,.65); }
-  .lm-form input, .lm-form textarea { background:#121314; border-color:#2d2f33; color:#e6e6e9; }
-  .btn.ghost { background:#26282b; color:#e6e6ea; border-color:#3a3d42; }
-  .btn.ghost:hover { background:#303337; }
-  .lm-close:hover { background:rgba(255,255,255,.08); }
-}
+/* Dark mode overrides removed */

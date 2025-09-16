@@ -6,6 +6,9 @@ import { useScroll } from '../hooks/useScroll';
 import NavBar from './navigation/NavBar';
 import Footer from './Footer';
 import MobileBottomNav from './navigation/MobileBottomNav';
+import InstallPWA from './pwa/InstallPWA';
+import PWAUpdatePrompt from './pwa/PWAUpdatePrompt';
+import IOSAddToHomeBanner from './pwa/IOSAddToHomeBanner';
 import Modal from './Modal';
 import { useModal } from '../context/ModalContext';
 
@@ -26,9 +29,12 @@ const Layout = () => {
       </main>
   <Footer />
   <MobileBottomNav />
+      <InstallPWA />
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         {modalContent}
       </Modal>
+      <PWAUpdatePrompt />
+      <IOSAddToHomeBanner />
     </div>
   );
 };

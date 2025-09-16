@@ -11,6 +11,7 @@ import DashboardPage from './pages/DashboardPage';
 import MessagesPage from './pages/MessagesPage';
 import { MessagingProvider } from './context/MessagingContext';
 import HelpPage from './pages/HelpPage';
+import SettingsPage from './pages/SettingsPage';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
             } 
           />
           <Route path="/help" element={<HelpPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="/browse" element={<BrowsePage />} />
         </Route>
       </Routes>

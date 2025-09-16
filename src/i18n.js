@@ -28,6 +28,7 @@ import frCreateListing from './locales/fr/createListing.json';
 // Force French default: ignore any previously saved language for now
 try { localStorage.setItem('appLanguage','fr'); } catch { /* ignore */ }
 
+// Static resources bundled at build time
 const resources = {
   en: {
     common: enCommon,
@@ -53,30 +54,49 @@ const resources = {
   }
 };
 
+// Core namespaces critical for first contentful paint
+const CORE_NAMESPACES = ['common','navigation','home','listing'];
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
-  ns: ['common', 'navigation', 'auth', 'listing', 'messaging', 'dashboard', 'errors', 'home', 'createListing'],
+    ns: ['common', 'navigation', 'auth', 'listing', 'messaging', 'dashboard', 'errors', 'home', 'createListing'],
     defaultNS: 'common',
-  fallbackLng: 'fr',
-  lng: 'fr', // always initialize French
+    preload: CORE_NAMESPACES, // hint initial preload
+    fallbackLng: 'fr',
+    lng: 'fr', // always initialize French
     debug: true, // disable in production
     interpolation: { escapeValue: false },
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag', 'path', 'subdomain'],
       caches: ['localStorage'],
     },
-    // Return key if missing so it's visible during dev
     saveMissing: false,
     missingKeyHandler: function(lng, ns, key) {
-      // Surface missing keys in dev tools without relying on process env (Vite provides import.meta.env)
-      if (import.meta && import.meta.env && import.meta.env.DEV) {
+      if (import.meta?.env?.DEV) {
         console.warn(`[i18n] Missing key: ${ns}:${key}`);
       }
     }
   });
+
+// Dynamic category translation injection helper
+export const injectCategoryTranslations = (lng, map) => {
+  if (!map || typeof map !== 'object') return;
+  const ns = 'categories';
+  const existing = i18n.getResourceBundle(lng, ns) || {};
+  const merged = { ...existing, ...map };
+  i18n.addResourceBundle(lng, ns, merged, true, true);
+};
+
+// Preload categories namespace lazily when needed
+export const ensureCategoriesNamespace = async (lng = i18n.language) => {
+  const hasNs = i18n.hasResourceBundle(lng, 'categories');
+  if (!hasNs) {
+    i18n.addResourceBundle(lng, 'categories', {}, true, true);
+  }
+};
 
 // Persist language on change
 const setHtmlLang = (lng) => {

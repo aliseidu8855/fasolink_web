@@ -7,7 +7,7 @@ import SearchBar from './navigation/SearchBar.jsx';
 
 // The hero now focuses on quick discovery: prominent search, quick category pills, and trust stats.
 const Hero = () => {
-  const { t } = useTranslation(['home']);
+  const { t } = useTranslation(['home','categories']);
   const [topCategories, setTopCategories] = useState([]);
   const [featured, setFeatured] = useState([]);
   // Simple runtime flag: set to false to completely disable fetching & rendering featured cards
@@ -42,7 +42,16 @@ const Hero = () => {
 
   }, [SHOW_FEATURED]);
 
-  // Search removed from hero; search happens in nav bar. Keep minimal CTA.
+  const translateCategoryName = (cat) => {
+    if (!cat) return '';
+    // Expect backend category to have a slug or name; build key categories:slug
+    const keyBase = cat.slug || (cat.name ? cat.name.toLowerCase().replace(/[^a-z0-9]+/g,'-') : null);
+    if (!keyBase) return cat.name || '';
+    const key = `categories:${keyBase}`;
+    const translated = t(key);
+    // i18next returns key if missing; in that case fallback to original name
+    return translated === key ? (cat.name || keyBase) : translated;
+  };
 
   return (
     <section className="hero-section" aria-labelledby="home-hero-heading">
@@ -55,16 +64,15 @@ const Hero = () => {
           <p className="hero-subtitle">{t('home:hero.subtitle')}</p>
 
           <div className="hero-cta-line">
-            <a className="hero-cta-btn primary" href="/listings/new">{t('home:hero.postAd', 'Publier une annonce')}</a>
-            <a className="hero-cta-btn secondary" href="/browse">{t('home:hero.browse', 'Parcourir les catégories')} →</a>
+            <a className="hero-cta-btn primary" href="/listings/new">{t('home:hero.postAd')}</a>
+            <a className="hero-cta-btn secondary" href="/browse">{t('home:hero.browse')} →</a>
           </div>
-          <div className="hero-embedded-search-wrapper">
-            <div className="hero-search-label" aria-hidden="true">{t('home:hero.searchLabel', 'Search listings')}</div>
+          <div className="hero-embedded-search-wrapper" data-mobile-slot>
+            <div className="hero-search-label">{t('home:hero.searchLabel')}</div>
             <div className="hero-embedded-search hero-search-surface">
               <SearchBar />
             </div>
           </div>
-          <div className="hero-mobile-search-slot" aria-hidden="true" />
 
           {topCategories.length > 0 && (
             <div className="quick-categories" aria-label={t('home:hero.quickBrowse')}>
@@ -72,7 +80,7 @@ const Hero = () => {
               <ul>
                 {topCategories.map(cat => (
                   <li key={cat.id}>
-                    <Link to={`/listings?category=${cat.id}`}>{cat.name}</Link>
+                    <Link to={`/listings?category=${cat.id}`}>{translateCategoryName(cat)}</Link>
                   </li>
                 ))}
               </ul>
@@ -80,7 +88,7 @@ const Hero = () => {
           )}
 
           {SHOW_FEATURED && featured.length > 0 && (
-            <div className="hero-featured" aria-label={t('home:hero.featured','Featured')}>
+            <div className="hero-featured" aria-label={t('home:hero.featured')}>
               {featured.map(item => (
                 <Link key={item.id} to={`/listings/${item.id}`} className="hf-card">
                   <div className="hf-thumb">
@@ -91,7 +99,7 @@ const Hero = () => {
                     )}
                   </div>
                   <div className="hf-body">
-                    <h3 className="hf-title">{item.title?.slice(0,48) || 'Listing'}</h3>
+                    <h3 className="hf-title">{item.title?.slice(0,48) || t('home:hero.listingFallback')}</h3>
                     {item.price && <div className="hf-price">{item.price} {item.currency || 'XOF'}</div>}
                   </div>
                 </Link>
