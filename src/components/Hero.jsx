@@ -74,7 +74,7 @@ const Hero = () => {
             </div>
           </div>
 
-          {topCategories.length > 0 && (
+          {/* {topCategories.length > 0 && (
             <div className="quick-categories" aria-label={t('home:hero.quickBrowse')}>
               <span className="qc-label">{t('home:hero.quickBrowse')}:</span>
               <ul>
@@ -85,7 +85,7 @@ const Hero = () => {
                 ))}
               </ul>
             </div>
-          )}
+          )} */}
 
           {SHOW_FEATURED && featured.length > 0 && (
             <div className="hero-featured" aria-label={t('home:hero.featured')}>

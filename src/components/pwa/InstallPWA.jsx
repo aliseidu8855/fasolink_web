@@ -19,7 +19,8 @@ export default function InstallPWA() {
     setDismissed(true)
   }
 
-  if (!canInstall || dismissed || installed) return null
+  const devForce = import.meta.env.VITE_FORCE_INSTALL_BTN === 'true'
+  if (!devForce && (!canInstall || dismissed || installed)) return null
 
   return (
     <div style={styles.container} role="dialog" aria-label="Installer l'application">

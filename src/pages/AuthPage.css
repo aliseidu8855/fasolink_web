@@ -15,6 +15,7 @@
 .separator:before, .separator:after { content:""; position:absolute; top:50%; width:35%; height:1px; background: linear-gradient(90deg,rgba(0,0,0,0.08),rgba(0,0,0,0.15)); }
 .separator:before { left:0; }
 .separator:after { right:0; }
+.auth-hint { background:#fff7f8; border:1px solid #ffd7dd; color:#7a1020; font-size:.72rem; padding:.55rem .65rem; border-radius:8px; margin:.35rem 0 .75rem; line-height:1.35; }
 .form.scroll-area { padding:0; background:transparent; box-shadow:none; border:none; }
 .form.scroll-area .auth-panel { background:transparent; border:none; box-shadow:none; padding:0; }
 .switch-line { font-size:.7rem; margin:.75rem 0 .2rem; text-align:center; }

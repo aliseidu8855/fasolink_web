@@ -16,13 +16,34 @@ export default function AuthPage() {
   const { t } = useTranslation(['auth'])
   const navigate = useNavigate()
 
-  useEffect(() => { if (isAuthenticated) { const back = consumeIntendedPath() || '/'; navigate(back, { replace:true }) } }, [isAuthenticated, navigate, consumeIntendedPath])
+  // Helper: basic safety check to prevent external redirects via `next`
+  const isSafeNext = (p) => {
+    if (!p || typeof p !== 'string') return false
+    // same-origin path only
+    if (!p.startsWith('/')) return false
+    // Avoid protocol-relative or suspicious sequences
+    if (p.startsWith('//')) return false
+    return true
+  }
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const nextParam = params.get('next')
+      const safe = isSafeNext(nextParam) ? nextParam : null
+      const back = safe || consumeIntendedPath() || '/'
+      navigate(back, { replace: true })
+    }
+  }, [isAuthenticated, navigate, consumeIntendedPath, params])
 
   const switchMode = (next) => {
     setMode(next)
     params.set('mode', next)
     setParams(params, { replace:true })
   }
+
+  // Detect if user came from a listing with intent to message seller
+  const nextParam = params.get('next') || ''
+  const cameToMessageSeller = typeof nextParam === 'string' && nextParam.includes('#message-seller')
 
   // Lazy load provider handlers (placeholder logic)
   const [loadingProvider, setLoadingProvider] = useState(null);
@@ -66,6 +87,11 @@ export default function AuthPage() {
             <span className="ico">f</span> {loadingProvider==='facebook' ? t('auth:loading','...') : 'Facebook'}
           </button>
         </div>
+        {cameToMessageSeller && (
+          <div className="auth-hint" role="note">
+            {t('auth:continueToMessage','Continue to message the seller after you finish signing in.')}
+          </div>
+        )}
         <div className="separator"><span>{t('auth:or','or')}</span></div>
         {mode === 'login' ? <LoginForm /> : <RegisterForm />}
         <p className="switch-line">

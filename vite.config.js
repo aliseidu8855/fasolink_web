@@ -14,6 +14,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'robots.txt', 'logo.svg'],
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js',
       manifest: {
         name: 'FasoLink',
         short_name: 'FasoLink',
@@ -27,45 +30,13 @@ export default defineConfig({
         dir: 'ltr',
         orientation: 'portrait-primary',
         icons: [
-          { src: '/logo.svg', sizes: '192x192', type: 'image/svg+xml' },
-          { src: '/logo.svg', sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
-        ]
-      },
-      workbox: {
-        navigateFallback: '/offline.html',
-        globPatterns: ['**/*.{js,css,html,svg,png,jpg,jpeg,json,woff2}'],
-        runtimeCaching: [
-          {
-            urlPattern: /.*\.(png|jpg|jpeg|gif|svg|webp)$/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'images-cache',
-              expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 },
-            }
-          },
-          {
-            urlPattern: /https:\/\/[^/]*api[^/]*\/.*$/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-cache',
-              networkTimeoutSeconds: 8,
-              expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 },
-              cacheableResponse: { statuses: [0, 200] }
-            }
-          },
-          {
-            urlPattern: ({ request }) => request.mode === 'navigate',
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'pages-cache',
-              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 7 }
-            }
-          }
+          { src: '/icons/manifest-icon-192.maskable.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+          { src: '/icons/manifest-icon-512.maskable.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+          { src: '/icons/favicon-196.png', sizes: '196x196', type: 'image/png' }
         ]
       },
       devOptions: {
-        enabled: true,
-        navigateFallback: '/index.html'
+        enabled: true
       }
     })
   ],
