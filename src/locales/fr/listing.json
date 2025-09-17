@@ -37,6 +37,10 @@
   "noRatings": "Pas encore de notes",
   "priceNegotiable": "Prix négociable",
   "yourListing": "Votre annonce"
+  ,"categoryElectronics": "Électronique"
+  ,"categoryCars": "Voitures"
+  ,"categoryRealEstate": "Immobilier"
+  ,"categoryFashion": "Mode"
   ,"listingsPage": {
     "title": "Parcourir les annonces",
     "searchLabel": "Rechercher des annonces",

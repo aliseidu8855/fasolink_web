@@ -23,6 +23,13 @@
     "email": "support@fasolink.bf",
     "address": "Ouagadougou, Burkina Faso",
     "rights": "Tous droits réservés.",
-    "madeWith": "Fait avec ♥ pour le Burkina Faso"
-  }
+    "madeWith": "Fait avec ♥ pour le Burkina Faso",
+    "socialLabel": "Réseaux sociaux",
+    "socialFacebook": "Facebook",
+    "socialTwitter": "Twitter",
+    "socialInstagram": "Instagram",
+    "languageSwitch": "Langue"
+  },
+  "yes": "Oui",
+  "no": "Non"
 }

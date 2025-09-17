@@ -200,10 +200,10 @@ export default function CreateListingPage(){
   const goPrev = () => setStep(p=> STEP_KEYS[STEP_KEYS.indexOf(p)-1] || 'category');
 
   const stepItems = useMemo(()=> [
-    { key:'category', label: t('createListing.step_category','Category') },
-    { key:'core', label: t('createListing.step_core','Core') },
-    { key:'specs', label: t('createListing.step_specs','Specs') },
-    { key:'review', label: t('createListing.step_review','Review') }
+  { key:'category', label: t('createListing:step_category','Category') },
+  { key:'core', label: t('createListing:step_core','Core') },
+  { key:'specs', label: t('createListing:step_specs','Specs') },
+  { key:'review', label: t('createListing:step_review','Review') }
   ],[t]);
 
   const currentStepIndex = STEP_KEYS.indexOf(step);
@@ -248,7 +248,9 @@ export default function CreateListingPage(){
         const v = specValues[k];
         return v!=='' && v!=null;
       }).map(k=> ({ name:k, value: specValues[k] }));
-      fd.append('attributes', JSON.stringify(attrs));
+      if (attrs.length > 0) {
+        fd.append('attributes', JSON.stringify(attrs));
+      }
       images.forEach(img=> fd.append('uploaded_images', img));
       const res = await createListing(fd);
       setCreatedId(res.data.id);
@@ -278,7 +280,9 @@ export default function CreateListingPage(){
         if ((status === 401 || status === 403) && !fe._non) {
           fe._non = t('createListing:authRequired','Authentication required. Please log in and try again.');
         }
-        setFieldErrors(fe); setSpecErrors(se); setSubmitError(null);
+  // Store raw backend errors for visibility
+  console.error('Create listing error:', data);
+  setFieldErrors(fe); setSpecErrors(se); setSubmitError(JSON.stringify(data));
         if(fe.category){ setStep('category'); }
         else if(fe.title || fe.price || fe.location || fe.description || fe.contact_phone){ setStep('core'); }
         else if(Object.keys(se).length>0){ setStep('specs'); }
@@ -304,8 +308,8 @@ export default function CreateListingPage(){
       {step==='category' && (
         <section className="cl-panel" aria-labelledby="cl-cat-h">
           <div className="cl-cat-bar">
-            {catPath.length>0 && <button type="button" className="cl-back-btn" onClick={goBackCategory}>{t('createListing.back','Back')}</button>}
-            <h2 id="cl-cat-h" className="cl-cat-heading">{atRoot ? t('createListing.chooseCategory','Choose a category') : catPath[catPath.length-1]}</h2>
+            {catPath.length>0 && <button type="button" className="cl-back-btn" onClick={goBackCategory}>{t('createListing:back','Back')}</button>}
+            <h2 id="cl-cat-h" className="cl-cat-heading">{atRoot ? t('createListing:chooseCategory','Choose a category') : catPath[catPath.length-1]}</h2>
           </div>
           <ul className="cl-cat-grid" role="listbox" aria-activedescendant={`cat-node-${catFocusIndex}`} tabIndex={0} onKeyDown={onCatKeyDown}>
             {visibleNodes.map((node, idx)=> {
@@ -328,12 +332,12 @@ export default function CreateListingPage(){
               );
             })}
           </ul>
-          {catName && <div className="cl-cat-selection-preview">{t('createListing.category','Category')}: <strong>{catName}</strong></div>}
+          {catName && <div className="cl-cat-selection-preview">{t('createListing:category','Category')}: <strong>{catName}</strong></div>}
         </section>
       )}
       {step==='core' && (
         <section className="cl-panel" aria-labelledby="cl-core-h">
-          <h2 id="cl-core-h">{t('createListing.coreDetails','Core details')}</h2>
+          <h2 id="cl-core-h">{t('createListing:coreDetails','Core details')}</h2>
           <div className="cl-field">
             <label htmlFor="cl-title">{t('createListing:title')}*</label>
             <input id="cl-title" value={title} aria-invalid={title.trim().length<=4 || undefined} ref={title.trim().length<=4 && !firstErrorRef.current ? firstErrorRef : undefined} onChange={e=> setTitle(e.target.value)} />
@@ -365,9 +369,9 @@ export default function CreateListingPage(){
             {fieldErrors.location && <span className="cl-err-msg" role="alert">{fieldErrors.location}</span>}
           </div>
           <div className="cl-field"><label htmlFor="cl-phone">{t('createListing:contactPhone')}</label><input id="cl-phone" value={contactPhone} onChange={e=> setContactPhone(e.target.value)} placeholder={t('createListing:contactPhonePlaceholder')} />{fieldErrors.contact_phone && <span className="cl-err-msg" role="alert">{fieldErrors.contact_phone}</span>}</div>
-          <div className="cl-field cl-check"><label><input type="checkbox" checked={negotiable} onChange={e=> setNegotiable(e.target.checked)} /> {t('createListing.negotiable','Negotiable')}</label></div>
+          <div className="cl-field cl-check"><label><input type="checkbox" checked={negotiable} onChange={e=> setNegotiable(e.target.checked)} /> {t('createListing:negotiable','Negotiable')}</label></div>
           <div className="cl-field">
-            <label htmlFor="cl-desc">{t('createListing.description','Description')}*</label>
+            <label htmlFor="cl-desc">{t('createListing:description','Description')}*</label>
             <textarea id="cl-desc" rows={5} value={desc} aria-invalid={!desc.trim() || undefined} onChange={e=> setDesc(e.target.value)} maxLength={2000} />
             <small className="cl-hint">Required</small>
             {fieldErrors.description && <span className="cl-err-msg" role="alert">{fieldErrors.description}</span>}
