@@ -12,6 +12,7 @@ import ListingSpecsTable from '../components/listing/ListingSpecsTable';
 import SellerInfoPanel from '../components/listing/SellerInfoPanel';
 import RelatedListingsCarousel from '../components/listing/RelatedListingsCarousel';
 import './ListingDetailPage.css';
+import ListingDetailSkeleton from '../components/listing/ListingDetailSkeleton';
 
 // Helper to format the CFA currency
 const formatPrice = (price) => {
@@ -157,7 +158,7 @@ const ListingDetailPage = () => {
     return { "@graph": [ product, breadcrumb ] };
   };
 
-  if (loading) return <p className="container">{t('common:loading')}</p>;
+  if (loading) return <ListingDetailSkeleton />;
   if (error) return <p className="container error-message">{error}</p>;
   if (!listing) return null;
 
@@ -213,7 +214,21 @@ const ListingDetailPage = () => {
         </div>
       </div>
       <div className="detail-lower">
-        {relatedLoading && <p className="ld-related-loading" aria-live="polite">{t('common:loading')}</p>}
+        {relatedLoading && (
+          <div className="ld-related-loading" role="status" aria-live="polite">
+            <div style={{ display:'flex', gap:12, overflow:'hidden' }}>
+              {Array.from({ length: 4 }).map((_,i)=> (
+                <div key={`rl-sk-${i}`} style={{ flex:'0 0 220px' }}>
+                  <div className="skel skel-rect" style={{ '--sk-h':'140px', '--sk-r':'10px' }} />
+                  <div style={{ marginTop:8 }}>
+                    <div className="skel skel-line" style={{ '--sk-h':'10px', width:'85%' }} />
+                    <div className="skel skel-line" style={{ '--sk-h':'10px', width:'60%', marginTop:6 }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         <div id="ld-related-anchor" style={{height:1}} />
         {!relatedLoading && related.length > 0 && <RelatedListingsCarousel listings={related} />}
         {!relatedLoading && related.length === 0 && relatedError === 'empty' && (
