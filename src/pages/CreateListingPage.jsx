@@ -9,6 +9,11 @@ import { BF_LOCATIONS } from '../data/locations.js';
 import './CreateListingPage.css';
 
 const PRIMARY_CATEGORIES = ['Phones','Cars','Real Estate','Electronics'];
+// Map UI/spec category names to backend Category.name values for submission
+const BACKEND_CATEGORY_NAME_MAP = {
+  // Backend does not have a separate "Phones" category; map to Electronics
+  'Phones': 'Electronics',
+};
 // Temporary frontend hierarchy mapping (leaf names must match backend category names)
 // Extend/adjust when real sub-category data is available.
 const CATEGORY_HIERARCHY = {
@@ -139,7 +144,10 @@ export default function CreateListingPage(){
       if(node) handleCategoryActivate(node);
     }
   };
-  const currentCatId = allCats.find(c=> c.name===catName)?.id;
+  // current selected category id resolved via backend name mapping below
+  // Resolve backend category ID using mapping (so phones specs still load while submission uses Electronics id)
+  const backendCatName = BACKEND_CATEGORY_NAME_MAP[catName] || catName;
+  const resolvedCatId = allCats.find(c => c.name === backendCatName)?.id;
 
   const requiredSpecsValid = specMeta.filter(s=> s.required).every(s=> {
     const v = specValues[s.key];
@@ -207,7 +215,14 @@ export default function CreateListingPage(){
   };
 
   const onSubmit = async () => {
-    if(!currentCatId){
+    // Extra guard: ensure auth token exists (should be enforced by ProtectedRoute already)
+    const authToken = localStorage.getItem('authToken');
+    if(!authToken){
+      setFieldErrors(prev => ({ ...prev, _non: t('createListing:mustLogin','Please login to post an ad.') }));
+      setStep('review');
+      return;
+    }
+    if(!resolvedCatId){
       setFieldErrors({ category: t('createListing:required') });
       setStep('category');
       return;
@@ -220,7 +235,15 @@ export default function CreateListingPage(){
     setSubmitting(true); setSubmitError(null); setFieldErrors({}); setSpecErrors({});
     try {
       const fd = new FormData();
-      fd.append('title', title); fd.append('price', price); fd.append('description', desc); fd.append('location', loc); fd.append('category', currentCatId || ''); fd.append('negotiable', negotiable?'true':'false');
+      fd.append('title', title);
+      fd.append('price', price);
+      fd.append('description', desc);
+      fd.append('location', loc);
+  fd.append('category', resolvedCatId || '');
+      fd.append('negotiable', negotiable?'true':'false');
+      if (contactPhone && contactPhone.trim()) {
+        fd.append('contact_phone', contactPhone.trim());
+      }
       const attrs = Object.keys(specValues).filter(k=> {
         const v = specValues[k];
         return v!=='' && v!=null;
@@ -231,25 +254,38 @@ export default function CreateListingPage(){
       setCreatedId(res.data.id);
       setStep('review');
     } catch(e){
+      const status = e.response?.status;
       const data = e.response?.data;
       if(data && typeof data === 'object'){
         const fe = {}; const se = {};
+        // Surface global error messages
+        if (data.detail) {
+          fe._non = Array.isArray(data.detail) ? data.detail.join(' ') : String(data.detail);
+        }
         Object.entries(data).forEach(([k,v])=> {
           if(k==='attributes' && Array.isArray(v)){
             // attributes errors may come as list-level; show generic
             se._generic = Array.isArray(v)? v.join(' '): String(v);
           } else if(k==='non_field_errors'){
             fe._non = Array.isArray(v)? v.join(' '): String(v);
-          } else {
+          } else if(k!=='detail') {
             // core field or maybe spec key
             if(specMeta.find(s=> s.key===k)) se[k] = Array.isArray(v)? v[0]: String(v);
             else fe[k] = Array.isArray(v)? v[0]: String(v);
           }
         });
-  setFieldErrors(fe); setSpecErrors(se); setSubmitError(null);
-  if(fe.category){ setStep('category'); }
-  else if(fe.title || fe.price || fe.location || fe.description || fe.contact_phone){ setStep('core'); }
-  else if(Object.keys(se).length>0){ setStep('specs'); }
+        // Auth specific messaging
+        if ((status === 401 || status === 403) && !fe._non) {
+          fe._non = t('createListing:authRequired','Authentication required. Please log in and try again.');
+        }
+        setFieldErrors(fe); setSpecErrors(se); setSubmitError(null);
+        if(fe.category){ setStep('category'); }
+        else if(fe.title || fe.price || fe.location || fe.description || fe.contact_phone){ setStep('core'); }
+        else if(Object.keys(se).length>0){ setStep('specs'); }
+        else { setStep('review'); }
+      } else if (e.request && !e.response) {
+        // Network error (CORS, offline, DNS, etc.)
+        setSubmitError('Network error. Please check your connection and try again.');
       } else {
         setSubmitError(data || 'Failed');
       }
