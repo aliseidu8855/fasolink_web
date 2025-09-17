@@ -14,9 +14,16 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'robots.txt', 'logo.svg'],
-      strategies: 'injectManifest',
-      srcDir: 'src',
-      filename: 'sw.js',
+      // Use generateSW to avoid inject-manifest build errors and keep things simple.
+      // We'll keep it online-only by not precaching any app shell files.
+      strategies: 'generateSW',
+      workbox: {
+        globPatterns: [], // don't precache built assets; stay online-only
+        navigateFallback: null, // no offline fallback routing
+        cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true,
+      },
       manifest: {
         name: 'FasoLink',
         short_name: 'FasoLink',
