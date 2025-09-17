@@ -12,11 +12,8 @@ const HomePage = () => {
         <div className="home-section">
           <ListingRow
             title="Recent Listings"
-            subtitle="Freshly added by the community"
             apiParams={{ ordering: '-created_at' }}
             compact
-            browseLink="/browse"
-            browseLabel="Browse categories"
             lazySecondHalf
           />
         </div>

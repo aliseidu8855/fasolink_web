@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { fetchCategories } from '../../services/api';
+import { useNavigate } from 'react-router-dom';
 
 // Simple accessible dropdown skeleton for categories
 const CategoryMenu = () => {
@@ -9,6 +10,7 @@ const CategoryMenu = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const ref = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!open || categories.length > 0 || loading) return;
@@ -46,8 +48,15 @@ const CategoryMenu = () => {
             <div className="cat-empty">(none)</div>
           )}
           {!loading && categories.slice(0, 12).map(cat => (
-            <button key={cat.id} className="cat-item" role="menuitem">
-              {cat.name}
+            <button
+              key={cat.id}
+              className="cat-item"
+              role="menuitem"
+              onClick={() => { setOpen(false); navigate({ pathname: '/listings', search: `?category=${cat.id}` }); }}
+              title={`${cat.name} (${cat.listings_count || 0})`}
+            >
+              <span className="cat-name">{cat.name}</span>
+              <span className="cat-count">{(cat.listings_count || 0).toLocaleString()}</span>
             </button>
           ))}
           {categories.length > 12 && <div className="cat-more">+ {categories.length - 12} more</div>}
