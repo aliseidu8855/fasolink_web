@@ -20,6 +20,17 @@ export default defineConfig({
       workbox: {
         globPatterns: [], // don't precache built assets; stay online-only
         navigateFallback: null, // no offline fallback routing
+          // Provide a minimal runtimeCaching rule so Workbox has a configuration
+          // even when precache is disabled. Use NetworkOnly to keep online-only behavior.
+          runtimeCaching: [
+            {
+              urlPattern: /^https?:\/\//,
+              handler: 'NetworkOnly',
+              options: {
+                cacheName: 'runtime-no-cache'
+              }
+            }
+          ],
         cleanupOutdatedCaches: true,
         skipWaiting: true,
         clientsClaim: true,

@@ -6,9 +6,6 @@ const baseURL = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
 const apiClient = axios.create({
   baseURL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 apiClient.interceptors.request.use(
@@ -65,11 +62,7 @@ export const fetchCurrentUser = () => {
 };
 
 export const createListing = (formData) => {
-  return apiClient.post('listings/', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  return apiClient.post('listings/', formData);
 };
 
 // Specs metadata for dynamic form fields per category
@@ -92,9 +85,7 @@ export const fetchUserListings = () => {
 };
 
 export const updateListing = (id, formData) => {
-  return apiClient.patch(`listings/${id}/`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  });
+  return apiClient.patch(`listings/${id}/`, formData);
 };
 
 export const deleteListing = (id) => {
