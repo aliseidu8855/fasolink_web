@@ -25,8 +25,8 @@ const timeAgo = (isoString) => {
   return diffW + 'w';
 };
 
-// Accept optional compact flag and showNegotiable flag if listing supports it
-const ListingCard = ({ listing, compact = false }) => {
+// Accept optional compact flag and minimal flag to reduce details in dense grids
+const ListingCard = ({ listing, compact = false, minimal = false }) => {
   const { t } = useTranslation(['listing','common']);
   const imageUrl = (listing.images && listing.images.length > 0)
     ? listing.images[0].image
@@ -34,10 +34,11 @@ const ListingCard = ({ listing, compact = false }) => {
 
   const badges = [];
   if (listing.is_featured) badges.push({ key:'featured', label: t('listing:badgeFeatured','Featured'), type:'featured' });
-  // within 48h -> new
+  // NEW badge: only if created < 10 hours ago
   if (listing.created_at) {
     const created = new Date(listing.created_at).getTime();
-    if (Date.now() - created < 1000 * 60 * 60 * 48) {
+    const TEN_HOURS_MS = 10 * 60 * 60 * 1000;
+    if (Date.now() - created < TEN_HOURS_MS) {
       badges.push({ key:'new', label: t('listing:badgeNew','New'), type:'new' });
     }
   }
@@ -46,8 +47,9 @@ const ListingCard = ({ listing, compact = false }) => {
   const relative = listing.created_at ? timeAgo(listing.created_at) : '';
   const sellerRating = listing.seller_rating;
 
+  const cardClass = `listing-card${compact ? ' compact' : ''}${minimal ? ' minimal' : ''}`;
   return (
-    <Link to={`/listings/${listing.id}`} className={`listing-card${compact ? ' compact' : ''}`} aria-label={listing.title}>
+    <Link to={`/listings/${listing.id}`} className={cardClass} aria-label={listing.title}>
       {badges.length > 0 && (
         <div className="lc-badges" aria-label="badges">
           {badges.map(b => (
@@ -64,12 +66,14 @@ const ListingCard = ({ listing, compact = false }) => {
           <span className="lc-price">{formatPrice(listing.price)}</span>
           <span className="lc-currency">{t('listing:priceCurrency')}</span>
         </div>
-        {listing.location && <div className="lc-location" title={listing.location}>{listing.location}</div>}
-        <div className="lc-meta">
-          {relative && <span className="lc-time" aria-label="time">{relative}</span>}
-          {relative && sellerRating && <span className="lc-dot" />}
-          {sellerRating && <span className="lc-rating" aria-label={t('listing:sellerRating','Seller rating')}>{Number(sellerRating).toFixed(1)}</span>}
-        </div>
+        {!minimal && listing.location && <div className="lc-location" title={listing.location}>{listing.location}</div>}
+        {!minimal && (
+          <div className="lc-meta">
+            {relative && <span className="lc-time" aria-label="time">{relative}</span>}
+            {relative && sellerRating && <span className="lc-dot" />}
+            {sellerRating && <span className="lc-rating" aria-label={t('listing:sellerRating','Seller rating')}>{Number(sellerRating).toFixed(1)}</span>}
+          </div>
+        )}
       </div>
     </Link>
   );

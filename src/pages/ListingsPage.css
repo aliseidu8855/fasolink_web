@@ -226,3 +226,21 @@
 }
 
 /* Dark mode overrides removed intentionally (temporary light-only mode) */
+
+/* Results grid: 3 columns on mobile, 6 on desktop */
+.listings-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  align-items: stretch;
+}
+@media (min-width: 1024px) {
+  .listings-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+  }
+}
+/* Slightly tighter when compact/minimal cards are used */
+.listings-grid.listings-grid-compact {
+  gap: 0.65rem;
+}

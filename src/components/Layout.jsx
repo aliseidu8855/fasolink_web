@@ -1,8 +1,6 @@
 import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom'; // Import useLocation
 // Replaced legacy Header with new NavBar implementation
-import Header from './Header';
-import { useScroll } from '../hooks/useScroll';
 import NavBar from './navigation/NavBar';
 import Footer from './Footer';
 import MobileBottomNav from './navigation/MobileBottomNav';
@@ -19,11 +17,10 @@ const Layout = () => {
   // The messages page handles its own layout, so we don't apply padding
   const applyMainPadding = !location.pathname.startsWith('/messages');
 
-  const { isScrolled } = useScroll();
   return (
     <div>
       <a href="#main-content" className="skip-link">Skip to content</a>
-      <NavBar isScrolled={isScrolled} />
+      <NavBar />
       <main id="main-content" style={{ paddingTop: applyMainPadding ? '58px' : '0', paddingBottom: '64px' }}>
         <Outlet />
       </main>

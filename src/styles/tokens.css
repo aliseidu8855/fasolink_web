@@ -1,0 +1,156 @@
+/* Design Tokens: colors, typography, spacing, radii, shadows, z-index, and component metrics */
+
+:root {
+  /* Brand palette */
+  --brand-ink: #1A1A1A;
+  --brand-teal: #77ACB7;
+  --brand-peach: #F8B097;
+  --brand-green: #3FC495;
+  --brand-ink-rgb: 26,26,26;
+  --brand-teal-rgb: 119,172,183;
+  --brand-peach-rgb: 248,176,151;
+  --brand-green-rgb: 63,196,149;
+
+  /* Heritage variants (optional accents) */
+  --brand-heritage-red: #DE0000;
+  --brand-heritage-red-rgb: 222,0,0;
+  --brand-forest: #006020;
+  --brand-forest-rgb: 0,96,32;
+  --brand-gold: #E7B200;
+  --brand-gold-rgb: 231,178,0;
+  --brand-clay: #C65A35;
+  --brand-clay-rgb: 198,90,53;
+  --brand-mint: #48B58A;
+  --brand-mint-rgb: 72,181,138;
+
+  /* Base grays and backgrounds */
+  --bg-primary: #F8F9FA;
+  --bg-surface: #FFFFFF;
+  --bg-muted: #F1F3F5;
+  --border-default: #E1E3E6;
+  --text-strong: #111111;
+  --text-primary: #222222;
+  --text-secondary: #555555;
+  --text-faint: #777777;
+
+  /* Semantic color tokens */
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-muted: var(--bg-muted);
+  --color-border: var(--border-default);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-faint: var(--text-faint);
+
+  --color-brand: var(--brand-heritage-red);
+  --color-brand-rgb: var(--brand-heritage-red-rgb);
+  --color-brand-emphasis: #B80000;
+  --color-brand-hover: #C70000;
+  --color-accent: var(--brand-gold);
+  --color-accent-soft: #FFF6E0;
+  --color-accent-alt: var(--brand-mint);
+
+  --color-success: var(--brand-mint);
+  --color-danger: var(--brand-heritage-red);
+  --color-danger-bg: #FFE5E5;
+  --color-danger-border: #F5B3B3;
+
+  --color-link: var(--color-brand);
+  --color-link-hover: var(--color-brand-hover);
+  --color-cta-bg: var(--color-brand);
+  --color-cta-text: #FFFFFF;
+  --color-focus-ring: var(--color-brand);
+  --color-divider: #E4E7EB;
+  --color-bg-elevated: #FFFFFF;
+  --color-bg-alt: #FAFCFD;
+  --color-bg-danger-soft: #FFF1F1;
+  --color-bg-brand-soft: #FFF1F1;
+
+  /* Surfaces (neutral rgba helpers) */
+  --surface-muted: rgba(0,0,0,0.035);
+  --surface-soft: rgba(0,0,0,0.055);
+  --border-soft: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.14);
+
+  /* Skeletons */
+  --skeleton-base: #ECEDEF;
+  --skeleton-highlight: #F5F6F7;
+  --skeleton-dark-base: #2A2F33;
+  --skeleton-dark-highlight: #3A4147;
+
+  /* Radii, shadows, transitions */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 10px -2px rgba(0,0,0,0.12);
+  --shadow-lg: 0 8px 28px -6px rgba(0,0,0,0.18);
+  --transition-base: .25s cubic-bezier(.4,.0,.2,1);
+
+  /* Spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  /* Typography */
+  --font-whyte: 'Whyte', 'Inter', 'Amazon Ember', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-sans: var(--font-whyte);
+
+  --fs-2xs: 0.6875rem; /* 11px */
+  --fs-xs: 0.75rem;    /* 12px */
+  --fs-sm: 0.8125rem;  /* 13px */
+  --fs-base: 0.875rem; /* 14px */
+  --fs-md: 0.9375rem;  /* 15px */
+  --fs-lg: 1rem;       /* 16px */
+  --fs-xl: 1.125rem;   /* 18px */
+  --fs-2xl: 1.25rem;   /* 20px */
+  --fs-3xl: 1.5rem;    /* 24px */
+  --fs-4xl: 1.75rem;   /* 28px */
+  --fs-5xl: 2rem;      /* 32px */
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+
+  --lh-tight: 1.15;
+  --lh-snug: 1.25;
+  --lh-normal: 1.4;
+  --lh-relaxed: 1.55;
+  --ls-tight: -0.015em;
+
+  /* Buttons */
+  --btn-font-sm: var(--fs-xs);
+  --btn-font-md: var(--fs-base);
+  --btn-radius: 8px;
+  --btn-pad-y-sm: 0.4rem;
+  --btn-pad-x-sm: 0.85rem;
+  --btn-pad-y-md: 0.55rem;
+  --btn-pad-x-md: 1rem;
+  --btn-gap: 0.5rem;
+
+  /* Layout metrics */
+  --container-max: 1200px;
+  --nav-height: 58px;
+  --nav-height-compact: 48px;
+  --nav-action-btn-gap: 0.45rem;
+  --nav-search-max: 540px;
+
+  /* Z-index layers */
+  --z-nav: 1000;
+  --z-dropdown: 1100;
+  --z-toast: 1200;
+  --z-modal: 1300;
+  --z-overlay: 1400;
+}
+
+html { color-scheme: light; }

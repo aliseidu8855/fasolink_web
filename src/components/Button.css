@@ -23,15 +23,15 @@
 }
 
 .btn-primary { /* Solid dark */
-  background: var(--brand-ink);
-  color:#fff;
-  border-color: var(--brand-ink);
+  background: var(--color-cta-bg);
+  color: var(--color-cta-text);
+  border-color: var(--color-cta-bg);
 }
 
-.btn-secondary { /* Teal outline */
+.btn-secondary { /* Outline accent */
   background: transparent;
-  color: var(--brand-teal);
-  border-color: var(--brand-teal);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
 }
 
 .btn-success { /* Green solid */
@@ -46,14 +46,20 @@
   border-color: rgba(var(--brand-peach-rgb),0.4);
 }
 
+.btn-ghost { /* Text button */
+  background: transparent;
+  color: var(--color-text-primary);
+  border-color: transparent;
+}
+
 /* Interaction states */
-.btn-primary:hover, .btn-success:hover { box-shadow: 0 2px 6px -2px rgba(0,0,0,0.25); }
-.btn-primary:hover { background: rgba(var(--brand-ink-rgb),0.92); }
-.btn-secondary:hover { background: rgba(var(--brand-teal-rgb),0.12); }
+.btn-primary:hover, .btn-success:hover { box-shadow: var(--shadow-xs); }
+.btn-primary:hover { background: var(--color-brand-hover); border-color: var(--color-brand-hover); }
+.btn-secondary:hover { background: var(--color-accent-soft); }
 .btn-success:hover { background:#35ad83; }
 .btn-neutral:hover { background: rgba(var(--brand-peach-rgb),0.28); }
 .btn:active { transform: translateY(1px); }
-.btn:focus-visible { outline:2px solid var(--brand-teal); outline-offset:2px; }
+.btn:focus-visible { outline:2px solid var(--color-focus-ring); outline-offset:2px; }
 
 /* Compact variant utility (optional future) */
 .btn.is-compact { padding: var(--btn-pad-y-sm,0.35rem) var(--btn-pad-x-sm,0.7rem); font-size: var(--fs-xs); min-height:30px; }

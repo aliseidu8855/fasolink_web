@@ -162,7 +162,7 @@ export default function ListingsPage() {
           )}
           <div className={`listings-grid ${view==='compact' ? 'listings-grid-compact' : ''}`} role="list" aria-busy={loading}>
             {listings.map(l => (
-              <ListingCard key={l.id} listing={l} compact={view==='compact'} role="listitem" />
+              <ListingCard key={l.id} listing={l} compact={view==='compact'} minimal={view==='compact'} role="listitem" />
             ))}
           </div>
           {loading && <p className="lp-loading-text">{t('listingsPage.loading','Loading…')}</p>}

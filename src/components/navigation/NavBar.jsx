@@ -6,11 +6,11 @@ import SearchBar from './SearchBar';
 import CategoryMenu from './CategoryMenu';
 import './NavBar.css';
 
-// High-level orchestration component
-const NavBar = ({ isScrolled }) => {
+// High-level orchestration component (static header; no scroll compaction)
+const NavBar = () => {
   const { isAuthenticated } = useAuth();
   return (
-    <header className={`nav-root ${isScrolled ? 'scrolled' : ''}`}>      
+    <header className="nav-root">      
       <div className="nav-inner container">
         <div className="nav-left">
           <NavBrand />

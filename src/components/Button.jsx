@@ -1,12 +1,11 @@
 import React from 'react';
-import './Button.css'; // We'll create this CSS file next
+import './Button.css';
 
-const Button = ({ children, onClick, variant = 'primary', type = 'button' }) => {
-  // variant can be 'primary', 'secondary', 'success', 'neutral'
-  const className = `btn btn-${variant}`;
-  
+// Supported variants: 'primary' | 'secondary' | 'ghost' | 'success' | 'neutral'
+const Button = ({ children, onClick, variant = 'primary', type = 'button', className = '' }) => {
+  const classes = `btn btn-${variant} ${className}`.trim();
   return (
-    <button type={type} className={className} onClick={onClick}>
+    <button type={type} className={classes} onClick={onClick}>
       {children}
     </button>
   );

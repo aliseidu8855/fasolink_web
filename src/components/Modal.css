@@ -8,12 +8,12 @@
   align-items:center;
   justify-content:center;
   padding: 2vh 1rem;
-  animation: overlayFade .25s ease;
+  
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
 }
 
-@keyframes overlayFade { from { opacity:0; } to { opacity:1; } }
+/* overlayFade removed for static design */
 
 /* Content container */
 .modal-content {
@@ -29,7 +29,7 @@
   display:flex;
   flex-direction:column;
   gap:0.85rem;
-  animation: modalFade .22s ease;
+  
   max-height: 82vh;
   overflow: hidden;
   overscroll-behavior: contain;
@@ -47,7 +47,7 @@
     padding: clamp(.9rem, 3.2vw, 1.25rem) clamp(.9rem, 3.2vw, 1.25rem) calc(1.25rem + env(safe-area-inset-bottom));
     border:1px solid rgba(0,0,0,0.15);
     box-shadow: 0 -2px 12px -4px rgba(0,0,0,0.18), 0 0 24px -6px rgba(0,0,0,0.28);
-    animation: slideUp .32s cubic-bezier(.33,.85,.45,.99);
+    
     gap: clamp(.75rem, 2.2vw, 1rem);
   }
   @keyframes slideUp { from { transform: translateY(18px); opacity:0; } to { transform:translateY(0); opacity:1; } }
@@ -58,7 +58,7 @@
   .modal-content button.btn { width:100%; font-size: var(--fs-sm); padding:.85rem 1rem; }
 }
 
-@keyframes modalFade { from { opacity:0; } to { opacity:1; } }
+/* modalFade removed */
 
 .modal-content > *:first-child { margin-top: .25rem; }
 
