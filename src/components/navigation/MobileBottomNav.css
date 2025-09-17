@@ -6,6 +6,7 @@
 .mbn-btn:focus-visible { outline:2px solid var(--color-accent,#2563eb); outline-offset:2px; border-radius:10px; }
 .mbn-btn.active, .mbn-btn:hover { color: var(--color-text,#111); }
 .mbn-label { line-height:1; }
+.mbn-badge { position:absolute; top:-3px; right:-6px; min-width:16px; height:16px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; background: var(--brand-peach); color:#1a1a1a; border-radius:999px; padding:0 4px; border:1px solid rgba(0,0,0,0.05); }
 .post-slot { flex:1.15; }
 .mbn-post-icon { display:none; }
 .post-btn { top:-2px; position:relative; background: var(--brand-ink); color:#fff; border-radius:16px; padding:4px 12px; gap:4px; }

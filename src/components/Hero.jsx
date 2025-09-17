@@ -1,29 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import './Hero.css';
 import { useTranslation } from 'react-i18next';
-import { fetchCategories, fetchListings } from '../services/api';
+import { fetchListings } from '../services/api';
 import { Link } from 'react-router-dom';
-import SearchBar from './navigation/SearchBar.jsx';
 
 // The hero now focuses on quick discovery: prominent search, quick category pills, and trust stats.
 const Hero = () => {
   const { t } = useTranslation(['home','categories']);
-  const [topCategories, setTopCategories] = useState([]);
   const [featured, setFeatured] = useState([]);
   // Simple runtime flag: set to false to completely disable fetching & rendering featured cards
   const SHOW_FEATURED = false; // flip to true when ready for paid placement rollout
 
   useEffect(() => {
-    // Load a few categories for hero pills
-    const loadCats = async () => {
-      try {
-        const res = await fetchCategories();
-        setTopCategories(res.data.slice(0, 6));
-      } catch {
-        // ignore category load error; UI degrades gracefully
-      }
-    };
-    loadCats();
+    // (categories for hero pills removed along with hero search)
 
     if (SHOW_FEATURED) {
       // Load a pool of latest listings and pick 2 random for hero feature (lightweight)
@@ -42,16 +31,7 @@ const Hero = () => {
 
   }, [SHOW_FEATURED]);
 
-  const translateCategoryName = (cat) => {
-    if (!cat) return '';
-    // Expect backend category to have a slug or name; build key categories:slug
-    const keyBase = cat.slug || (cat.name ? cat.name.toLowerCase().replace(/[^a-z0-9]+/g,'-') : null);
-    if (!keyBase) return cat.name || '';
-    const key = `categories:${keyBase}`;
-    const translated = t(key);
-    // i18next returns key if missing; in that case fallback to original name
-    return translated === key ? (cat.name || keyBase) : translated;
-  };
+  // helper removed with hero categories
 
   return (
     <section className="hero-section" aria-labelledby="home-hero-heading">
@@ -67,12 +47,7 @@ const Hero = () => {
             <a className="hero-cta-btn primary" href="/listings/new">{t('home:hero.postAd')}</a>
             <a className="hero-cta-btn secondary" href="/browse">{t('home:hero.browse')} →</a>
           </div> */}
-          <div className="hero-embedded-search-wrapper" data-mobile-slot>
-            {/* <div className="hero-search-label">{t('home:hero.searchLabel')}</div> */}
-            <div className="hero-embedded-search hero-search-surface">
-              <SearchBar />
-            </div>
-          </div>
+          {/* Search removed from hero; keep discovery light here */}
 
           {/* {topCategories.length > 0 && (
             <div className="quick-categories" aria-label={t('home:hero.quickBrowse')}>

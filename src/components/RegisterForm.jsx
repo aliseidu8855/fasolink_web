@@ -122,13 +122,9 @@ const RegisterForm = () => {
           </button>
         </div>
       </div>
-      <button type="submit" className="btn btn-auth-primary" disabled={submitting} style={{marginTop:'0.25rem'}}>
+      <button type="submit" className="btn btn-auth-primary" disabled={submitting}>
         {submitting ? t('common:loading','Loading...') : t('auth:register')}
       </button>
-      <div className="auth-divider" aria-hidden="true"></div>
-      <div className="auth-alt-actions">
-        <button type="button" className="auth-link-btn" data-auth-switch="login">{t('auth:haveAccount','Already have an account? Sign in')}</button>
-      </div>
     </form>
     </div>
   );

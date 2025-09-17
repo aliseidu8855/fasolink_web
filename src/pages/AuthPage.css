@@ -1,27 +1,28 @@
-.auth-page-wrapper { min-height:100dvh; display:flex; align-items:flex-start; justify-content:center; background: var(--color-bg-primary); padding: clamp(.75rem,1.8vw,1.25rem) .75rem 2rem; }
+.auth-page-wrapper { min-height:100dvh; display:flex; align-items:flex-start; justify-content:center; background: var(--color-bg-primary); padding: clamp(.5rem,1.2vw,.9rem) .6rem 1.2rem; }
+@media (max-width:640px){ .auth-page-wrapper { padding-top: var(--nav-height); } }
 @media (min-width:800px){ .auth-page-wrapper { align-items:center; } }
-.auth-shell { width:100%; max-width:460px; background:#fff; border:1px solid #d5d9d9; border-radius:14px; padding:1.1rem 1.15rem 1.35rem; box-shadow:0 3px 14px -4px rgba(0,0,0,0.14), 0 8px 26px -6px rgba(0,0,0,0.18); position:relative; }
-@media (max-width:640px){ .auth-shell { border-radius:22px 22px 0 0; position:fixed; left:0; right:0; bottom:0; margin:0 auto; max-width:100%; height: calc(100dvh - 1rem); overflow:auto; padding:.9rem .85rem 1.25rem; box-shadow:0 -2px 10px -4px rgba(0,0,0,0.15), 0 0 18px -6px rgba(0,0,0,0.25); } }
+.auth-shell { width:100%; max-width:460px; background:#fff; border:1px solid #d5d9d9; border-radius:14px; padding:.65rem .7rem .8rem; box-shadow:0 3px 14px -4px rgba(0,0,0,0.14), 0 8px 26px -6px rgba(0,0,0,0.18); position:relative; }
+@media (max-width:640px){ .auth-shell { border-radius:22px 22px 0 0; position:fixed; left:0; right:0; top: var(--nav-height); bottom:0; margin:0 auto; max-width:100%; height: calc(100dvh - var(--nav-height)); overflow:auto; padding:.55rem .5rem .7rem; box-shadow:0 -2px 10px -4px rgba(0,0,0,0.15), 0 0 18px -6px rgba(0,0,0,0.25); } }
 @media (max-width:640px){ .sheet-handle { display:flex; justify-content:center; padding:.2rem 0 .4rem; } .sheet-handle span { width:46px; height:5px; background:#d6d9dc; border-radius:4px; } }
 .sheet-handle { display:none; }
-.auth-title { font-size:1.05rem; font-weight:700; letter-spacing:-0.25px; margin:0 0 .75rem; text-align:left; }
-.social-row { display:flex; gap:.55rem; margin-bottom:.75rem; }
-.social-btn { flex:1; display:flex; align-items:center; justify-content:center; gap:.45rem; font-weight:600; font-size:.72rem; padding:.55rem .6rem; border-radius:9px; border:1px solid #c8cccf; background:#fff; cursor:pointer; transition: background .2s,border-color .2s,box-shadow .2s; }
+.auth-title { font-size:1.02rem; font-weight:700; letter-spacing:-0.25px; margin:0 0 .45rem; text-align:left; }
+.social-row { display:flex; gap:.4rem; margin-bottom:.5rem; }
+.social-btn { flex:1; display:flex; align-items:center; justify-content:center; gap:.35rem; font-weight:600; font-size:.71rem; padding:.42rem .5rem; border-radius:9px; border:1px solid #c8cccf; background:#fff; cursor:pointer; transition: background .2s,border-color .2s,box-shadow .2s; }
 .social-btn .ico { font-size:1rem; line-height:1; }
 .social-btn.google:hover { background:#f8f9f9; }
 .social-btn.facebook { background:#214b96; border-color:#214b96; color:#fff; }
 .social-btn.facebook:hover { background:#1d4285; }
-.separator { position:relative; text-align:center; font-size:.62rem; font-weight:500; text-transform:uppercase; letter-spacing:.4px; color:#6a7075; margin: .55rem 0 .8rem; }
+.separator { position:relative; text-align:center; font-size:.6rem; font-weight:500; text-transform:uppercase; letter-spacing:.4px; color:#6a7075; margin: .35rem 0 .5rem; }
 .separator:before, .separator:after { content:""; position:absolute; top:50%; width:35%; height:1px; background: linear-gradient(90deg,rgba(0,0,0,0.08),rgba(0,0,0,0.15)); }
 .separator:before { left:0; }
 .separator:after { right:0; }
 .auth-hint { background:#fff7f8; border:1px solid #ffd7dd; color:#7a1020; font-size:.72rem; padding:.55rem .65rem; border-radius:8px; margin:.35rem 0 .75rem; line-height:1.35; }
 .form.scroll-area { padding:0; background:transparent; box-shadow:none; border:none; }
 .form.scroll-area .auth-panel { background:transparent; border:none; box-shadow:none; padding:0; }
-.switch-line { font-size:.7rem; margin:.75rem 0 .2rem; text-align:center; }
+.switch-line { font-size:.68rem; margin:.55rem 0 .2rem; text-align:center; }
 .linkish { background:none; border:none; color: var(--color-link); font-weight:600; cursor:pointer; padding:0; }
 .linkish:hover { text-decoration:underline; }
-.terms-line { font-size:.55rem; text-align:center; line-height:1.25; color:#6b7075; margin-top:.75rem; }
+.terms-line { font-size:.55rem; text-align:center; line-height:1.25; color:#6b7075; margin-top:.4rem; }
 .policy-link { color: var(--color-link); font-weight:600; }
 .policy-link:hover { text-decoration:underline; }
 /* Ensure primary auth button spans full width */

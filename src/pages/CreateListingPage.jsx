@@ -7,53 +7,14 @@ import Stepper from '../components/Stepper';
 import ImageUploader from '../components/ImageUploader';
 import { BF_LOCATIONS } from '../data/locations.js';
 import './CreateListingPage.css';
-
-const PRIMARY_CATEGORIES = ['Phones','Cars','Real Estate','Electronics'];
-// Map UI/spec category names to backend Category.name values for submission
-const BACKEND_CATEGORY_NAME_MAP = {
-  // Backend does not have a separate "Phones" category; map to Electronics
-  'Phones': 'Electronics',
-};
-// Temporary frontend hierarchy mapping (leaf names must match backend category names)
-// Extend/adjust when real sub-category data is available.
-const CATEGORY_HIERARCHY = {
-  Phones: {
-    children: {
-      'Smartphones': { leaf: true, mapsTo: 'Phones' },
-      'Accessories': { leaf: true, mapsTo: 'Phones' }
-    }
-  },
-  Cars: {
-    children: {
-      'Sedans': { leaf: true, mapsTo: 'Cars' },
-      'SUVs': { leaf: true, mapsTo: 'Cars' },
-      'Trucks': { leaf: true, mapsTo: 'Cars' }
-    }
-  },
-  'Real Estate': {
-    children: {
-      'Apartments': { leaf: true, mapsTo: 'Real Estate' },
-      'Houses': { leaf: true, mapsTo: 'Real Estate' },
-      'Land': { leaf: true, mapsTo: 'Real Estate' }
-    }
-  },
-  Electronics: {
-    children: {
-      'Computers': { leaf: true, mapsTo: 'Electronics' },
-      'TV & Video': { leaf: true, mapsTo: 'Electronics' },
-      'Audio': { leaf: true, mapsTo: 'Electronics' }
-    }
-  }
-};
+// Categories are now loaded dynamically from the backend and selected by id.
 const STEP_KEYS = ['category','core','specs','review'];
 
 export default function CreateListingPage(){
   const { t } = useTranslation(['createListing','common']);
   const nav = useNavigate();
   const [allCats,setAllCats] = useState([]);
-  const [catName,setCatName] = useState('');
-  const [catPath,setCatPath] = useState([]); // navigation stack
-  const [catFocusIndex,setCatFocusIndex] = useState(0); // keyboard focus within visible nodes
+  const [selectedCategoryId,setSelectedCategoryId] = useState(null);
   const [step,setStep]=useState('category');
   const [title,setTitle]=useState('');
   const [price,setPrice]=useState('');
@@ -75,7 +36,20 @@ export default function CreateListingPage(){
   const firstErrorRef = useRef(null);
 
   useEffect(()=>{ fetchCategories().then(r=> setAllCats(r.data)); },[]);
-  useEffect(()=>{ if(catName){ fetchSpecsMetadata(catName).then(r=> setSpecMeta(r.data.specs||[])).catch(()=> setSpecMeta([])); } else setSpecMeta([]); },[catName]);
+  // Load specs metadata for selected category name if available; otherwise none
+  useEffect(()=>{
+    if(selectedCategoryId){
+      const cat = allCats.find(c=> c.id===selectedCategoryId);
+      const name = cat?.name;
+      if(name){
+        fetchSpecsMetadata(name).then(r=> setSpecMeta(r.data.specs||[])).catch(()=> setSpecMeta([]));
+      } else {
+        setSpecMeta([]);
+      }
+    } else {
+      setSpecMeta([]);
+    }
+  },[selectedCategoryId, allCats]);
   // Load distinct locations once (empty query) when entering core step or on mount
   // Build curated list from BF_LOCATIONS (region + towns) instead of backend distinct list
   // (curated list derived directly where needed, no variable retained)
@@ -92,69 +66,15 @@ export default function CreateListingPage(){
     }
   },[selectedTown, selectedRegionCode]);
 
-  // primaryCats no longer directly used; hierarchy uses static mapping
-
-  // Build visible node list depending on path
-  const atRoot = catPath.length === 0;
-  let visibleNodes = [];
-  if(atRoot){
-    visibleNodes = PRIMARY_CATEGORIES.map(name=> ({ label: name, expandable: !!CATEGORY_HIERARCHY[name], key: name }));
-  } else {
-    const top = catPath[catPath.length-1];
-    const node = CATEGORY_HIERARCHY[top];
-    if(node && node.children){
-      visibleNodes = Object.entries(node.children).map(([label, cfg])=> ({ label, leaf: !!cfg.leaf, mapsTo: cfg.mapsTo || label, key: label }));
-    }
-  }
-
-  const handleCategoryActivate = (node) => {
-    if(atRoot){
-      // Go deeper if expandable, else treat as leaf selection
-      if(CATEGORY_HIERARCHY[node.key]){
-        setCatPath(p=> [...p, node.key]);
-        setCatFocusIndex(0);
-      } else {
-        setCatName(node.label);
-      }
-    } else {
-      if(node.leaf){
-        setCatName(node.mapsTo);
-      } else {
-        // Future deeper levels
-        setCatPath(p=> [...p, node.key]);
-        setCatFocusIndex(0);
-      }
-    }
-  };
-
-  const goBackCategory = () => {
-    if(catPath.length===0) return; setCatPath(p=> p.slice(0,-1)); setCatName(''); setCatFocusIndex(0);
-  };
-
-  const onCatKeyDown = (e) => {
-    if(!['ArrowRight','ArrowLeft','ArrowUp','ArrowDown','Home','End','Enter',' '].includes(e.key)) return;
-    e.preventDefault();
-    const max = visibleNodes.length -1;
-    if(e.key==='ArrowRight' || e.key==='ArrowDown') setCatFocusIndex(i=> i>=max?0:i+1);
-    else if(e.key==='ArrowLeft' || e.key==='ArrowUp') setCatFocusIndex(i=> i<=0?max:i-1);
-    else if(e.key==='Home') setCatFocusIndex(0);
-    else if(e.key==='End') setCatFocusIndex(max);
-    else if(e.key==='Enter' || e.key===' '){
-      const node = visibleNodes[catFocusIndex];
-      if(node) handleCategoryActivate(node);
-    }
-  };
-  // current selected category id resolved via backend name mapping below
-  // Resolve backend category ID using mapping (so phones specs still load while submission uses Electronics id)
-  const backendCatName = BACKEND_CATEGORY_NAME_MAP[catName] || catName;
-  const resolvedCatId = allCats.find(c => c.name === backendCatName)?.id;
+  // Flat list of categories from backend
+  const visibleCategories = allCats;
 
   const requiredSpecsValid = specMeta.filter(s=> s.required).every(s=> {
     const v = specValues[s.key];
     return (v!==undefined && v!==null && v!=='' && !(typeof v==='string' && v.trim()===''));
   });
   const canNext = step==='category'
-    ? !!catName
+    ? !!selectedCategoryId
     : step==='core'
       ? (title.trim().length>4 && price && loc && desc.trim().length>0)
       : step==='specs'
@@ -172,9 +92,9 @@ export default function CreateListingPage(){
       const missing = specMeta.find(s=> s.required && (specValues[s.key]===undefined || specValues[s.key]===''));
       if(missing) return missing.name + ' ' + t('createListing:required');
     }
-    if(step==='category' && !catName) return t('createListing:category') + ' ' + t('createListing:required');
+    if(step==='category' && !selectedCategoryId) return t('createListing:category') + ' ' + t('createListing:required');
     return '';
-  },[step, title, price, loc, catName, specMeta, specValues, t]);
+  },[step, title, price, loc, selectedCategoryId, specMeta, specValues, t]);
 
   const handleAttemptNext = () => {
     if(canNext){ goNext(); return; }
@@ -222,7 +142,7 @@ export default function CreateListingPage(){
       setStep('review');
       return;
     }
-    if(!resolvedCatId){
+    if(!selectedCategoryId){
       setFieldErrors({ category: t('createListing:required') });
       setStep('category');
       return;
@@ -238,8 +158,8 @@ export default function CreateListingPage(){
       fd.append('title', title);
       fd.append('price', price);
       fd.append('description', desc);
-      fd.append('location', loc);
-  fd.append('category', resolvedCatId || '');
+    fd.append('location', loc);
+    fd.append('category', selectedCategoryId || '');
       fd.append('negotiable', negotiable?'true':'false');
       if (contactPhone && contactPhone.trim()) {
         fd.append('contact_phone', contactPhone.trim());
@@ -308,31 +228,26 @@ export default function CreateListingPage(){
       {step==='category' && (
         <section className="cl-panel" aria-labelledby="cl-cat-h">
           <div className="cl-cat-bar">
-            {catPath.length>0 && <button type="button" className="cl-back-btn" onClick={goBackCategory}>{t('createListing:back','Back')}</button>}
-            <h2 id="cl-cat-h" className="cl-cat-heading">{atRoot ? t('createListing:chooseCategory','Choose a category') : catPath[catPath.length-1]}</h2>
+            <h2 id="cl-cat-h" className="cl-cat-heading">{t('createListing:chooseCategory','Choose a category')}</h2>
           </div>
-          <ul className="cl-cat-grid" role="listbox" aria-activedescendant={`cat-node-${catFocusIndex}`} tabIndex={0} onKeyDown={onCatKeyDown}>
-            {visibleNodes.map((node, idx)=> {
-              const selected = catName && (node.mapsTo===catName || node.label===catName);
-              const expandable = !node.leaf && (atRoot || !node.leaf);
+          <ul className="cl-cat-grid" role="listbox">
+            {visibleCategories.map((c)=> {
+              const selected = selectedCategoryId === c.id;
               return (
-                <li key={node.key} id={`cat-node-${idx}`}>
+                <li key={c.id}>
                   <button
                     type="button"
                     className={`cl-cat-btn${selected?' selected':''}`}
-                    data-expandable={expandable||undefined}
-                    onClick={()=> handleCategoryActivate(node)}
+                    onClick={()=> setSelectedCategoryId(c.id)}
                     aria-selected={selected||undefined}
-                    tabIndex={idx===catFocusIndex?0:-1}
                   >
-                    <span className="cl-cat-label">{node.label}</span>
-                    {expandable && <span className="cl-cat-chevron" aria-hidden>›</span>}
+                    <span className="cl-cat-label">{c.name}</span>
                   </button>
                 </li>
               );
             })}
           </ul>
-          {catName && <div className="cl-cat-selection-preview">{t('createListing:category','Category')}: <strong>{catName}</strong></div>}
+          {selectedCategoryId && <div className="cl-cat-selection-preview">{t('createListing:category','Category')}: <strong>{allCats.find(c=> c.id===selectedCategoryId)?.name}</strong></div>}
         </section>
       )}
       {step==='core' && (
@@ -437,7 +352,7 @@ export default function CreateListingPage(){
             </div>
           ) : (
             <div className="cl-summary">
-              <p><strong>{t('createListing:category')}:</strong> {catName}</p>
+              <p><strong>{t('createListing:category')}:</strong> {allCats.find(c=> c.id===selectedCategoryId)?.name || ''}</p>
               <p><strong>{t('createListing:title')}:</strong> {title}</p>
               <p><strong>{t('createListing:price')}:</strong> {price}</p>
               <p><strong>{t('createListing:location')}:</strong> {loc}</p>

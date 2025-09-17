@@ -96,7 +96,13 @@ const LocationDropdown = ({ open, onClose, anchorRef, onApply, currentValue, t }
 
   // Position panel relative to anchor (basic left align). Could add dynamic width adjustments later.
   const anchorRect = anchorRef.current?.getBoundingClientRect();
-  const style = anchorRect ? { position:'absolute', top: anchorRef.current.offsetHeight + 4, left:0 } : {};
+  const style = anchorRect ? {
+    position:'absolute',
+    top: anchorRef.current.offsetHeight + 4,
+    left: 0,
+    maxHeight: 380,
+    overflow: 'hidden'
+  } : {};
 
   const applyRegionOnly = (r) => {
     onApply(r, null, r.code);
@@ -107,8 +113,8 @@ const LocationDropdown = ({ open, onClose, anchorRef, onApply, currentValue, t }
 
   return (
     <div className="location-dropdown-root" style={style} ref={panelRef} role="dialog" aria-label={t?.('chooseLocation','Choose location')}>
-      <div className="location-dropdown-panel">
-        <div className="location-dropdown-col" role="listbox" aria-label={t?.('regions','Regions')}>
+      <div className="location-dropdown-panel" style={{maxHeight: 380, overflow: 'hidden'}}>
+        <div className="location-dropdown-col" role="listbox" aria-label={t?.('regions','Regions')} style={{maxHeight: 360, overflowY: 'auto'}}>
           {!townMode && (
             <div style={{padding:'6px 8px 4px'}}>
               <input
@@ -157,7 +163,7 @@ const LocationDropdown = ({ open, onClose, anchorRef, onApply, currentValue, t }
           )}
         </div>
         {townMode && (
-          <div className="location-dropdown-col" role="listbox" aria-label={t?.('towns','Towns')}>
+          <div className="location-dropdown-col" role="listbox" aria-label={t?.('towns','Towns')} style={{maxHeight: 360, overflowY: 'auto'}}>
             {towns.map((tw, idx) => {
               const active = idx === townFocus;
               return (
