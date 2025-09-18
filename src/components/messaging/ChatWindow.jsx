@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Skeleton, SkeletonAvatar } from '../ui/Skeleton';
 import { PaperclipIcon, SendIcon } from '../icons/Icons.jsx';
 import Spinner from '../ui/Spinner';
@@ -33,6 +33,12 @@ const ChatWindow = ({ conversationId }) => {
   const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
   const [atBottom, setAtBottom] = useState(true);
   const [newSinceScroll, setNewSinceScroll] = useState(0);
+  // Quick reply presets (localized or generic fallbacks)
+  const quickReplies = useMemo(() => ([
+    t('messaging:qr_isAvailable', 'Is this still available?'),
+    t('messaging:qr_bestPrice', 'What’s your best price?'),
+    t('messaging:qr_meetup', 'Can we meet to inspect?'),
+  ]), [t]);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -369,18 +375,34 @@ const ChatWindow = ({ conversationId }) => {
               ))
             )}
         <ListingSnippet listing={conversation.listing} />
-        {messages.map(msg => {
+        {/* Render messages with date separators */}
+        {messages.map((msg, idx) => {
           const statusLabel = msg.failed ? ` (${t('messaging:failedSend')})` : (msg.pending ? ' …' : '');
           const ts = msg.timestamp ? new Date(msg.timestamp) : null;
           const timeShort = ts ? ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
           const timeFull = ts ? ts.toLocaleString() : '';
+          const showDateSeparator = (() => {
+            if (!ts) return false;
+            if (idx === 0) return true;
+            const prev = messages[idx - 1];
+            if (!prev?.timestamp) return true;
+            const a = new Date(prev.timestamp);
+            return a.getFullYear() !== ts.getFullYear() || a.getMonth() !== ts.getMonth() || a.getDate() !== ts.getDate();
+          })();
+          const dateLabel = ts ? ts.toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' }) : '';
           return (
-            <div key={msg.id} className={`message-bubble-wrapper ${msg.sender === user?.username ? 'sent' : 'received'}`}>
-              <div 
+            <React.Fragment key={msg.id}>
+              {showDateSeparator && (
+                <div className="date-separator" role="separator" aria-label={dateLabel}>
+                  <span>{dateLabel}</span>
+                </div>
+              )}
+              <div className={`message-bubble-wrapper ${msg.sender === user?.username ? 'sent' : 'received'}`}>
+                <div 
                 className={`message-bubble ${msg.failed ? 'failed' : ''}`}
                 role="article"
                 aria-label={msg.sender === user?.username ? t('messaging:youSaid', { content: msg.content }) : t('messaging:userSaid', { user: msg.sender, content: msg.content })}
-              >
+                >
                 {msg.content}{statusLabel}
                 {Array.isArray(msg.attachments) && msg.attachments.length > 0 && (
                   <div className="attachments">
@@ -406,8 +428,9 @@ const ChatWindow = ({ conversationId }) => {
                 {msg.failed && (
                   <button type="button" className="retry-btn" onClick={() => retryMessage(msg)}>{t('messaging:retrySend')}</button>
                 )}
+                </div>
               </div>
-            </div>
+            </React.Fragment>
           );
         })}
         <div ref={messagesEndRef} />
@@ -419,6 +442,19 @@ const ChatWindow = ({ conversationId }) => {
           </button>
         </div>
       )}
+      {/* Quick reply chips */}
+      <div className="quick-replies" role="group" aria-label={t('messaging:quickReplies','Quick replies')}>
+        {quickReplies.map((q, i) => (
+          <button
+            type="button"
+            key={i}
+            className="quick-reply-chip"
+            onClick={() => setNewMessage(m => (m ? `${m} ${q}` : q))}
+          >
+            {q}
+          </button>
+        ))}
+      </div>
       <form className="message-input-area" onSubmit={handleSendMessage}>
         <button
           type="button"

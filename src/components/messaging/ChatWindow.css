@@ -109,3 +109,13 @@
 /* New messages chip that appears when scrolled up */
 .new-messages-chip { position: sticky; bottom: 64px; display:flex; justify-content:center; pointer-events:none; }
 .new-messages-chip button { pointer-events:auto; background:#0ea5e9; color:#fff; border:none; border-radius:999px; padding:.35rem .75rem; font-size:.75rem; box-shadow:0 6px 22px -6px rgba(14,165,233,.55); cursor:pointer; }
+
+/* Date separator between message days */
+.date-separator { display:flex; align-items:center; gap:.75rem; color:#64748b; font-size:.75rem; margin: .25rem 0; }
+.date-separator::before, .date-separator::after { content:""; height:1px; background:#e2e8f0; flex:1; }
+.date-separator span { background:#fff; padding:.1rem .5rem; border:1px solid #e2e8f0; border-radius:999px; }
+
+/* Quick reply chips row */
+.quick-replies { display:flex; flex-wrap: wrap; gap:.5rem; padding:.5rem 1rem 0; border-top:1px solid #f0f0f0; }
+.quick-reply-chip { background:#eef6ff; color:#075985; border:1px solid #bfdbfe; padding:.25rem .6rem; border-radius:999px; font-size:.78rem; cursor:pointer; }
+.quick-reply-chip:hover { filter:brightness(.95); }

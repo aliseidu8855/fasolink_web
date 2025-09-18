@@ -15,16 +15,18 @@ const Layout = () => {
   const location = useLocation(); // Get the current location
 
   // The messages page handles its own layout, so we don't apply padding
-  const applyMainPadding = !location.pathname.startsWith('/messages');
+  // Bring back NavBar on top for all routes, including /messages
+  const applyMainPadding = true;
+  const showNavBar = true;
+  const showFooter = !location.pathname.startsWith('/messages');
 
   return (
     <div>
-      <a href="#main-content" className="skip-link">Skip to content</a>
-      <NavBar />
+      {showNavBar && <NavBar />}
       <main id="main-content" style={{ paddingTop: applyMainPadding ? '58px' : '0', paddingBottom: '64px' }}>
         <Outlet />
       </main>
-  <Footer />
+  {showFooter && <Footer />}
   <MobileBottomNav />
       <InstallPWA />
       <Modal isOpen={isModalOpen} onClose={closeModal}>

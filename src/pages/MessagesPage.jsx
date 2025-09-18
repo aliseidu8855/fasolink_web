@@ -55,38 +55,7 @@ const MessagesPage = () => {
 
   return (
     <div className="messages-page-wrapper" data-mobile={isMobile}>
-      <div className="messages-topbar" role="banner">
-        {isMobile && (
-          <button
-            className="mt-menu-btn"
-            aria-label={sidebarOpen ? t('messaging:closeList') : t('messaging:openList')}
-            aria-expanded={sidebarOpen}
-            onClick={() => setSidebarOpen(o => !o)}
-          >
-            <span aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
-            </span>
-          </button>
-        )}
-        <div className="mt-left">
-          <a href="/" className="mt-home" aria-label={t('common:home','Home')}>
-            <span aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 11.5l9-8 9 8" />
-                <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10" />
-              </svg>
-            </span>
-          </a>
-          <h1 className="mt-title">{t('messaging:messages')}</h1>
-        </div>
-        <div className="mt-right">
-          {/* future actions */}
-        </div>
-      </div>
+      {/* Global NavBar is shown above; no custom top bar here */}
       <div className="messages-page-body">
         <div className={`messages-sidebar ${sidebarOpen ? 'open' : ''} ${isMobile ? 'mobile' : ''}`}>
           {isMobile && (
