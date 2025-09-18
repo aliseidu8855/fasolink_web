@@ -3,7 +3,7 @@ import { Skeleton, SkeletonAvatar } from '../ui/Skeleton';
 import { PaperclipIcon, SendIcon } from '../icons/Icons.jsx';
 import Spinner from '../ui/Spinner';
 import { useTranslation } from 'react-i18next';
-import { fetchConversationById, sendMessage, fetchConversationMessages, markConversationRead, MESSAGE_PAGE_SIZE } from '../../services/api';
+import { fetchConversationById, sendMessage, sendMessageMultipart, fetchConversationMessages, markConversationRead, MESSAGE_PAGE_SIZE } from '../../services/api';
 import { connectSocket } from '../../services/socket';
 import { useAuth } from '../../context/AuthContext';
 import ListingSnippet from './ListingSnippet';
@@ -20,6 +20,7 @@ const ChatWindow = ({ conversationId }) => {
   const [loadingOlder, setLoadingOlder] = useState(false);
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
+  const [pendingFiles, setPendingFiles] = useState([]); // FileList[] for attachments
   // Polling removed in favor of WebSockets
   const wsRef = useRef(null);
   const typingRef = useRef(false);
@@ -28,7 +29,10 @@ const ChatWindow = ({ conversationId }) => {
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const firstRenderRef = useRef(true);
+  const fileInputRef = useRef(null);
   const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
+  const [atBottom, setAtBottom] = useState(true);
+  const [newSinceScroll, setNewSinceScroll] = useState(0);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -49,6 +53,45 @@ const ChatWindow = ({ conversationId }) => {
     }
   };
 
+  // Persist/restore scroll position per-thread using sessionStorage
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el || !conversationId) return;
+    const key = `chat:scroll:${conversationId}`;
+    // Restore
+    try {
+      const saved = sessionStorage.getItem(key);
+      if (saved) {
+        const top = parseInt(saved, 10);
+        if (!isNaN(top)) el.scrollTop = top;
+      }
+    } catch { /* ignore */ }
+    const onScroll = () => {
+      try { sessionStorage.setItem(key, String(el.scrollTop)); } catch { /* ignore */ }
+    };
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, [conversationId]);
+
+  // Track if user is at/near bottom to decide whether to auto-scroll
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const threshold = 80; // px
+      const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+      const nowAtBottom = distanceFromBottom <= threshold;
+      setAtBottom(nowAtBottom);
+      if (nowAtBottom && newSinceScroll > 0) {
+        setNewSinceScroll(0);
+      }
+    };
+    el.addEventListener('scroll', onScroll, { passive: true });
+    // initialize once
+    onScroll();
+    return () => el.removeEventListener('scroll', onScroll);
+  }, [newSinceScroll]);
+
   // Load base conversation meta (listing, participants)
   const loadConversationMeta = useCallback(async () => {
     try {
@@ -66,6 +109,9 @@ const ChatWindow = ({ conversationId }) => {
     else setLoadingOlder(true);
     const container = scrollContainerRef.current;
     const prevScrollHeight = container ? container.scrollHeight : 0;
+    const hadSavedScroll = (targetPage === 1) ? (() => {
+      try { return !!sessionStorage.getItem(`chat:scroll:${conversationId}`); } catch { return false; }
+    })() : false;
     try {
       const res = await fetchConversationMessages(conversationId, targetPage);
       // Assuming backend returns {results, next, previous, count}
@@ -82,8 +128,9 @@ const ChatWindow = ({ conversationId }) => {
         else if (newMsgs.length < MESSAGE_PAGE_SIZE) setHasMore(false);
       }
       setPage(targetPage);
+      // Preserve anchor only when prepending older pages, or when no saved scroll exists
       setTimeout(() => {
-        if (container) {
+        if (container && (targetPage > 1 || !hadSavedScroll)) {
           const newScrollHeight = container.scrollHeight;
           container.scrollTop = newScrollHeight - prevScrollHeight + container.scrollTop;
         }
@@ -115,6 +162,7 @@ const ChatWindow = ({ conversationId }) => {
     initialMessagesCountRef.current = 0;
     setPage(1);
     setHasMore(true);
+    setPendingFiles([]);
     loadConversationMeta();
     loadMessagesPage(1).then(() => {
       // Only auto-scroll if there are already multiple messages (existing conversation)
@@ -139,7 +187,14 @@ const ChatWindow = ({ conversationId }) => {
             const exists = prev.some(x => x.id === m.id);
             return exists ? prev : [...prev, { ...m, sender: m.sender_id === user?.id ? user?.username : (conversation?.participants?.find(p => p !== user?.username) || 'user') }];
           });
-          setTimeout(() => scrollToBottom(), 30);
+          // Auto-scroll only if user is near bottom; otherwise increment the new message counter
+          setTimeout(() => {
+            if (atBottom) {
+              scrollToBottom();
+            } else {
+              setNewSinceScroll(c => c + 1);
+            }
+          }, 30);
         } else if (data?.event === 'typing') {
           // Show typing indicator for a short time when other user types
           setOtherTyping(true);
@@ -157,7 +212,7 @@ const ChatWindow = ({ conversationId }) => {
     });
     wsRef.current = socket;
   return () => { try { close(); } catch { /* ignore */ } };
-  }, [conversationId, user, conversation]);
+  }, [conversationId, user, conversation, atBottom]);
 
   // Mark read when messages change
   useEffect(() => { markReadIfNeeded(); }, [messages, markReadIfNeeded]);
@@ -167,24 +222,28 @@ const ChatWindow = ({ conversationId }) => {
   useEffect(() => {
     if (firstRenderRef.current) { prevCountRef.current = messages.length; firstRenderRef.current = false; return; }
     if (messages.length > prevCountRef.current) {
-      scrollToBottom();
+      if (atBottom) scrollToBottom();
     }
     prevCountRef.current = messages.length;
-  }, [messages]);
+  }, [messages, atBottom]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
     const trimmed = newMessage.trim();
-    if (!trimmed || sending) return;
+    if ((trimmed.length === 0 && pendingFiles.length === 0) || sending) return;
+    const files = pendingFiles;
     setNewMessage('');
+    setPendingFiles([]);
     const tempId = 'temp-' + Date.now();
-    const tempMessage = { id: tempId, content: trimmed, sender: user.username, pending: true };
+    const tempMessage = { id: tempId, content: trimmed, sender: user.username, pending: true, attachments: files.map((f, idx) => ({ id: `temp-att-${idx}`, name: f.name })) };
     setMessages(prev => [...prev, tempMessage]);
     setSending(true);
     setTimeout(() => scrollToBottom(), 10);
     try {
-      // Optimistic via REST, then WS will also deliver; to avoid duplicates we replace temp with server payload
-      const response = await sendMessage(conversationId, trimmed);
+      // Prefer multipart when sending files; allow empty content when only attachments
+      const response = files.length > 0
+        ? await sendMessageMultipart(conversationId, { content: trimmed, files })
+        : await sendMessage(conversationId, trimmed);
       setMessages(prev => prev.map(m => m.id === tempId ? response.data : m));
       setTimeout(() => scrollToBottom(), 20);
     } catch (err) {
@@ -255,13 +314,17 @@ const ChatWindow = ({ conversationId }) => {
   if (!conversation) return null;
 
   const otherParticipant = conversation.participants.find(p => p !== user?.username);
+  const isOtherOwner = conversation?.listing?.user === otherParticipant;
 
   return (
     <div className="chat-window">
       <div className="chat-header">
         <img src={`https://i.pravatar.cc/40?u=${otherParticipant}`} alt={t('messaging:avatarAlt', { user: otherParticipant })} className="avatar" />
         <div>
-          <h3>{otherParticipant}</h3>
+          <h3>
+            {otherParticipant}
+            {isOtherOwner && <span className="owner-badge" title={t('messaging:ownerTooltip','Listing owner')}>{t('messaging:owner','Owner')}</span>}
+          </h3>
           <p>
             {otherTyping ? t('messaging:typing','Typing…') : t('listing:interestedInYour', { title: conversation.listing.title })}
           </p>
@@ -308,6 +371,9 @@ const ChatWindow = ({ conversationId }) => {
         <ListingSnippet listing={conversation.listing} />
         {messages.map(msg => {
           const statusLabel = msg.failed ? ` (${t('messaging:failedSend')})` : (msg.pending ? ' …' : '');
+          const ts = msg.timestamp ? new Date(msg.timestamp) : null;
+          const timeShort = ts ? ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+          const timeFull = ts ? ts.toLocaleString() : '';
           return (
             <div key={msg.id} className={`message-bubble-wrapper ${msg.sender === user?.username ? 'sent' : 'received'}`}>
               <div 
@@ -316,6 +382,27 @@ const ChatWindow = ({ conversationId }) => {
                 aria-label={msg.sender === user?.username ? t('messaging:youSaid', { content: msg.content }) : t('messaging:userSaid', { user: msg.sender, content: msg.content })}
               >
                 {msg.content}{statusLabel}
+                {Array.isArray(msg.attachments) && msg.attachments.length > 0 && (
+                  <div className="attachments">
+                    {msg.attachments.map(att => (
+                      <a key={att.id} href={att.url || '#'} target="_blank" rel="noopener noreferrer" className="attachment-link">
+                        {att.name || t('messaging:attachment','Attachment')}
+                      </a>
+                    ))}
+                  </div>
+                )}
+                {msg.sender === user?.username && (
+                  <div className="message-meta" aria-hidden>
+                    <span title={timeFull}>{timeShort}</span>
+                    {' '}
+                    {msg.is_read ? '✓✓' : '✓'}
+                  </div>
+                )}
+                {msg.sender !== user?.username && ts && (
+                  <div className="message-meta left" aria-hidden>
+                    <span title={timeFull}>{timeShort}</span>
+                  </div>
+                )}
                 {msg.failed && (
                   <button type="button" className="retry-btn" onClick={() => retryMessage(msg)}>{t('messaging:retrySend')}</button>
                 )}
@@ -325,10 +412,32 @@ const ChatWindow = ({ conversationId }) => {
         })}
         <div ref={messagesEndRef} />
       </div>
+      {newSinceScroll > 0 && (
+        <div className="new-messages-chip" role="status" aria-live="polite">
+          <button type="button" onClick={() => { scrollToBottom(); setNewSinceScroll(0); }}>
+            {t('messaging:newMessages',{ count: newSinceScroll, defaultValue: '{{count}} new messages' }).replace('{{count}}', String(newSinceScroll))}
+          </button>
+        </div>
+      )}
       <form className="message-input-area" onSubmit={handleSendMessage}>
-        <button type="button" className="attach-btn" aria-label={t('messaging:attach','Attach a file')}>
+        <button
+          type="button"
+          className="attach-btn"
+          aria-label={t('messaging:attach','Attach a file')}
+          onClick={() => fileInputRef.current?.click()}
+        >
           <PaperclipIcon size={18} strokeWidth={1.7} />
         </button>
+        <input
+          ref={el => (fileInputRef.current = el)}
+          type="file"
+          style={{ display: 'none' }}
+          multiple
+          onChange={(e) => {
+            const files = Array.from(e.target.files || []);
+            if (files.length) setPendingFiles(files);
+          }}
+        />
         <input
           type="text"
           placeholder={t('messaging:placeholder','Type your message...')}
@@ -337,6 +446,15 @@ const ChatWindow = ({ conversationId }) => {
           value={newMessage}
           onChange={e => setNewMessage(e.target.value)}
         />
+        {pendingFiles.length > 0 && (
+          <div className="pending-files" aria-live="polite">
+            {pendingFiles.slice(0, 3).map((f, i) => (
+              <span key={i} className="pending-file-chip" title={f.name}>{f.name}</span>
+            ))}
+            {pendingFiles.length > 3 && <span className="pending-file-chip more">+{pendingFiles.length - 3}</span>}
+            <button type="button" className="clear-files" onClick={() => setPendingFiles([])}>{t('messaging:clear','Clear')}</button>
+          </div>
+        )}
         <button type="submit" className="send-button" aria-label={t('messaging:sendMessageAria','Send message')} disabled={sending || !isOnline}>
           {sending ? <Spinner size={16} stroke={2} /> : <SendIcon size={18} strokeWidth={1.7} />}
         </button>

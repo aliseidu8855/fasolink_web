@@ -137,6 +137,19 @@ export const sendMessage = (conversationId, content) => {
   return apiClient.post(`conversations/${conversationId}/messages/`, { content });
 };
 
+// Sends a message with optional file attachments via multipart/form-data
+export const sendMessageMultipart = (conversationId, { content = '', files = [] } = {}, config = {}) => {
+  const fd = new FormData();
+  // Allow blank content when only attachments are sent
+  if (typeof content === 'string') fd.append('content', content);
+  if (files && files.length) {
+    for (const f of files) {
+      fd.append('uploaded_files', f);
+    }
+  }
+  return apiClient.post(`conversations/${conversationId}/messages/`, fd, config);
+};
+
 // Paginated fetch of messages for a conversation
 // page (number) is optional (defaults to 1). Backend pagination param is 'page'.
 export const fetchConversationMessages = (conversationId, page = 1) => {

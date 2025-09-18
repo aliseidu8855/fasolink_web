@@ -42,7 +42,7 @@
 
 .convo-item {
   display: flex;
-  padding: 1rem 1.5rem;
+  padding: .7rem 1rem;
   cursor: pointer;
   border-bottom: 1px solid #eee;
   text-decoration: none;
@@ -77,10 +77,10 @@
 }
 
 .avatar {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  margin-right: 1rem;
+  margin-right: .75rem;
 }
 
 .convo-details {
@@ -94,9 +94,7 @@
   margin-bottom: 0.25rem;
 }
 
-.user-name {
-  font-weight: 600;
-}
+.user-name { font-weight: 600; font-size: .95rem; }
 
 .timestamp {
   font-size: 12px;
@@ -107,14 +105,14 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 14px;
+  font-size: 13px;
   color: #555;
   margin-bottom: 0.5rem;
 }
 
 .listing-tag {
   display: inline-block;
-  font-size: 12px;
+  font-size: 11px;
   padding: 2px 8px;
   border-radius: 12px;
   background-color: #eee;

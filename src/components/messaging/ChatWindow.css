@@ -23,6 +23,7 @@
   font-size: 14px;
   color: #777;
 }
+.chat-header .owner-badge { margin-left:.5rem; font-size:.7rem; background:#f0f9ff; color:#0369a1; border:1px solid #bae6fd; padding:.1rem .4rem; border-radius:6px; vertical-align: middle; }
 .safety-tip {
   background-color: #fffbeb;
   color: #b45309;
@@ -61,6 +62,8 @@
   border-radius: 18px;
   line-height: 1.5;
 }
+.message-bubble .attachments { display:flex; flex-direction:column; gap:6px; margin-top:.4rem; }
+.message-bubble .attachment-link { color:inherit; text-decoration:underline; word-break: break-all; }
 .message-bubble-wrapper.sent {
   align-self: flex-end;
 }
@@ -72,6 +75,8 @@
 .message-bubble-wrapper.received { align-self:flex-start; }
 .message-bubble-wrapper.received .message-bubble { background-color:#f1f1f1; border-bottom-left-radius:4px; }
 .message-bubble.failed { background: var(--color-bg-danger-soft); border:1px solid var(--color-danger-border); color: var(--color-danger); }
+.message-bubble .message-meta { font-size: 10px; opacity: .8; margin-top: 4px; text-align: right; }
+.message-bubble .message-meta.left { text-align: left; }
 .message-bubble-wrapper .message-bubble.pending::after {
   content: ' …';
   opacity: 0.6;
@@ -94,5 +99,13 @@
 .message-input-area input:focus { outline:2px solid var(--color-focus-ring); }
 .attach-icon { font-size:24px; color:#777; }
 .send-button { background-color: var(--color-brand); color: var(--blanc); border:none; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:20px; }
+.pending-files { display:flex; align-items:center; gap:6px; flex-wrap: wrap; }
+.pending-file-chip { background:#e9eef5; color:#334155; border:1px solid #cbd5e1; border-radius:12px; padding:2px 8px; font-size:.7rem; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pending-file-chip.more { background:#0ea5e9; color:#fff; border-color:#0284c7; }
+.clear-files { background:none; border:none; color:var(--color-brand); cursor:pointer; font-size:.75rem; text-decoration:underline; }
 
 /* Ensure file ends with newline and no stray syntax issues */
+
+/* New messages chip that appears when scrolled up */
+.new-messages-chip { position: sticky; bottom: 64px; display:flex; justify-content:center; pointer-events:none; }
+.new-messages-chip button { pointer-events:auto; background:#0ea5e9; color:#fff; border:none; border-radius:999px; padding:.35rem .75rem; font-size:.75rem; box-shadow:0 6px 22px -6px rgba(14,165,233,.55); cursor:pointer; }
