@@ -5,6 +5,7 @@ import { fetchListings } from '../services/api';
 import ListingCard from './ListingCard';
 import './ListingRow.css';
 import { Skeleton } from './ui/Skeleton';
+import { ArrowRightIcon } from './icons/Icons';
 
 const ListingRow = ({ title, subtitle, apiParams, compact = false, browseLink, browseLabel = 'Browse categories', lazySecondHalf = false }) => {
   const [listings, setListings] = useState([]);
@@ -70,7 +71,7 @@ const ListingRow = ({ title, subtitle, apiParams, compact = false, browseLink, b
             <Link to={browseLink} className="browse-inline-link">{browseLabel}</Link>
           )}
         </div>
-        <Link to="/listings" className="view-all-link">{t('listing:viewAll', 'View All')}</Link>
+  <Link to="/listings" className="view-all-link">{t('listing:viewAll', 'View All')} <span className="val-icn" aria-hidden><ArrowRightIcon size={16} /></span></Link>
       </div>
       <div className={`listing-grid${compact ? ' compact' : ''}`}>
         {loading ? skeletonCards : firstSlice.map(listing => (

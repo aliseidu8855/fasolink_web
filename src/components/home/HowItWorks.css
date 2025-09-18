@@ -1,9 +1,10 @@
 .hiw-section { padding:2.6rem 0 1.6rem; background:#fff; }
 .hiw-title { text-align:center; font-size:1.75rem; margin:0 0 1.75rem; letter-spacing:-.5px; }
+.hiw-caption { text-align:center; margin:-1.1rem 0 1.6rem; color:#666; font-size:.9rem; }
 .hiw-grid { display:grid; gap:1.25rem; grid-template-columns: repeat(auto-fit,minmax(210px,1fr)); }
 .hiw-card { background:#fff; border:1px solid #e2e4e6; padding:1.25rem 1.1rem; border-radius:16px; position:relative; overflow:hidden; transition: border-color .25s, box-shadow .25s, background-color .25s; }
 .hiw-card:hover { border-color:#d2d5d8; box-shadow:0 4px 14px -4px rgba(0,0,0,0.12); }
-.hiw-icon { font-size:2rem; margin-bottom:.75rem; }
+.hiw-icon { display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background: rgba(var(--brand-ink-rgb), .06); color: var(--brand-ink); margin-bottom:.75rem; }
 .hiw-card h3 { margin:.2rem 0 .45rem; font-size:1.05rem; }
 .hiw-card p { margin:0; font-size:.85rem; line-height:1.4; color:#555; }
 

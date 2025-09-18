@@ -15,6 +15,8 @@ const HomePage = () => {
             apiParams={{ ordering: '-created_at' }}
             compact
             lazySecondHalf
+            browseLink="/browse"
+            browseLabel="Browse"
           />
         </div>
         <div className="home-section">

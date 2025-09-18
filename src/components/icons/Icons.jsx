@@ -68,4 +68,72 @@ export const PlusCircleIcon = ({ size = 20, strokeWidth = 1.8 }) => (
   </svg>
 );
 
-export default { SearchIcon, SendIcon, PaperclipIcon, MessageBubbleIcon, InboxIcon, HomeIcon, CategoryIcon, UserIcon, PlusCircleIcon };
+// New lightweight UI icons
+export const ShopIcon = ({ size = 20, strokeWidth = 1.8 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M3 7l2-3h14l2 3" />
+    <path d="M5 7v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7" />
+    <path d="M3 7h18" />
+    <path d="M9 12h6" />
+  </svg>
+);
+
+export const HelpCircleIcon = ({ size = 20, strokeWidth = 1.8 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M9.09 9a3 3 0 1 1 5.83 1c0 2-3 2-3 4" />
+    <line x1="12" y1="17" x2="12.01" y2="17" />
+  </svg>
+);
+
+export const SettingsIcon = ({ size = 20, strokeWidth = 1.8 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="3" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H2a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 3.6 8a1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 6.04 3.3l.06.06A1.65 1.65 0 0 0 7.92 3a1.65 1.65 0 0 0 1-1.51V2a2 2 0 1 1 4 0v.09A1.65 1.65 0 0 0 16 3.6c.49.2 1.05.09 1.45-.31l.06-.06A2 2 0 1 1 20.34 6l-.06.06A1.65 1.65 0 0 0 19.94 8c.2.49.09 1.05-.31 1.45l-.06.06c-.4.4-.51.96-.31 1.45.2.49.71.8 1.2.8H22a2 2 0 1 1 0 4h-.09c-.68 0-1.3.4-1.51 1z" />
+  </svg>
+);
+
+export const LogoutIcon = ({ size = 20, strokeWidth = 1.8 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+    <polyline points="16 17 21 12 16 7" />
+    <line x1="21" y1="12" x2="9" y2="12" />
+  </svg>
+);
+
+export const CloseIcon = ({ size = 18, strokeWidth = 2 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
+
+export const ChevronDownIcon = ({ size = 16, strokeWidth = 2 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points="6 9 12 15 18 9" />
+  </svg>
+);
+
+export const CompassIcon = ({ size = 22, strokeWidth = 1.8 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="10" />
+    <polygon points="16 8 12 14 8 16 10 12 16 8" />
+  </svg>
+);
+
+export const HandshakeIcon = ({ size = 22, strokeWidth = 1.8 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M11 12l2-2 4 4-2 2-2-2-2 2-2-2" />
+    <path d="M7 12l-4-4 4-4" />
+    <path d="M17 12l4-4-4-4" />
+  </svg>
+);
+
+export const ArrowRightIcon = ({ size = 18, strokeWidth = 2 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <line x1="5" y1="12" x2="19" y2="12" />
+    <polyline points="12 5 19 12 12 19" />
+  </svg>
+);
+
+export default { SearchIcon, SendIcon, PaperclipIcon, MessageBubbleIcon, InboxIcon, HomeIcon, CategoryIcon, UserIcon, PlusCircleIcon, ShopIcon, HelpCircleIcon, SettingsIcon, LogoutIcon, CloseIcon, ChevronDownIcon, CompassIcon, HandshakeIcon, ArrowRightIcon };

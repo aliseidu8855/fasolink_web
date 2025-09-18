@@ -2,6 +2,7 @@
   "brand": "FasoLink",
   "home": "Accueil",
   "dashboard": "Tableau de bord",
+  "myShop": "Ma boutique",
   "messages": "Messages",
   "help": "Aide",
   "postAd": "Vendre",
@@ -25,7 +26,9 @@
   "chooseLocation": "Choisir une localisation",
   "searchLocation": "Rechercher région ou ville...",
   "regions": "Régions",
-  "towns": "Villes"
+  "towns": "Villes",
+  "settings": "Paramètres"
   ,"browse":"Annonces"
   ,"primary":"Principal"
+  ,"myShopSubtitle":"Gérez vos annonces"
 }

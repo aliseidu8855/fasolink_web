@@ -150,6 +150,16 @@ const SearchBar = ({ variant = 'desktop' }) => {
           aria-label={t('searchPlaceholder')}
           autoComplete="off"
         />
+        {query && (
+          <button
+            type="button"
+            className="nav-search-clear"
+            aria-label={t('common:clear','Clear search')}
+            onClick={() => { setQuery(''); setShowSuggest(false); setHighlight(-1); }}
+          >
+            ✕
+          </button>
+        )}
         <button type="submit" className="nav-search-submit peach" aria-label={t('searchMobileLabel')}>
           <SearchIcon size={18} strokeWidth={1.8} />
         </button>
