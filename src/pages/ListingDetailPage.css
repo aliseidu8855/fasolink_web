@@ -90,6 +90,11 @@
   .detail-gallery { padding:.7rem; }
   .detail-grid { gap:1rem; }
 }
+/* Full-bleed media on small screens */
+@media (max-width:620px){
+  .listing-detail-page { padding-top: 0; }
+  .detail-gallery { margin-left: calc(-1 * clamp(.65rem,3vw,1.1rem)); margin-right: calc(-1 * clamp(.65rem,3vw,1.1rem)); border-radius: 0; box-shadow: none; }
+}
 @media (max-width:560px){
   .mobile-sticky-cta { display:flex; position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid #e2e5e8; padding:.55rem .75rem; align-items:center; justify-content:space-between; gap:.6rem; box-shadow:0 -2px 8px rgba(0,0,0,.08); z-index:40; }
   .mobile-sticky-cta .msc-price { font-size:1rem; font-weight:700; }
@@ -99,6 +104,8 @@
   .detail-main { padding:.95rem .9rem 1.05rem; border-radius:10px; }
   .detail-gallery { padding:.6rem; border-radius:10px; }
   .ld-specs { padding:.9rem 1rem; }
+  /* Reserve space for sticky CTA */
+  .listing-detail-page { padding-bottom: 72px; }
 }
 .detail-actions {
   position: sticky;

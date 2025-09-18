@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 // Removed modal-based auth import; use route navigation instead
 import ListingImageGallery from '../components/ListingImageGallery';
 import Button from '../components/Button';
+import { PhoneIcon, MessageBubbleIcon } from '../components/icons/Icons';
 import ListingBuyBox from '../components/listing/ListingBuyBox';
 import ListingCoreInfo from '../components/listing/ListingCoreInfo';
 import ListingSpecsTable from '../components/listing/ListingSpecsTable';
@@ -13,6 +14,7 @@ import SellerInfoPanel from '../components/listing/SellerInfoPanel';
 import RelatedListingsCarousel from '../components/listing/RelatedListingsCarousel';
 import './ListingDetailPage.css';
 import ListingDetailSkeleton from '../components/listing/ListingDetailSkeleton';
+import ListingGalleryOverlay from '../components/listing/ListingGalleryOverlay';
 
 // Helper to format the CFA currency
 const formatPrice = (price) => {
@@ -34,6 +36,8 @@ const ListingDetailPage = () => {
   const [relatedLoading, setRelatedLoading] = useState(false);
   const [relatedError, setRelatedError] = useState(null);
   const [showPresets, setShowPresets] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [galleryIndex, setGalleryIndex] = useState(0);
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
 
@@ -172,7 +176,7 @@ const ListingDetailPage = () => {
       )}
       <div className="detail-grid">
         <div className="detail-gallery">
-          <ListingImageGallery images={listing.images} />
+          <ListingImageGallery images={listing.images} onOpenFullscreen={(i)=>{ setGalleryIndex(i||0); setGalleryOpen(true); }} />
         </div>
         <div className="detail-main">
           <ListingCoreInfo listing={listing} />
@@ -243,11 +247,25 @@ const ListingDetailPage = () => {
           <p className="ld-reviews-empty">{t('listing:noReviewsYet','No reviews yet')}</p>
         </section>
       </div>
+      {/* Fullscreen gallery overlay */}
+      <ListingGalleryOverlay images={Array.isArray(listing.images)?listing.images:[]} startIndex={galleryIndex} open={galleryOpen} onClose={()=>setGalleryOpen(false)} />
+
       {/* Mobile sticky CTA bar */}
       <div className="mobile-sticky-cta" role="complementary">
         <div className="msc-price">{formatPrice(listing.price)} CFA {listing.negotiable && <span className="msc-neg">{t('listing:priceNegotiable','Negotiable')}</span>}</div>
         {!isOwnListing ? (
-          <Button variant="primary" onClick={handleMessageSeller}>{t('listing:messageSeller')}</Button>
+          <div style={{display:'flex', gap:'.5rem'}}>
+            {listing.contact_phone ? (
+              <a href={`tel:${listing.contact_phone}`} className="btn btn-secondary" style={{display:'inline-flex',alignItems:'center',justifyContent:'center',padding:'.6rem .9rem',borderRadius:'8px',border:'1px solid #d0d5da',fontWeight:600, gap:'.4rem'}}>
+                <PhoneIcon size={16} />
+                {t('listing:callSeller','Call')}
+              </a>
+            ) : null}
+            <Button variant="primary" onClick={handleMessageSeller} style={{ display:'inline-flex', alignItems:'center', gap:'.4rem' }}>
+              <MessageBubbleIcon size={16} />
+              {t('listing:messageSeller')}
+            </Button>
+          </div>
         ) : (
           <span className="msc-owner">{t('listing:yourListing','Your listing')}</span>
         )}
