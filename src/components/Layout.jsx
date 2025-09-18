@@ -24,7 +24,15 @@ const Layout = () => {
   return (
     <div>
       {showNavBar && <NavBar />}
-  <main id="main-content" style={{ paddingTop: applyMainPadding ? '58px' : '0', paddingBottom: isMessages ? '0' : '64px' }}>
+      <main
+        id="main-content"
+        style={{
+          paddingTop: applyMainPadding ? '58px' : '0',
+          paddingBottom: isMessages ? '0' : '64px',
+          height: isMessages ? 'calc(100vh - 58px)' : undefined,
+          minHeight: 0
+        }}
+      >
         <Outlet />
       </main>
   {showFooter && <Footer />}
