@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Skeleton, SkeletonAvatar } from '../ui/Skeleton';
 import { PaperclipIcon, SendIcon } from '../icons/Icons.jsx';
+import Spinner from '../ui/Spinner';
 import { useTranslation } from 'react-i18next';
 import { fetchConversationById, sendMessage, fetchConversationMessages, markConversationRead, MESSAGE_PAGE_SIZE } from '../../services/api';
 import { connectSocket } from '../../services/socket';
@@ -288,9 +289,22 @@ const ChatWindow = ({ conversationId }) => {
             onClick={() => loadMessagesPage(page + 1)}
             aria-label={t('messaging:loadOlderAria','Load older messages')}
           >
-            {loadingOlder ? t('common:loading') : t('messaging:loadOlder')}
+                {loadingOlder ? (
+                  <span style={{ display:'inline-flex', alignItems:'center', gap:6 }}>
+                    <Spinner size={14} stroke={2} /> {t('common:loading')}
+                  </span>
+                ) : t('messaging:loadOlder')}
           </button>
         )}
+            {loadingOlder && (
+              Array.from({ length: 3 }).map((_,i)=>(
+                <div key={`older-skel-${i}`} className={`message-bubble-wrapper ${i%2===0 ? 'received':'sent'}`} aria-hidden="true">
+                  <div className="message-bubble skeleton-msg">
+                    <Skeleton variant="text" lines={2} />
+                  </div>
+                </div>
+              ))
+            )}
         <ListingSnippet listing={conversation.listing} />
         {messages.map(msg => {
           const statusLabel = msg.failed ? ` (${t('messaging:failedSend')})` : (msg.pending ? ' …' : '');
@@ -324,7 +338,7 @@ const ChatWindow = ({ conversationId }) => {
           onChange={e => setNewMessage(e.target.value)}
         />
         <button type="submit" className="send-button" aria-label={t('messaging:sendMessageAria','Send message')} disabled={sending || !isOnline}>
-          <SendIcon size={18} strokeWidth={1.7} />
+          {sending ? <Spinner size={16} stroke={2} /> : <SendIcon size={18} strokeWidth={1.7} />}
         </button>
       </form>
     </div>
