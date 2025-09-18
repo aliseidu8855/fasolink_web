@@ -2,6 +2,7 @@ import React from 'react';
 import Hero from '../components/Hero';
 import ListingRow from '../components/ListingRow';
 import HowItWorks from '../components/home/HowItWorks';
+import CategoryChips from '../components/home/CategoryChips';
 import './HomePage.css';
 
 const HomePage = () => {
@@ -9,6 +10,9 @@ const HomePage = () => {
     <>
       <Hero />
       <main className="home-main" id="main-content">
+        <div className="home-section">
+          <CategoryChips />
+        </div>
         <div className="home-section">
           <ListingRow
             title="Recent Listings"

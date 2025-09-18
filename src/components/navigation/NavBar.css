@@ -29,11 +29,14 @@
   justify-content: space-between;
   gap: 1.25rem;
 }
+.desktop-only { display: block; }
+.mobile-only { display: none; }
 .nav-left {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
+.nav-brand-wrap { display: block; }
 /* Unified Category + Search bar */
 .cat-search-root { position: relative; flex: 1; max-width: var(--nav-search-max); }
 .cat-search-form {
@@ -383,16 +386,26 @@
   .nav-brand-text {
     display: none;
   }
+  .desktop-only { display: none; }
+  .mobile-only { display: block; }
   /* Removed hamburger trigger; reset padding */
   .nav-mobile-trigger {
     display: none;
   }
   .nav-inner {
     padding-left: 0;
+    gap: 0.75rem;
   }
   .mobile-menu-toggle {
     display: flex;
   }
+  /* Sticky compact: hide brand on scroll, keep search visible */
+  .nav-root.is-scrolled .nav-brand-wrap { display: none; }
+  .nav-root.is-scrolled .nav-inner { justify-content: center; }
+  .nav-root.is-scrolled .mobile-only { flex: 1; }
+  /* Inner pages: use compact height */
+  .nav-root.is-inner { height: var(--nav-height-compact); }
+  .nav-root.is-home { height: var(--nav-height); }
 }
 
 /* Mobile Drawer */
@@ -1039,4 +1052,6 @@ mark {
     width: 26px;
     height: 26px;
   }
+  .nav-search-input { font-size: var(--fs-sm); }
+  .nav-search-submit { font-size: var(--fs-2xs); }
 }

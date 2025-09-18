@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { SearchIcon } from '../icons/Icons.jsx';
+import { SearchIcon, CloseIcon } from '../icons/Icons.jsx';
 // Location removed for now; keep core query search only
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ const SearchBar = ({ variant = 'desktop' }) => {
   const params = new URLSearchParams(location.search);
   const initialQ = params.get('q') || '';
   const [query, setQuery] = useState(initialQ);
-  // Mobile overlay removed; inline-only search
+  const [overlayOpen, setOverlayOpen] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggest, setShowSuggest] = useState(false);
   const [highlight, setHighlight] = useState(-1);
@@ -72,6 +72,16 @@ const SearchBar = ({ variant = 'desktop' }) => {
     return () => clearTimeout(handle);
   }, [query, loadSuggestions]);
   // Mobile overlay removed; inline search only
+  // When overlay opens, focus input next tick
+  useEffect(() => {
+    if (overlayOpen) {
+      const t = setTimeout(() => {
+        const el = document.getElementById('mobile-search-input');
+        if (el) el.focus();
+      }, 0);
+      return () => clearTimeout(t);
+    }
+  }, [overlayOpen]);
 
   const onKeyDown = (e) => {
     if (e.key === 'ArrowDown') {
@@ -130,22 +140,26 @@ const SearchBar = ({ variant = 'desktop' }) => {
   };
 
   const rootClass = variant === 'mobile' ? 'nav-search-wrapper amazon-style mobile' : 'nav-search-wrapper amazon-style';
+  const isMobile = variant === 'mobile';
   return (
     <div className={rootClass}>
       <form
         ref={formRef}
   className={`nav-search-form amazon-search ${variant === 'mobile' ? 'mobile' : ''}`}
-        onSubmit={submit}
+        onSubmit={(e)=>{ submit(e); setOverlayOpen(false); }}
         role="search"
         aria-label={t('searchMobileLabel')}
         onKeyDown={onKeyDown}
       >
-        {/* Location removed */}
-         <input
+        {/* For mobile, make input readOnly and open overlay on focus/tap */}
+        <input
+          id={isMobile ? 'mobile-search-trigger' : undefined}
           className="nav-search-input"
           value={query}
-          onChange={(e) => { setQuery(e.target.value); setShowSuggest(true); setHighlight(-1); }}
-          onFocus={() => { if (suggestions.length > 0) setShowSuggest(true); }}
+          readOnly={isMobile}
+          onClick={isMobile ? () => setOverlayOpen(true) : undefined}
+          onChange={!isMobile ? (e) => { setQuery(e.target.value); setShowSuggest(true); setHighlight(-1); } : undefined}
+          onFocus={!isMobile ? () => { if (suggestions.length > 0) setShowSuggest(true); } : undefined}
           placeholder={t('searchPlaceholder')}
           aria-label={t('searchPlaceholder')}
           autoComplete="off"
@@ -157,14 +171,14 @@ const SearchBar = ({ variant = 'desktop' }) => {
             aria-label={t('common:clear','Clear search')}
             onClick={() => { setQuery(''); setShowSuggest(false); setHighlight(-1); }}
           >
-            ✕
+            <CloseIcon size={16} />
           </button>
         )}
         <button type="submit" className="nav-search-submit peach" aria-label={t('searchMobileLabel')}>
           <SearchIcon size={18} strokeWidth={1.8} />
         </button>
   {/* Suggestions list */}
-        {showSuggest && (
+    {!isMobile && showSuggest && (
           <div className="search-suggestions" role="listbox">
             {query.length >=2 && suggestions.length === 0 && (
               <div className="suggestion-empty">{t('navigation:noResults')}</div>
@@ -203,6 +217,64 @@ const SearchBar = ({ variant = 'desktop' }) => {
       </form>
       {/* Mobile search overlay removed */}
       {/* Location dropdown removed */}
+      {/* Mobile search overlay */}
+      {isMobile && overlayOpen && (
+        <div className="search-overlay" role="dialog" aria-modal="true" aria-label={t('searchMobileLabel')}>
+          <button type="button" className="search-close-btn" aria-label={t('common:close','Close')}
+            onClick={() => { setOverlayOpen(false); setShowSuggest(false); }}>
+            <CloseIcon size={18} />
+          </button>
+          <form onSubmit={(e)=>{ submit(e); setOverlayOpen(false); }} style={{ flex: 1 }}>
+            <input
+              id="mobile-search-input"
+              value={query}
+              onChange={(e)=>{ setQuery(e.target.value); setShowSuggest(true); setHighlight(-1); }}
+              placeholder={t('searchPlaceholder')}
+              aria-label={t('searchPlaceholder')}
+              autoComplete="off"
+            />
+            <button type="submit">
+              <SearchIcon size={18} strokeWidth={1.8} />
+            </button>
+          </form>
+          {showSuggest && (
+            <div className="search-suggestions" role="listbox" style={{ top: 'var(--nav-height)' }}>
+              {query.length >=2 && suggestions.length === 0 && (
+                <div className="suggestion-empty">{t('navigation:noResults')}</div>
+              )}
+              {query.length < 2 && recent.length > 0 && (
+                <div className="recent-block">
+                  <div className="recent-header">
+                    <span style={{ fontSize:'var(--fs-xs)', opacity:.75 }}>Recent</span>
+                    <button type="button" className="recent-clear" onClick={clearRecent}>Clear</button>
+                  </div>
+                  {recent.map(r => (
+                    <button key={r} type="button" className="suggestion-item" onClick={() => selectRecent(r)}>
+                      <span className="suggestion-title">{r}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {suggestions.map((s, i) => {
+                const label = s.title || s.name || `#${s.id}`;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    role="option"
+                    aria-selected={highlight === i}
+                    className={`suggestion-item ${highlight === i ? 'active' : ''}`}
+                    onMouseEnter={() => setHighlight(i)}
+                    onClick={() => selectSuggestion(s)}
+                  >
+                    <span className="suggestion-title">{highlightMatch(label)}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
