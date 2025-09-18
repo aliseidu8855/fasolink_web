@@ -2,7 +2,12 @@ import axios from 'axios';
 
 // Ensure baseURL ends with a trailing slash so relative paths (e.g., 'listings/') resolve under /api/
 const rawBase = import.meta.env.VITE_API_BASE_URL || '';
-const baseURL = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+let baseURL = rawBase && rawBase.trim().length > 0 ? (rawBase.endsWith('/') ? rawBase : rawBase + '/') : '/api/';
+if (!rawBase && !import.meta.env.DEV) {
+  // In production, set VITE_API_BASE_URL to your backend API root (e.g., https://api.example.com/api/)
+  // Falling back to same-origin /api/ will only work if your hosting rewrites /api to your backend.
+  console.warn('[api] VITE_API_BASE_URL is not set; defaulting to /api/. Configure a rewrite or set the env for production.');
+}
 
 const apiClient = axios.create({
   baseURL,

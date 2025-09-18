@@ -62,6 +62,14 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
-    allowedHosts: ['fasolink-web.onrender.com'],
+    allowedHosts: ['fasolink-web.onrender.com', "fasolink.vercel.app"],
+    proxy: {
+      // Proxy API to local Django in dev so frontend can call /api/* without CORS issues
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
 })

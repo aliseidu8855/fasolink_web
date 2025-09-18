@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "name": "fasolink-web",
+  "builds": [
+    { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "dist" } }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "https://fasolinkapi-c1c106ebe031.herokuapp.com/api/$1" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}

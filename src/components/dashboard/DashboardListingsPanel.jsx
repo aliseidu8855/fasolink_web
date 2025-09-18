@@ -1,8 +1,8 @@
 import React from 'react';
 import ListingCard from '../ListingCard.jsx';
 import { useTranslation } from 'react-i18next';
-import EmptyState from '../../components/ui/EmptyState.jsx';
-import Button from '../../components/Button.jsx';
+import EmptyState from '../ui/EmptyState.jsx';
+import Button from '../Button.jsx';
 
 const DashboardListingsPanel = ({ listings, onEdit, onDelete, onNew }) => {
   const { t } = useTranslation('dashboard');
