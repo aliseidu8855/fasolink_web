@@ -5,7 +5,7 @@ import Button from './Button';
 import './FilterSidebar.css';
 
 // Extended to support negotiable, is_featured, min_rating and immediate change notifications
-const FilterSidebar = ({ onFilterChange, autoApply=true }) => {
+const FilterSidebar = ({ onFilterChange, autoApply=true, initialFilters }) => {
   const { t } = useTranslation();
   const [categories, setCategories] = useState([]);
   const [filters, setFilters] = useState({
@@ -15,7 +15,8 @@ const FilterSidebar = ({ onFilterChange, autoApply=true }) => {
     max_price: '',
     negotiable: '',
     is_featured: '',
-    min_rating: ''
+    min_rating: '',
+    town: ''
   });
   const [facets, setFacets] = useState({ total: null, categories: [], negotiable: null, featured: null, price_ranges: [] });
   const [loadingFacets, setLoadingFacets] = useState(false);
@@ -32,7 +33,14 @@ const FilterSidebar = ({ onFilterChange, autoApply=true }) => {
     getCategories();
   }, []);
 
-  // Fetch facets when filters (except the specific facet itself) change; lightweight debounce via timeout
+  // Prime from initialFilters
+  useEffect(() => {
+    if (!initialFilters) return;
+    setFilters(prev => ({ ...prev, ...initialFilters }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(initialFilters)]);
+
+  // Fetch facets when filters change; lightweight debounce via timeout
   useEffect(() => {
     let cancelled = false;
     const t = setTimeout(async () => {
@@ -67,7 +75,7 @@ const FilterSidebar = ({ onFilterChange, autoApply=true }) => {
   };
 
   const reset = () => {
-    setFilters({ search:'', category:'', min_price:'', max_price:'', negotiable:'', is_featured:'', min_rating:'' });
+    setFilters({ search:'', category:'', min_price:'', max_price:'', negotiable:'', is_featured:'', min_rating:'', town:'' });
   };
 
   return (
@@ -85,6 +93,17 @@ const FilterSidebar = ({ onFilterChange, autoApply=true }) => {
           value={filters.search}
           onChange={(e)=>update('search', e.target.value)}
           placeholder={t('listing:keywordPlaceholder', 'e.g., iPhone 13')}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="town">{t('listing:location', 'Location')}</label>
+        <input
+          type="text"
+          id="town"
+          name="town"
+          value={filters.town}
+          onChange={(e)=>update('town', e.target.value)}
+          placeholder={t('listing:locationPlaceholder', 'e.g., Dakar, Pikine')}
         />
       </div>
       <div className="form-group">

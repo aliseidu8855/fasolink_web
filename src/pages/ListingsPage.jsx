@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import FilterSidebar from '../components/FilterSidebar';
 import ListingCard from '../components/ListingCard';
-import SortBar from '../components/SortBar';
 import { fetchListingsPage } from '../services/api';
 import '../components/dashboard/dashboard.css';
 import './ListingsPage.css';
 import EmptyState from '../components/ui/EmptyState';
 import Button from '../components/Button';
+import CategorySearchBar from '../components/navigation/CategorySearchBar';
+import FilterChips from '../components/listings/FilterChips';
+import FilterBottomSheet from '../components/listings/FilterBottomSheet';
 
 // Debounce helper (simple)
 const useDebouncedValue = (value, delay) => {
@@ -32,17 +33,18 @@ export default function ListingsPage() {
     const { q: _q, ordering: _ord, view: _view, ...rest } = qp; return rest;
   });
   const [ordering, setOrdering] = useState(qp.ordering || '-created_at');
-  const [view, setView] = useState(qp.view === 'compact' ? 'compact' : 'grid');
+  const [view, setView] = useState(qp.view === 'grid' ? 'grid' : 'compact');
   const initialPage = parseInt(qp.page || '1', 10) || 1;
   const [page, setPage] = useState(initialPage);
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [showFilters, setShowFilters] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const [showTopBtn, setShowTopBtn] = useState(false);
   const [pageSize, setPageSize] = useState(null); // determined after first load
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(null);
+  const resultsRef = useRef(null);
 
   const baseParams = useMemo(() => ({
     ...filters,
@@ -71,7 +73,17 @@ export default function ListingsPage() {
     try {
       const data = await fetchListingsPage(targetPage, baseParams, { signal: controller.signal });
       const results = data.results || data;
-      setListings(Array.isArray(results) ? results : []);
+      setListings(prev => {
+        const next = Array.isArray(results) ? (targetPage === 1 ? results : [...prev, ...results]) : (targetPage === 1 ? [] : prev);
+        // de-dupe by id in case of overlapping pages
+        const seen = new Set();
+        return next.filter(item => {
+          const id = item && item.id != null ? item.id : Symbol('x');
+          if (seen.has(id)) return false;
+          seen.add(id);
+          return true;
+        });
+      });
       if (targetPage === 1 && Array.isArray(results)) {
         setPageSize(results.length || null);
       }
@@ -136,7 +148,46 @@ export default function ListingsPage() {
     setPage(target);
   };
 
-  const onFilterChange = (f) => { setFilters(f); };
+  const onChipChange = (partial) => {
+    setFilters(prev => ({ ...prev, ...partial }));
+  };
+
+  const openSheet = () => setSheetOpen(true);
+  const closeSheet = () => setSheetOpen(false);
+  const applySheet = (nextFilters) => {
+    const nf = { ...(nextFilters || {}) };
+    if (Object.prototype.hasOwnProperty.call(nf, 'search')) {
+      setQuery(nf.search || '');
+      delete nf.search;
+    }
+    setFilters(nf);
+    // Anchor to results top
+    const el = resultsRef.current;
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Sync from URL if user navigates with CategorySearchBar or external links
+  useEffect(() => {
+    const qpObj = Object.fromEntries([...searchParams]);
+    const nextQuery = qpObj.q || '';
+    if (nextQuery !== query) setQuery(nextQuery);
+    const nextOrdering = qpObj.ordering || '-created_at';
+    if (nextOrdering !== ordering) setOrdering(nextOrdering);
+    const nextView = qpObj.view === 'grid' ? 'grid' : 'compact';
+    if (nextView !== view) setView(nextView);
+    const nextPage = parseInt(qpObj.page || '1', 10) || 1;
+    if (nextPage !== page) setPage(nextPage);
+    const { q: _q, ordering: _o, view: _v, page: _p, ...rest } = qpObj;
+    // Only update filters if different
+    if (JSON.stringify(rest) !== JSON.stringify(filters)) {
+      setFilters(rest);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
 
   const toggleView = () => setView(v => v === 'compact' ? 'grid' : 'compact');
 
@@ -148,35 +199,27 @@ export default function ListingsPage() {
     <div className="lp-shell">
       <div className={`lp-loading-bar${loading ? ' active' : ''}`} aria-hidden={!loading} />
       <header className="lp-header" role="banner">
-        <div className="lp-header-row">
-          <h1 className="lp-title">{t('listingsPage.title','Browse Listings')}</h1>
-          <div className="lp-search-group" role="search">
-            <label htmlFor="listing-search" className="visually-hidden">{t('listingsPage.searchLabel','Search listings')}</label>
-            <input
-              id="listing-search"
-              type="search"
-              value={query}
-              onChange={(e)=>setQuery(e.target.value)}
-              placeholder={t('listingsPage.searchPlaceholder','Search products, brands...')}
-              className="lp-search"
-            />
-            <Button type="button" variant="secondary" size="sm" className="lp-filters-toggle" onClick={()=>setShowFilters(s=>!s)} aria-expanded={showFilters}>
-              {showFilters ? t('listingsPage.hideFilters','Hide Filters') : t('listingsPage.showFilters','Filters')}
-            </Button>
+        <div className="lp-header-row" style={{gap:'.6rem', alignItems:'stretch'}}>
+          <h1 className="lp-title" style={{marginBottom:'.25rem'}}>{t('listingsPage.title','Browse Listings')}</h1>
+          <div className="lp-embedded-search" style={{flex:1, minWidth:0}}>
+            <CategorySearchBar />
           </div>
         </div>
+        <FilterChips
+          filters={filters}
+          ordering={ordering}
+          onChange={onChipChange}
+          onChangeOrdering={setOrdering}
+          onOpenSheet={openSheet}
+        />
         <div className="lp-meta-row" aria-live="polite">{resultsCountLabel}</div>
       </header>
       <div className="lp-body">
-        <aside className={`lp-filters${showFilters ? ' open' : ''}`} aria-label={t('listingsPage.filtersAria','Filters')}>
-          <FilterSidebar onFilterChange={onFilterChange} />
-        </aside>
-        <section className="lp-results" role="region" aria-label={t('listingsPage.resultsAria','Results')}>
+  <section ref={resultsRef} className="lp-results" role="region" aria-label={t('listingsPage.resultsAria','Results')}>
           <div className="lp-sort-row" style={{display:'flex', gap:'.75rem', justifyContent:'flex-end', alignItems:'center'}}>
             <button type="button" onClick={toggleView} className={`lp-view-toggle ${view}`} aria-pressed={view==='compact'} title={view==='compact'?t('listingsPage.viewCompact','Compact view'):t('listingsPage.viewGrid','Grid view')}>
               {view==='compact'?t('listingsPage.viewGrid','Grid'):t('listingsPage.viewCompact','Compact')}
             </button>
-            <SortBar onChange={setOrdering} />
           </div>
           {error && (
             <div className="lp-error" role="alert">
@@ -215,13 +258,16 @@ export default function ListingsPage() {
               secondaryAction={{ label: t('listingsPage.reload','Reload'), onClick: ()=>loadPage(1) }}
             />
           )}
-          <nav className="lp-pagination" aria-label="Pagination">
-            <button type="button" className="pg-btn" onClick={()=>gotoPage(page-1)} disabled={page<=1}>{t('pagination.prev','Previous')}</button>
-            <span className="pg-status">{t('pagination.pageOf', { page, total: totalPages, defaultValue: `Page ${page} of ${totalPages}` })}</span>
-            <button type="button" className="pg-btn" onClick={()=>gotoPage(page+1)} disabled={page>=totalPages}>{t('pagination.next','Next')}</button>
+          <nav className="lp-pagination" aria-label="Pagination" style={{display:'flex', justifyContent:'center', padding:'.5rem 0'}}>
+            {page < totalPages && (
+              <button type="button" className="pg-btn" onClick={()=>gotoPage(page+1)} disabled={loading}>
+                {loading ? t('listingsPage.loading','Loading…') : t('pagination.loadMore','Load more')}
+              </button>
+            )}
           </nav>
         </section>
       </div>
+      <FilterBottomSheet open={sheetOpen} initialFilters={{ ...filters, search: debouncedQuery }} onClose={closeSheet} onApply={applySheet} />
       {showTopBtn && (
         <button type="button" className="lp-back-top" onClick={scrollToTop} aria-label={t('listingsPage.backToTop','Back to top')}>↑</button>
       )}
