@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchSpecsMetadata, fetchCategories, createListing } from '../services/api';
+import { fetchSpecsMetadata, fetchCategories, createListing, appendListingImage } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import Stepper from '../components/Stepper';
 import ImageUploader from '../components/ImageUploader';
+import { pLimit } from '../utils/concurrency';
 import { BF_LOCATIONS } from '../data/locations.js';
 import './CreateListingPage.css';
 // Categories are now loaded dynamically from the backend and selected by id.
 const STEP_KEYS = ['category','core','specs','review'];
+const DRAFT_KEY = 'createListing.draft.v1';
 
 export default function CreateListingPage(){
   const { t } = useTranslation(['createListing','common']);
@@ -30,12 +32,85 @@ export default function CreateListingPage(){
   const [images,setImages]=useState([]); // File[]
   const [submitting,setSubmitting]=useState(false);
   const [submitError,setSubmitError]=useState(null);
+  const [uploadStates, setUploadStates] = useState({}); // index -> {progress, error}
+
+  const limit = useMemo(()=> pLimit(3), []);
+
+  const uploadImageAt = async (listingId, idx) => {
+    const file = images[idx];
+    if(!file) return;
+    setUploadStates(prev=> ({...prev, [idx]: { progress: 0, error: null }}));
+    try{
+      await appendListingImage(listingId, file, (e)=> {
+        if(!e.total) return;
+        const pct = (e.loaded / e.total) * 100;
+        setUploadStates(prev=> ({...prev, [idx]: { progress: pct, error: null }}));
+      });
+      setUploadStates(prev=> ({...prev, [idx]: { progress: 100, error: null }}));
+    }catch(err){
+      const msg = err?.response?.data?.detail || err?.message || 'Upload failed';
+      setUploadStates(prev=> ({...prev, [idx]: { progress: prev[idx]?.progress || 0, error: msg }}));
+      throw err;
+    }
+  };
+
+  const retryUploadAt = (idx) => {
+    if(!createdId) return;
+    limit(()=> uploadImageAt(createdId, idx)).catch(()=>{/* error already set in state */});
+  };
+
   const [fieldErrors,setFieldErrors]=useState({}); // backend field -> messages[]
   const [specErrors,setSpecErrors]=useState({}); // spec key -> message
   const [createdId,setCreatedId]=useState(null);
+  const [descCount, setDescCount] = useState(0);
   const firstErrorRef = useRef(null);
 
   useEffect(()=>{ fetchCategories().then(r=> setAllCats(r.data)); },[]);
+
+  // Restore draft on mount
+  useEffect(()=>{
+    try{
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if(raw){
+        const d = JSON.parse(raw);
+        if(d.step && STEP_KEYS.includes(d.step)) setStep(d.step);
+        if(d.selectedCategoryId) setSelectedCategoryId(d.selectedCategoryId);
+        if(d.title) setTitle(d.title);
+        if(d.price) setPrice(d.price);
+        if(typeof d.negotiable==='boolean') setNegotiable(d.negotiable);
+        if(d.desc) setDesc(d.desc);
+        if(d.selectedRegionCode) setSelectedRegionCode(d.selectedRegionCode);
+        if(d.selectedTown) setSelectedTown(d.selectedTown);
+        if(d.contactPhone) setContactPhone(d.contactPhone);
+        if(d.specValues) setSpecValues(d.specValues);
+        // images cannot be restored (File objects), leave empty
+      }
+    }catch{ /* ignore */ }
+  },[]);
+
+  // Persist draft (debounced)
+  useEffect(()=>{
+    const h = setTimeout(()=>{
+      const draft = {
+        step,
+        selectedCategoryId,
+        title,
+        price,
+        negotiable,
+        desc,
+        selectedRegionCode,
+        selectedTown,
+        contactPhone,
+        specValues,
+      };
+  try{ localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); }catch{ /* ignore quota errors */ }
+    }, 400);
+    return ()=> clearTimeout(h);
+  }, [step, selectedCategoryId, title, price, negotiable, desc, selectedRegionCode, selectedTown, contactPhone, specValues]);
+
+  const clearDraft = () => {
+    try{ localStorage.removeItem(DRAFT_KEY); }catch{ /* ignore */ }
+  };
   // Load specs metadata for selected category name if available; otherwise none
   useEffect(()=>{
     if(selectedCategoryId){
@@ -152,7 +227,7 @@ export default function CreateListingPage(){
       setStep('core');
       return;
     }
-    setSubmitting(true); setSubmitError(null); setFieldErrors({}); setSpecErrors({});
+  setSubmitting(true); setSubmitError(null); setFieldErrors({}); setSpecErrors({});
     try {
       const fd = new FormData();
       fd.append('title', title);
@@ -171,9 +246,17 @@ export default function CreateListingPage(){
       if (attrs.length > 0) {
         fd.append('attributes', JSON.stringify(attrs));
       }
-      images.forEach(img=> fd.append('uploaded_images', img));
+      // Phase 1: Create listing without images (metadata only)
       const res = await createListing(fd);
-      setCreatedId(res.data.id);
+      const newId = res.data.id;
+      setCreatedId(newId);
+      clearDraft();
+      // Phase 2: Upload images concurrently
+      if(images.length > 0){
+        // reset uploads state
+        setUploadStates({});
+        await Promise.all(images.map((_, idx) => limit(() => uploadImageAt(newId, idx))));
+      }
       setStep('review');
     } catch(e){
       const status = e.response?.status;
@@ -287,13 +370,13 @@ export default function CreateListingPage(){
           <div className="cl-field cl-check"><label><input type="checkbox" checked={negotiable} onChange={e=> setNegotiable(e.target.checked)} /> {t('createListing:negotiable','Negotiable')}</label></div>
           <div className="cl-field">
             <label htmlFor="cl-desc">{t('createListing:description','Description')}*</label>
-            <textarea id="cl-desc" rows={5} value={desc} aria-invalid={!desc.trim() || undefined} onChange={e=> setDesc(e.target.value)} maxLength={2000} />
-            <small className="cl-hint">Required</small>
+            <textarea id="cl-desc" rows={5} value={desc} aria-invalid={!desc.trim() || undefined} onChange={e=> { setDesc(e.target.value); setDescCount(e.target.value.length); }} maxLength={2000} />
+            <small className="cl-hint">Required • {descCount}/2000</small>
             {fieldErrors.description && <span className="cl-err-msg" role="alert">{fieldErrors.description}</span>}
             {!fieldErrors.description && !desc.trim() && <span className="cl-err-msg" role="alert">{t('createListing:required')}</span>}
           </div>
           <div className="cl-field">
-            <ImageUploader value={images} onChange={setImages} label={t('createListing:images')} max={5} />
+            <ImageUploader value={images} onChange={setImages} label={t('createListing:images')} max={5} uploadsState={uploadStates} onRetry={retryUploadAt} disableReorder={submitting || !!createdId} />
             <span className="visually-hidden" aria-live="polite">{t('createListing:imagesHelp')}</span>
           </div>
         </section>
@@ -348,7 +431,11 @@ export default function CreateListingPage(){
           {createdId ? (
             <div className="cl-success-box">
               <p>{t('createListing:success')}</p>
+              {images.length>0 && (
+                <p>{Object.values(uploadStates).every(u=> u && !u.error) ? t('createListing:uploadsComplete','All images uploaded.') : t('createListing:uploadsInProgress','Images are still uploading or failed. You can retry failed ones.')}</p>
+              )}
               <Button onClick={()=> nav(`/listings/${createdId}`)}>{t('createListing:viewListing')}</Button>
+              <Button variant="secondary" onClick={()=> setStep('core')}>{t('createListing:addMoreImages','Add more images')}</Button>
             </div>
           ) : (
             <div className="cl-summary">
@@ -370,6 +457,7 @@ export default function CreateListingPage(){
         {step!=='category' && step!=='review' && <Button onClick={goPrev} variant="secondary">{t('createListing:back')}</Button>}
   {['category','core','specs'].includes(step) && <Button disabled={!canNext} onClick={handleAttemptNext}>{t('createListing:next')}</Button>}
         {step==='review' && !createdId && <Button onClick={onSubmit} disabled={submitting}>{submitting? t('common:loading'): t('createListing:submit')}</Button>}
+        <Button onClick={clearDraft} variant="ghost">{t('createListing:clearDraft','Clear draft')}</Button>
       </div>
       <div className="cl-live-region" aria-live="polite" aria-atomic="true" style={{position:'absolute', left:'-9999px', height:'1px', width:'1px', overflow:'hidden'}}>{!canNext && firstErrorMessage}</div>
         </div>{/* end cl-main */}

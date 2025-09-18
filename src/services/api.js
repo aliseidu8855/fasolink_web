@@ -27,8 +27,14 @@ export const fetchCategories = () => {
 
 // Generic listings fetcher supporting filters, ordering, pagination
 // params can include: page, page_size, category, min_price, max_price, negotiable, is_featured, min_rating, ordering, search, location
-export const fetchListings = (params = {}) => {
-  return apiClient.get('listings/', { params });
+export const fetchListings = (params = {}, options = {}) => {
+  const { signal } = options;
+  return apiClient.get('listings/', { params, signal });
+};
+
+// Facets for listings given current filters (counts per category, negotiable, featured, price ranges)
+export const fetchListingsFacets = (params = {}) => {
+  return apiClient.get('listings/facets/', { params });
 };
 
 export const fetchListingById = (id) => {
@@ -86,6 +92,13 @@ export const fetchUserListings = () => {
 
 export const updateListing = (id, formData) => {
   return apiClient.patch(`listings/${id}/`, formData);
+};
+
+// Append a single image to an existing listing via PATCH (multipart)
+export const appendListingImage = (id, file, onUploadProgress) => {
+  const fd = new FormData();
+  fd.append('uploaded_images', file);
+  return apiClient.patch(`listings/${id}/`, fd, { onUploadProgress });
 };
 
 export const deleteListing = (id) => {
@@ -148,8 +161,10 @@ export const buildOrdering = ({ newestFirst, priceAsc, priceDesc, ratingDesc }) 
 };
 
 // Infinite scroll convenience (returns next page when called)
-export const fetchListingsPage = async (page, baseParams = {}) => {
+export const fetchListingsPage = async (page, baseParams = {}, options = {}) => {
   const params = { page, ...baseParams };
-  const res = await fetchListings(params);
+  const res = await fetchListings(params, options);
   return res.data; // expecting DRF pagination structure if pagination added on backend
 };
+
+export default apiClient;

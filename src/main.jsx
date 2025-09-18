@@ -6,6 +6,10 @@ import './i18n.js'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { ModalProvider } from './context/ModalContext.jsx'
 import CategoryTranslationProvider from './components/providers/CategoryTranslationProvider.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
+import { initRUM } from './rum'
+import apiClient from './services/api'
+import { instrumentAxios } from './rum'
 
 // PWA service worker registration (auto-update)
 // If you see a build error:  Cannot resolve "virtual:pwa-register"
@@ -29,12 +33,22 @@ if (enablePWA) {
   })
 }
 
+// RUM init and axios instrumentation
+try {
+  initRUM();
+  instrumentAxios(apiClient);
+} catch {
+  // ignore RUM init errors
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AuthProvider>
       <ModalProvider>
         <CategoryTranslationProvider>
-          <App />
+          <ErrorBoundary>
+            <App />
+          </ErrorBoundary>
         </CategoryTranslationProvider>
       </ModalProvider>
     </AuthProvider>

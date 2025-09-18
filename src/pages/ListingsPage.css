@@ -244,3 +244,12 @@
 .listings-grid.listings-grid-compact {
   gap: 0.65rem;
 }
+
+/* Skeleton cards */
+.listing-skel { border:1px solid #eee; border-radius:12px; padding:.75rem; display:flex; flex-direction:column; gap:.5rem; background:#fff; }
+.skel-img { background: #eee; height: 140px; border-radius: 8px; position: relative; overflow: hidden; }
+.skel-line { height: 12px; background:#eee; border-radius:6px; position: relative; overflow:hidden; }
+.skel-line-1 { width: 80%; }
+.skel-line-2 { width: 60%; }
+.skel-img::after, .skel-line::after { content:''; position:absolute; inset:0; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.6), rgba(255,255,255,0)); transform: translateX(-100%); animation: skel 1.2s infinite; }
+@keyframes skel { to { transform: translateX(100%); } }

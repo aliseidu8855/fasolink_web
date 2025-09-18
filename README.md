@@ -192,6 +192,18 @@ npm run build
 
 Environment variable `VITE_API_BASE_URL` should point to the backend root (e.g. `http://localhost:8000/api`).
 
+### Observability (RUM)
+
+Optional lightweight telemetry is built-in. To enable in development or production set:
+
+- `VITE_RUM_ENABLED=true` (frontend)
+
+With RUM enabled, the app will send web vitals, global error reports, and Axios timing events to the backend endpoint `/api/rum/`. The client avoids self-reporting requests to the rum endpoint itself.
+
+### HTTP Caching
+
+The backend sends `Cache-Control` and `ETag` (and `Last-Modified` where applicable) for categories, listings list, and listing detail endpoints. Browsers will automatically issue conditional GETs (`If-None-Match` / `If-Modified-Since`), and the server returns `304 Not Modified` when data hasn't changed. This reduces payloads and speeds up navigation and filter adjustments.
+
 ### License
 
 Internal project; licensing to be defined.
@@ -457,11 +469,13 @@ Next optional steps:
 Current repository references placeholder PNG filenames under `public/icons/`. Generate production-ready assets from `logo.svg`:
 
 Install tool (once):
+
 ```bash
 npm install -D pwa-asset-generator
 ```
 
 Generate (example):
+
 ```bash
 npx pwa-asset-generator src/assets/logo.svg public/icons \
   --favicon --maskable true --opaque false --padding "10%" \
@@ -475,6 +489,7 @@ Verify the manifest icons array matches the generated file names (update if diff
 `InstallPWA` component + `usePWAInstallPrompt` hook show a floating CTA when the browser fires `beforeinstallprompt`. Dismissal hides it for the session.
 
 User flow:
+
 1. Browser determines the app is installable (served over HTTPS, manifest + SW present, visited at least once).
 2. `beforeinstallprompt` captured; button appears.
 3. User clicks Install → native prompt appears → outcome resolved.

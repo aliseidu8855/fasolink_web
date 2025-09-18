@@ -5,7 +5,7 @@ import './ImageUploader.css';
 /** ImageUploader with previews, remove & reorder (via up/down buttons).
  * props: value (File[]) | onChange(files[]) | max (number)
  */
-export default function ImageUploader({ value=[], onChange, max=5, label='Images' }) {
+export default function ImageUploader({ value=[], onChange, max=5, label='Images', uploadsState, onRetry, disableReorder=false }) {
   const { t } = useTranslation('createListing');
   const inputRef = useRef(null);
   const [dragIndex,setDragIndex]=useState(null);
@@ -54,12 +54,23 @@ export default function ImageUploader({ value=[], onChange, max=5, label='Images
       <ul className="cl-uploader-grid" role="list" aria-describedby="image-reorder-help">
         {files.map((f,i)=> {
           const url = URL.createObjectURL(f);
+          const u = uploadsState?.[i]; // {progress, error}
           return (
-            <li key={i} className="cl-uploader-item" draggable onDragStart={()=> setDragIndex(i)} onDragEnd={()=> setDragIndex(null)} onDrop={(e)=> {e.preventDefault(); if(dragIndex!=null && dragIndex!==i) move(dragIndex,i);}}>
+            <li key={i} className="cl-uploader-item" draggable={!disableReorder} onDragStart={()=> !disableReorder && setDragIndex(i)} onDragEnd={()=> setDragIndex(null)} onDrop={(e)=> {e.preventDefault(); if(!disableReorder && dragIndex!=null && dragIndex!==i) move(dragIndex,i);}}>
               <div className="cl-thumb-wrap"><img src={url} alt={f.name} /></div>
+              {u && (
+                <>
+                  <div className="cl-upload-progress" aria-hidden={u.progress==null}><span style={{width: `${Math.max(0, Math.min(100, u.progress||0))}%`}}></span></div>
+                  <div className="cl-upload-status">
+                    <span>{u.progress!=null ? `${Math.round(u.progress)}%` : ''}</span>
+                    {u.error && <span className="cl-upload-error" role="alert">{String(u.error)}</span>}
+                    {u.error && onRetry && <button type="button" onClick={()=> onRetry(i)}>{t('retry','Retry')}</button>}
+                  </div>
+                </>
+              )}
               <div className="cl-uploader-actions">
-                <button type="button" onClick={()=> move(i,i-1)} aria-label={t('imageMoveUp')} disabled={i===0}>↑</button>
-                <button type="button" onClick={()=> move(i,i+1)} aria-label={t('imageMoveDown')} disabled={i===files.length-1}>↓</button>
+                {!disableReorder && <button type="button" onClick={()=> move(i,i-1)} aria-label={t('imageMoveUp')} disabled={i===0}>↑</button>}
+                {!disableReorder && <button type="button" onClick={()=> move(i,i+1)} aria-label={t('imageMoveDown')} disabled={i===files.length-1}>↓</button>}
                 <button type="button" onClick={()=> removeAt(i)} aria-label={t('imageRemove')}>✕</button>
               </div>
             </li>

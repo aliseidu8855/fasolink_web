@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchCategories } from '../services/api';
+import { fetchCategories, fetchListingsFacets } from '../services/api';
 import Button from './Button';
 import './FilterSidebar.css';
 
@@ -17,6 +17,8 @@ const FilterSidebar = ({ onFilterChange, autoApply=true }) => {
     is_featured: '',
     min_rating: ''
   });
+  const [facets, setFacets] = useState({ total: null, categories: [], negotiable: null, featured: null, price_ranges: [] });
+  const [loadingFacets, setLoadingFacets] = useState(false);
 
   useEffect(() => {
     const getCategories = async () => {
@@ -29,6 +31,27 @@ const FilterSidebar = ({ onFilterChange, autoApply=true }) => {
     };
     getCategories();
   }, []);
+
+  // Fetch facets when filters (except the specific facet itself) change; lightweight debounce via timeout
+  useEffect(() => {
+    let cancelled = false;
+    const t = setTimeout(async () => {
+      setLoadingFacets(true);
+      try {
+        // Send current filters as params; backend will ignore specific facet's param when building that facet
+        const res = await fetchListingsFacets(filters);
+        if (cancelled) return;
+        setFacets(res.data);
+      } catch {
+        if (!cancelled) {
+          // Non-fatal; keep previous facets
+        }
+      } finally {
+        if (!cancelled) setLoadingFacets(false);
+      }
+    }, 300);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [filters]);
 
   const update = (name, value) => {
     setFilters(prev => ({ ...prev, [name]: value }));
@@ -66,6 +89,7 @@ const FilterSidebar = ({ onFilterChange, autoApply=true }) => {
       </div>
       <div className="form-group">
         <label htmlFor="category">{t('listing:category', 'Category')}</label>
+        {loadingFacets && <span className="facets-loading" aria-live="polite">{t('common:loading','Loading…')}</span>}
         <select
           id="category"
           name="category"
@@ -73,9 +97,11 @@ const FilterSidebar = ({ onFilterChange, autoApply=true }) => {
           onChange={(e)=>update('category', e.target.value)}
         >
           <option value="">{t('listing:allCategories', 'All Categories')}</option>
-          {categories.map(cat => (
-            <option key={cat.id} value={cat.id}>{cat.name}</option>
-          ))}
+          {categories.map(cat => {
+            const f = facets.categories?.find(c => String(c.id) === String(cat.id));
+            const label = f ? `${cat.name} (${f.count})` : cat.name;
+            return <option key={cat.id} value={cat.id}>{label}</option>;
+          })}
         </select>
       </div>
       <div className="form-group">
@@ -100,19 +126,32 @@ const FilterSidebar = ({ onFilterChange, autoApply=true }) => {
       <div className="form-group">
         <label htmlFor="negotiable">{t('listing:negotiable', 'Negotiable')}</label>
         <select id="negotiable" name="negotiable" value={filters.negotiable} onChange={(e)=>update('negotiable', e.target.value)}>
-          <option value="">{t('listing:any', 'Any')}</option>
-          <option value="true">{t('listing:yes', 'Yes')}</option>
-          <option value="false">{t('listing:no', 'No')}</option>
+          <option value="">{t('listing:any', 'Any')}{facets.total != null ? ` (${facets.total})` : ''}</option>
+          <option value="true">{t('listing:yes', 'Yes')}{facets.negotiable ? ` (${facets.negotiable.true||0})` : ''}</option>
+          <option value="false">{t('listing:no', 'No')}{facets.negotiable ? ` (${facets.negotiable.false||0})` : ''}</option>
         </select>
       </div>
       <div className="form-group">
         <label htmlFor="is_featured">{t('listing:featured', 'Featured')}</label>
         <select id="is_featured" name="is_featured" value={filters.is_featured} onChange={(e)=>update('is_featured', e.target.value)}>
-          <option value="">{t('listing:any', 'Any')}</option>
-          <option value="true">{t('listing:yes', 'Yes')}</option>
-          <option value="false">{t('listing:no', 'No')}</option>
+          <option value="">{t('listing:any', 'Any')}{facets.total != null ? ` (${facets.total})` : ''}</option>
+          <option value="true">{t('listing:yes', 'Yes')}{facets.featured ? ` (${facets.featured.true||0})` : ''}</option>
+          <option value="false">{t('listing:no', 'No')}{facets.featured ? ` (${facets.featured.false||0})` : ''}</option>
         </select>
       </div>
+      {facets.price_ranges && facets.price_ranges.length > 0 && (
+        <div className="form-group">
+          <label>{t('listing:priceDistribution','Price distribution')}</label>
+          <div className="price-facets" aria-live="polite">
+            {facets.price_ranges.map((b, idx) => (
+              <div key={idx} className="price-facet-row">
+                <span className="price-facet-label">{b.label}</span>
+                <span className="price-facet-count">{b.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <div className="form-group">
         <label htmlFor="min_rating">{t('listing:minRating', 'Min Rating')}</label>
         <input type="number" step="0.1" id="min_rating" name="min_rating" value={filters.min_rating} onChange={(e)=>update('min_rating', e.target.value)} />

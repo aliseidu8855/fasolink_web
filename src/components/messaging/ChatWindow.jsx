@@ -3,6 +3,7 @@ import { Skeleton, SkeletonAvatar } from '../ui/Skeleton';
 import { PaperclipIcon, SendIcon } from '../icons/Icons.jsx';
 import { useTranslation } from 'react-i18next';
 import { fetchConversationById, sendMessage, fetchConversationMessages, markConversationRead, MESSAGE_PAGE_SIZE } from '../../services/api';
+import { connectSocket } from '../../services/socket';
 import { useAuth } from '../../context/AuthContext';
 import ListingSnippet from './ListingSnippet';
 import './ChatWindow.css';
@@ -18,7 +19,11 @@ const ChatWindow = ({ conversationId }) => {
   const [loadingOlder, setLoadingOlder] = useState(false);
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
-  const pollRef = useRef(null);
+  // Polling removed in favor of WebSockets
+  const wsRef = useRef(null);
+  const typingRef = useRef(false);
+  const typingTimeoutRef = useRef(null);
+  const [otherTyping, setOtherTyping] = useState(false);
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const firstRenderRef = useRef(true);
@@ -35,7 +40,7 @@ const ChatWindow = ({ conversationId }) => {
     };
   }, []);
 
-  const pageVisible = () => document.visibilityState === 'visible';
+  // const pageVisible = () => document.visibilityState === 'visible';
 
   const scrollToBottom = (instant=false) => {
     if (messagesEndRef.current) {
@@ -90,30 +95,7 @@ const ChatWindow = ({ conversationId }) => {
     }
   }, [conversationId]);
 
-  // Poll new messages (only fetch page 1 meta and newest messages - simple approach re-fetch page1 meta)
-  const refreshNewest = useCallback(async () => {
-    if (!conversationId) return;
-    try {
-      const res = await fetchConversationMessages(conversationId, 1);
-      const data = res.data;
-      const newest = (data.results || data.messages || data).reverse();
-      setMessages(prev => {
-        // Merge keeping existing older messages
-        // Assume IDs unique and stable
-        const existingIds = new Set(prev.map(m => m.id));
-        const merged = [...prev];
-        let added = false;
-        newest.forEach(m => {
-          if (!existingIds.has(m.id)) { merged.push(m); added = true; }
-        });
-        if (added) setTimeout(() => scrollToBottom(), 50);
-        return merged;
-      });
-      // update conversation meta (like unread counts externally) separately
-    } catch (e) {
-      console.error('Failed polling newest', e);
-    }
-  }, [conversationId]);
+  // Polling refreshNewest removed; updates now arrive via websocket
 
   // Mark as read after initial load or when new messages that belong to others arrive
   const markReadIfNeeded = useCallback(async () => {
@@ -143,11 +125,38 @@ const ChatWindow = ({ conversationId }) => {
     });
   }, [conversationId, loadConversationMeta, loadMessagesPage]);
 
-  // Poll newest messages visibility aware
+  // Real-time: open websocket per conversation
   useEffect(() => {
-    pollRef.current = setInterval(() => { if (pageVisible()) refreshNewest(); }, 5000);
-    return () => { if (pollRef.current) clearInterval(pollRef.current); };
-  }, [refreshNewest]);
+    if (!conversationId) return;
+    // Close previous
+  if (wsRef.current) { try { wsRef.current.close(); } catch { /* ignore */ } wsRef.current = null; }
+    const { socket, close } = connectSocket(`/ws/conversations/${conversationId}/`, {
+      onMessage: (data) => {
+        if (data?.event === 'message.created' && data.message) {
+          const m = data.message;
+          setMessages(prev => {
+            const exists = prev.some(x => x.id === m.id);
+            return exists ? prev : [...prev, { ...m, sender: m.sender_id === user?.id ? user?.username : (conversation?.participants?.find(p => p !== user?.username) || 'user') }];
+          });
+          setTimeout(() => scrollToBottom(), 30);
+        } else if (data?.event === 'typing') {
+          // Show typing indicator for a short time when other user types
+          setOtherTyping(true);
+          if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+          typingTimeoutRef.current = setTimeout(() => setOtherTyping(false), 1500);
+        } else if (data?.event === 'read') {
+          // If the other user read, mark our sent messages as read
+          if (data.user_id && user && data.user_id !== user.id) {
+            setMessages(prev => prev.map(m => m.sender === user.username ? { ...m, is_read: true } : m));
+          }
+        }
+      },
+      onClose: () => {},
+      onError: () => {},
+    });
+    wsRef.current = socket;
+  return () => { try { close(); } catch { /* ignore */ } };
+  }, [conversationId, user, conversation]);
 
   // Mark read when messages change
   useEffect(() => { markReadIfNeeded(); }, [messages, markReadIfNeeded]);
@@ -173,6 +182,7 @@ const ChatWindow = ({ conversationId }) => {
     setSending(true);
     setTimeout(() => scrollToBottom(), 10);
     try {
+      // Optimistic via REST, then WS will also deliver; to avoid duplicates we replace temp with server payload
       const response = await sendMessage(conversationId, trimmed);
       setMessages(prev => prev.map(m => m.id === tempId ? response.data : m));
       setTimeout(() => scrollToBottom(), 20);
@@ -183,6 +193,19 @@ const ChatWindow = ({ conversationId }) => {
       setSending(false);
     }
   };
+
+  // Typing indicator: fire when user types, throttled/debounced
+  useEffect(() => {
+    if (!newMessage || !conversationId) return;
+    if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
+    if (!typingRef.current) {
+      typingRef.current = true;
+      wsRef.current.send(JSON.stringify({ action: 'typing' }));
+    }
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => { typingRef.current = false; }, 1500);
+    return () => { if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current); };
+  }, [newMessage, conversationId]);
 
   const retryMessage = async (msg) => {
     if (msg.pending || !msg.failed) return;
@@ -238,7 +261,9 @@ const ChatWindow = ({ conversationId }) => {
         <img src={`https://i.pravatar.cc/40?u=${otherParticipant}`} alt={t('messaging:avatarAlt', { user: otherParticipant })} className="avatar" />
         <div>
           <h3>{otherParticipant}</h3>
-          <p>{t('listing:interestedInYour', { title: conversation.listing.title })}</p>
+          <p>
+            {otherTyping ? t('messaging:typing','Typing…') : t('listing:interestedInYour', { title: conversation.listing.title })}
+          </p>
         </div>
       </div>
       <div className="safety-tip">

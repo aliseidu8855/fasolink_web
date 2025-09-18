@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { fetchConversations } from '../services/api';
+import { connectSocket } from '../services/socket';
 
 // MessagingContext centralizes polling of conversation metadata (last message, unread counts)
 // and provides a single source of truth for unread totals across the app.
@@ -7,6 +8,7 @@ import { fetchConversations } from '../services/api';
 
 const MessagingContext = createContext(null);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useMessaging = () => useContext(MessagingContext);
 
 export const MessagingProvider = ({ children, pollInterval = 5000 }) => {
@@ -14,6 +16,7 @@ export const MessagingProvider = ({ children, pollInterval = 5000 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const pollRef = useRef(null);
+  const wsRef = useRef(null);
   const lastFetchRef = useRef(0);
 
   const pageVisible = () => typeof document !== 'undefined' && document.visibilityState === 'visible';
@@ -33,11 +36,34 @@ export const MessagingProvider = ({ children, pollInterval = 5000 }) => {
     }
   }, [loading]);
 
-  // Visibility-aware polling
+  // Visibility-aware polling (fallback if websocket not connected)
   useEffect(() => {
     refresh();
-    pollRef.current = setInterval(() => { if (pageVisible()) refresh(true); }, pollInterval);
-    return () => { if (pollRef.current) clearInterval(pollRef.current); };
+    const startPolling = () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+      pollRef.current = setInterval(() => { if (pageVisible()) refresh(true); }, pollInterval);
+    };
+    startPolling();
+
+    // Try to open a notifications websocket; if connected, pause polling and rely on server push
+    const { socket, close } = connectSocket('/ws/notifications/', {
+      onOpen: () => {
+        if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+      },
+      onClose: () => {
+        // Resume polling when socket closes
+        startPolling();
+      },
+      onMessage: () => {
+        // For now, any notification triggers a silent refresh
+        if (pageVisible()) refresh(true);
+      },
+    });
+    wsRef.current = socket;
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+      try { close(); } catch { /* ignore */ }
+    };
   }, [refresh, pollInterval]);
 
   // Manual visibility change immediate refresh

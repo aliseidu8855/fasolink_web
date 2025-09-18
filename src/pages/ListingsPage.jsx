@@ -57,11 +57,16 @@ export default function ListingsPage() {
     setSearchParams(next);
   }, [filters, query, ordering, view, page, setSearchParams]);
 
+  const abortRef = React.useRef();
   const loadPage = useCallback(async (targetPage) => {
+    // cancel previous
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchListingsPage(targetPage, baseParams);
+      const data = await fetchListingsPage(targetPage, baseParams, { signal: controller.signal });
       const results = data.results || data;
       setListings(Array.isArray(results) ? results : []);
       if (targetPage === 1 && Array.isArray(results)) {
@@ -73,8 +78,10 @@ export default function ListingsPage() {
         setTotalPages(Math.max(1, Math.ceil(data.count / size)));
       }
     } catch (e) {
-      console.error(e);
-      setError(t('listingsPage.error', 'Failed to load listings'));
+      if (e?.name !== 'CanceledError' && e?.code !== 'ERR_CANCELED') {
+        console.error(e);
+        setError(t('listingsPage.error', 'Failed to load listings'));
+      }
     } finally {
       setLoading(false);
     }
@@ -164,8 +171,17 @@ export default function ListingsPage() {
             {listings.map(l => (
               <ListingCard key={l.id} listing={l} compact={view==='compact'} minimal={view==='compact'} role="listitem" />
             ))}
+            {loading && listings.length === 0 && (
+              Array.from({ length: 8 }).map((_, i) => (
+                <div key={`sk-${i}`} className="listing-skel" aria-hidden="true">
+                  <div className="skel-img" />
+                  <div className="skel-line skel-line-1" />
+                  <div className="skel-line skel-line-2" />
+                </div>
+              ))
+            )}
           </div>
-          {loading && <p className="lp-loading-text">{t('listingsPage.loading','Loading…')}</p>}
+          {loading && listings.length > 0 && <p className="lp-loading-text">{t('listingsPage.loading','Loading…')}</p>}
           {!loading && listings.length === 0 && !error && (
             <p className="lp-empty">{t('listingsPage.empty','No listings found')}</p>
           )}
