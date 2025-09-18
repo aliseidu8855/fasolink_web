@@ -10,6 +10,7 @@ import ErrorBoundary from './components/ErrorBoundary.jsx'
 import { initRUM } from './rum'
 import apiClient from './services/api'
 import { instrumentAxios } from './rum'
+import { initPush } from './push'
 
 // PWA service worker registration (auto-update)
 // If you see a build error:  Cannot resolve "virtual:pwa-register"
@@ -39,6 +40,13 @@ try {
   instrumentAxios(apiClient);
 } catch {
   // ignore RUM init errors
+}
+
+// Push notifications (optional)
+try {
+  initPush();
+} catch {
+  // ignore push init errors
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(

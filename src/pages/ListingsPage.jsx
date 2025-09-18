@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import FilterSidebar from '../components/FilterSidebar';
 import ListingCard from '../components/ListingCard';
@@ -20,6 +20,7 @@ const useDebouncedValue = (value, delay) => {
 
 export default function ListingsPage() {
   const { t } = useTranslation(['listing']);
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const qp = Object.fromEntries([...searchParams]);
   const initialQuery = qp.q || '';
@@ -97,6 +98,23 @@ export default function ListingsPage() {
     loadPage(page);
   }, [page, loadPage]);
 
+  // Persist and restore scroll per filter set
+  useEffect(() => {
+    const key = `scroll:listings:${location.search}`;
+    // restore on mount (debounced to allow content mount)
+    const saved = Number(sessionStorage.getItem(key) || 0);
+    if (!Number.isNaN(saved) && saved > 0) {
+      setTimeout(() => window.scrollTo(0, saved), 0);
+    }
+    const onScroll = () => {
+      sessionStorage.setItem(key, String(window.scrollY || document.documentElement.scrollTop || 0));
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [location.search]);
+
   // Scroll listener for back-to-top button
   useEffect(()=>{
     const onScroll = () => {
@@ -171,8 +189,8 @@ export default function ListingsPage() {
             {listings.map(l => (
               <ListingCard key={l.id} listing={l} compact={view==='compact'} minimal={view==='compact'} role="listitem" />
             ))}
-            {loading && listings.length === 0 && (
-              Array.from({ length: 8 }).map((_, i) => (
+            {loading && (
+              Array.from({ length: listings.length ? Math.min(6, pageSize || 6) : 8 }).map((_, i) => (
                 <div key={`sk-${i}`} className="listing-skel" aria-hidden="true">
                   <div className="skel-img" />
                   <div className="skel-line skel-line-1" />

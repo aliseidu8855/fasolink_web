@@ -10,6 +10,11 @@
     "title": "Parcourir les catégories",
     "empty": "Aucune catégorie disponible"
   },
+  "update": {
+    "available": "Une mise à jour est disponible.",
+    "updateNow": "Mettre à jour",
+    "dismiss": "Plus tard"
+  },
   "footer": {
     "tagline": "Votre marché de confiance pour le Burkina Faso.",
     "quickLinks": "Liens rapides",

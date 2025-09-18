@@ -1,10 +1,12 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { MessagingProvider } from './context/MessagingContext';
 import ScrollToTop from './components/ScrollToTop';
 import GlobalLoader from './components/loading/GlobalLoader.jsx';
+import UpdateBadge from './components/UpdateBadge.jsx';
 
 // Lazy-loaded pages
 const HomePage = lazy(()=>import('./pages/HomePage'));
@@ -18,12 +20,12 @@ const HelpPage = lazy(()=>import('./pages/HelpPage'));
 const SettingsPage = lazy(()=>import('./pages/SettingsPage'));
 const AuthPage = lazy(()=>import('./pages/AuthPage'));
 
-function App() {
+function RoutesWithFade() {
+  const location = useLocation();
   return (
-    <Router>
-      <ScrollToTop />
-      <Suspense fallback={<GlobalLoader />}>      
-        <Routes>
+    <TransitionGroup>
+      <CSSTransition key={location.key} classNames="page" timeout={160}>
+        <Routes location={location}>
           <Route path="/" element={<Layout />}>            
             <Route index element={<HomePage />} />
             <Route path="/listings" element={<ListingsPage />} />
@@ -60,6 +62,18 @@ function App() {
             <Route path="/browse" element={<BrowsePage />} />
           </Route>
         </Routes>
+      </CSSTransition>
+    </TransitionGroup>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <ScrollToTop />
+      <UpdateBadge />
+      <Suspense fallback={<GlobalLoader />}>      
+        <RoutesWithFade />
       </Suspense>
     </Router>
   );
