@@ -28,7 +28,8 @@ const Layout = () => {
         id="main-content"
         style={{
           paddingTop: applyMainPadding ? '58px' : '0',
-          paddingBottom: isMessages ? '0' : '64px',
+          // Reserve space for MobileBottomNav on messages to avoid overlap
+          paddingBottom: isMessages ? '64px' : '64px',
           height: isMessages ? 'calc(100vh - 58px)' : undefined,
           minHeight: 0
         }}
