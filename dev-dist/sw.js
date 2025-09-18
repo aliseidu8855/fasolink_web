@@ -69,11 +69,12 @@ if (!self.define) {
 }
 define(['./workbox-d68aca84'], (function (workbox) { 'use strict';
 
-	self.skipWaiting();
-	workbox.clientsClaim();
-	workbox.registerRoute(/^https?:\/\//, new workbox.NetworkOnly({
-	  "cacheName": "runtime-no-cache",
-	  plugins: []
-	}), 'GET');
+  importScripts("sw-push.js");
+  self.skipWaiting();
+  workbox.clientsClaim();
+  workbox.registerRoute(/^https?:\/\//, new workbox.NetworkOnly({
+    "cacheName": "runtime-no-cache",
+    plugins: []
+  }), 'GET');
 
 }));
