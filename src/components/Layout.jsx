@@ -13,17 +13,18 @@ import { useModal } from '../context/ModalContext';
 const Layout = () => {
   const { isModalOpen, closeModal, modalContent } = useModal();
   const location = useLocation(); // Get the current location
+  const isMessages = location.pathname.startsWith('/messages');
 
   // The messages page handles its own layout, so we don't apply padding
   // Bring back NavBar on top for all routes, including /messages
   const applyMainPadding = true;
   const showNavBar = true;
-  const showFooter = !location.pathname.startsWith('/messages');
+  const showFooter = !isMessages;
 
   return (
     <div>
       {showNavBar && <NavBar />}
-      <main id="main-content" style={{ paddingTop: applyMainPadding ? '58px' : '0', paddingBottom: '64px' }}>
+  <main id="main-content" style={{ paddingTop: applyMainPadding ? '58px' : '0', paddingBottom: isMessages ? '0' : '64px' }}>
         <Outlet />
       </main>
   {showFooter && <Footer />}
