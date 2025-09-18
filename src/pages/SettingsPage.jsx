@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import Button from '../components/Button'
+import { initPush } from '../push'
 
 export default function SettingsPage() {
   const [status, setStatus] = useState('')
@@ -21,10 +23,17 @@ export default function SettingsPage() {
         <h2 style={h2Style}>PWA / Installation</h2>
         <p style={pStyle}>Utiliser les actions ci‑dessous pour réafficher les invites d’installation.</p>
         <div style={btnRow}>
-          <button style={btnPrimary} onClick={recheckInstall}>Réinitialiser l’invite d’installation</button>
-          <button style={btn} onClick={resetIOSBanner}>Réinitialiser bannière iOS A2HS</button>
+          <Button variant="primary" onClick={recheckInstall}>Réinitialiser l’invite d’installation</Button>
+          <Button variant="secondary" onClick={resetIOSBanner}>Réinitialiser bannière iOS A2HS</Button>
         </div>
         {status && <p style={{ ...pStyle, color: 'var(--color-text-secondary)', marginTop: '.75rem' }}>{status}</p>}
+      </section>
+      <section style={{ ...sectionStyle, marginTop: '1rem' }}>
+        <h2 style={h2Style}>Notifications push</h2>
+        <p style={pStyle}>Activer les notifications pour recevoir des alertes de messages et de mises à jour.</p>
+        <div style={btnRow}>
+          <Button onClick={async ()=>{ await initPush(); setStatus('Demande d’activation envoyée (si activée côté serveur).'); }}>Activer les notifications</Button>
+        </div>
       </section>
     </div>
   )
@@ -34,6 +43,3 @@ const sectionStyle = { border: '1px solid var(--color-border)', borderRadius: 12
 const h2Style = { fontSize: '1rem', margin: 0, marginBottom: '.5rem' }
 const pStyle = { fontSize: '.8rem', lineHeight: 1.35, margin: 0 }
 const btnRow = { display: 'flex', gap: '.75rem', flexWrap: 'wrap', marginTop: '.75rem' }
-const btnBase = { cursor: 'pointer', fontSize: '.75rem', padding: '.55rem .85rem', borderRadius: 8, fontWeight: 600, border: '1px solid var(--color-border)', background: '#fff' }
-const btnPrimary = { ...btnBase, background: 'var(--color-brand)', color: '#fff', border: 'none' }
-const btn = btnBase

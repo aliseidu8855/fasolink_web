@@ -7,6 +7,8 @@ import SortBar from '../components/SortBar';
 import { fetchListingsPage } from '../services/api';
 import '../components/dashboard/dashboard.css';
 import './ListingsPage.css';
+import EmptyState from '../components/ui/EmptyState';
+import Button from '../components/Button';
 
 // Debounce helper (simple)
 const useDebouncedValue = (value, delay) => {
@@ -158,9 +160,9 @@ export default function ListingsPage() {
               placeholder={t('listingsPage.searchPlaceholder','Search products, brands...')}
               className="lp-search"
             />
-            <button type="button" className="lp-filters-toggle" onClick={()=>setShowFilters(s=>!s)} aria-expanded={showFilters}>
+            <Button type="button" variant="secondary" size="sm" className="lp-filters-toggle" onClick={()=>setShowFilters(s=>!s)} aria-expanded={showFilters}>
               {showFilters ? t('listingsPage.hideFilters','Hide Filters') : t('listingsPage.showFilters','Filters')}
-            </button>
+            </Button>
           </div>
         </div>
         <div className="lp-meta-row" aria-live="polite">{resultsCountLabel}</div>
@@ -179,11 +181,16 @@ export default function ListingsPage() {
           {error && (
             <div className="lp-error" role="alert">
               <p>{error}</p>
-              <button className="btn" onClick={()=>loadPage(1)}>{t('listingsPage.retry','Retry')}</button>
+              <Button variant="primary" onClick={()=>loadPage(1)} size="sm">{t('listingsPage.retry','Retry')}</Button>
             </div>
           )}
           {!error && listings.length === 0 && !loading && (
-            <p className="lp-empty">{t('listingsPage.empty','No listings found')}</p>
+            <EmptyState
+              title={t('listingsPage.emptyTitle','No listings found')}
+              description={t('listingsPage.emptyDesc','Try adjusting filters or searching for a different term.')}
+              primaryAction={{ label: t('listingsPage.clearFilters','Clear filters'), onClick: ()=>{ setFilters({}); setQuery(''); setOrdering('-created_at'); } }}
+              secondaryAction={{ label: t('listingsPage.reload','Reload'), onClick: ()=>loadPage(1) }}
+            />
           )}
           <div className={`listings-grid ${view==='compact' ? 'listings-grid-compact' : ''}`} role="list" aria-busy={loading}>
             {listings.map(l => (
@@ -201,7 +208,12 @@ export default function ListingsPage() {
           </div>
           {loading && listings.length > 0 && <p className="lp-loading-text">{t('listingsPage.loading','Loading…')}</p>}
           {!loading && listings.length === 0 && !error && (
-            <p className="lp-empty">{t('listingsPage.empty','No listings found')}</p>
+            <EmptyState
+              title={t('listingsPage.emptyTitle','No listings found')}
+              description={t('listingsPage.emptyDesc','Try adjusting filters or searching for a different term.')}
+              primaryAction={{ label: t('listingsPage.clearFilters','Clear filters'), onClick: ()=>{ setFilters({}); setQuery(''); setOrdering('-created_at'); } }}
+              secondaryAction={{ label: t('listingsPage.reload','Reload'), onClick: ()=>loadPage(1) }}
+            />
           )}
           <nav className="lp-pagination" aria-label="Pagination">
             <button type="button" className="pg-btn" onClick={()=>gotoPage(page-1)} disabled={page<=1}>{t('pagination.prev','Previous')}</button>

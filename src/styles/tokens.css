@@ -60,6 +60,7 @@
   --color-cta-bg: var(--color-brand);
   --color-cta-text: #FFFFFF;
   --color-focus-ring: var(--color-brand);
+  --color-focus-ring-rgb: var(--brand-heritage-red-rgb);
   --color-divider: #E4E7EB;
   --color-bg-elevated: #FFFFFF;
   --color-bg-alt: #FAFCFD;

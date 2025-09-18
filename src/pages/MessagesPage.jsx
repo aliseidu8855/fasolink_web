@@ -6,6 +6,8 @@ import ChatWindow from '../components/messaging/ChatWindow';
 // Removed global LoggedInHeader for a focused messaging workspace
 import './MessagesPage.css';
 import { useAuth } from '../context/AuthContext';
+import EmptyState from '../components/ui/EmptyState';
+import Button from '../components/Button';
 
 const MessagesPage = () => {
   const { conversationId } = useParams();
@@ -109,10 +111,18 @@ const MessagesPage = () => {
                 </div>
               </div>
             ) : (
-              <div className="messages-placeholder" role="status">{t('messaging:selectConversation')}</div>
+              <EmptyState
+                title={t('messaging:messages')}
+                description={t('messaging:selectConversation')}
+                secondaryAction={{ label: t('messaging:refresh'), onClick: ()=>window.location.reload() }}
+              />
             )
           ) : (
-            <div className="messages-placeholder" role="status">{t('messaging:loginToViewMessages')}</div>
+            <EmptyState
+              title={t('messaging:messages')}
+              description={t('messaging:loginToViewMessages')}
+              primaryAction={{ label: t('common:login','Login'), onClick: ()=>window.location.assign('/auth') }}
+            />
           )}
         </div>
       </div>

@@ -1,0 +1,12 @@
+.empty {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  gap: var(--space-4);
+  padding: clamp(1.5rem, 5vh, 3rem) var(--space-4);
+}
+.empty__illustration { width: 160px; max-width: 60%; height: auto; opacity:.95; }
+.empty__title { font-size: var(--fs-xl); font-weight: var(--fw-bold); color: var(--brand-ink); }
+.empty__desc { font-size: var(--fs-sm); color: var(--color-text-secondary); line-height: var(--lh-relaxed); }
+.empty__actions { display:flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center; }

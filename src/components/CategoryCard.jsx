@@ -1,5 +1,6 @@
 import React from 'react';
 import './CategoryCard.css';
+import Card from './ui/Card';
 
 // A simple mapping for icon colors based on the design
 const iconColors = {
@@ -12,17 +13,17 @@ const iconColors = {
 };
 
 const CategoryCard = ({ name, adCount = 0 }) => {
-  const backgroundColor = iconColors[name] || '#f3f4f6'; // Default gray
+  const backgroundColor = iconColors[name] || 'var(--color-bg-muted)'; // Default soft surface
 
   return (
-    <div className="category-card">
+    <Card className="category-card" interactive>
       <div className="icon-container" style={{ backgroundColor }}>
         {/* Placeholder for a real icon */}
         <span>{name.charAt(0)}</span>
       </div>
       <h3 className="category-name">{name}</h3>
       <p className="ad-count">{adCount} ads</p>
-    </div>
+    </Card>
   );
 };
 

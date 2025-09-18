@@ -1,6 +1,8 @@
 import React from 'react';
 import ListingCard from '../ListingCard.jsx';
 import { useTranslation } from 'react-i18next';
+import EmptyState from '../../components/ui/EmptyState.jsx';
+import Button from '../../components/Button.jsx';
 
 const DashboardListingsPanel = ({ listings, onEdit, onDelete, onNew }) => {
   const { t } = useTranslation('dashboard');
@@ -13,15 +15,19 @@ const DashboardListingsPanel = ({ listings, onEdit, onDelete, onNew }) => {
         </div>
       </header>
       {listings.length === 0 && (
-        <p className="muted">{t('listings.empty')}</p>
+        <EmptyState
+          title={t('listings.empty')}
+          description={t('listings.emptyHelp','You have no listings yet. Create your first listing to get started.')}
+          primaryAction={{ label: t('listings.new'), onClick: onNew }}
+        />
       )}
       <div className="dash-listings-grid">
         {listings.map(l => (
           <div key={l.id} className="dash-listing-wrapper">
             <ListingCard listing={l} compact />
             <div className="dash-inline-actions">
-              <button onClick={() => onEdit?.(l)} className="text-btn">{t('listings.edit')}</button>
-              <button onClick={() => onDelete?.(l)} className="text-btn danger">{t('listings.delete')}</button>
+              <Button size="sm" variant="ghost" onClick={() => onEdit?.(l)}>{t('listings.edit')}</Button>
+              <Button size="sm" variant="secondary" onClick={() => onDelete?.(l)}>{t('listings.delete')}</Button>
             </div>
           </div>
         ))}

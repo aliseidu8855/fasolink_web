@@ -1,10 +1,4 @@
 /* Design system utility classes (new palette) */
-:root {
-  --surface-muted: rgba(0,0,0,0.035);
-  --surface-soft: rgba(0,0,0,0.055);
-  --border-soft: rgba(0,0,0,0.08);
-  --border-strong: rgba(0,0,0,0.14);
-}
 
 .u-flex { display:flex; }
 .u-flex-col { display:flex; flex-direction:column; }
@@ -44,6 +38,6 @@
 .search-icon-inline { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; color: currentColor; }
 .attach-btn { background:transparent; border:1px solid rgba(var(--brand-ink-rgb),0.15); width:34px; height:34px; display:inline-flex; align-items:center; justify-content:center; border-radius:10px; cursor:pointer; color: var(--brand-ink); transition: background .25s ease, border-color .25s ease; }
 .attach-btn:hover { background: rgba(var(--brand-ink-rgb),0.08); }
-.attach-btn:focus-visible { outline:2px solid var(--brand-teal); outline-offset:2px; }
+.attach-btn:focus-visible { outline:2px solid var(--color-focus-ring); outline-offset:2px; }
 [data-theme="dark"] .attach-btn { border-color: rgba(255,255,255,0.25); color:#F4F6F8; }
 [data-theme="dark"] .attach-btn:hover { background: rgba(255,255,255,0.12); }
