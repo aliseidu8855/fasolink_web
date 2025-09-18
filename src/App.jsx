@@ -1,6 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { MessagingProvider } from './context/MessagingContext';
@@ -20,50 +19,45 @@ const HelpPage = lazy(()=>import('./pages/HelpPage'));
 const SettingsPage = lazy(()=>import('./pages/SettingsPage'));
 const AuthPage = lazy(()=>import('./pages/AuthPage'));
 
-function RoutesWithFade() {
-  const location = useLocation();
+function AppRoutes() {
   return (
-    <TransitionGroup>
-      <CSSTransition key={location.key} classNames="page" timeout={160}>
-        <Routes location={location}>
-          <Route path="/" element={<Layout />}>            
-            <Route index element={<HomePage />} />
-            <Route path="/listings" element={<ListingsPage />} />
-            <Route path="/listings/:listingId" element={<ListingDetailPage />} />
-            <Route
-              path="/create-listing"
-              element={
-                <ProtectedRoute>
-                  <CreateListingPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <DashboardPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/messages/:conversationId?"
-              element={
-                <ProtectedRoute>
-                  <MessagingProvider>
-                    <MessagesPage />
-                  </MessagingProvider>
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/help" element={<HelpPage />} />
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/browse" element={<BrowsePage />} />
-          </Route>
-        </Routes>
-      </CSSTransition>
-    </TransitionGroup>
+    <Routes>
+      <Route path="/" element={<Layout />}>            
+        <Route index element={<HomePage />} />
+        <Route path="/listings" element={<ListingsPage />} />
+        <Route path="/listings/:listingId" element={<ListingDetailPage />} />
+        <Route
+          path="/create-listing"
+          element={
+            <ProtectedRoute>
+              <CreateListingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/messages/:conversationId?"
+          element={
+            <ProtectedRoute>
+              <MessagingProvider>
+                <MessagesPage />
+              </MessagingProvider>
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/help" element={<HelpPage />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/browse" element={<BrowsePage />} />
+      </Route>
+    </Routes>
   );
 }
 
@@ -73,7 +67,7 @@ function App() {
       <ScrollToTop />
       <UpdateBadge />
       <Suspense fallback={<GlobalLoader />}>      
-        <RoutesWithFade />
+        <AppRoutes />
       </Suspense>
     </Router>
   );
