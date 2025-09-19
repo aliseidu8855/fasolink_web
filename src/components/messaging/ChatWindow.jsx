@@ -7,13 +7,14 @@ import { fetchConversationById, sendMessage, sendMessageMultipart, fetchConversa
 import { connectSocket } from '../../services/socket';
 import { useAuth } from '../../context/AuthContext';
 import ListingSnippet from './ListingSnippet';
+import InitialsAvatar from '../ui/InitialsAvatar';
 import './ChatWindow.css';
 
 const ChatWindow = ({ conversationId }) => {
   const { user } = useAuth();
   const { t } = useTranslation(['messaging','listing']);
   const [conversation, setConversation] = useState(null);
-  const [messages, setMessages] = useState([]); // paginated, newest at end
+  const [messages, setMessages] = useState([]); // We'll keep state oldest->newest but render reversed (newest on top)
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -53,10 +54,12 @@ const ChatWindow = ({ conversationId }) => {
 
   // const pageVisible = () => document.visibilityState === 'visible';
 
-  const scrollToBottom = (instant=false) => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: instant ? 'auto' : 'smooth' });
-    }
+  // With newest-on-top UI, scrolling to "top" means showing the latest messages area.
+  const scrollToLatest = (instant=false) => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    // Since newest is visually at top, scrollTop = 0 shows latest
+    el.scrollTo({ top: 0, behavior: instant ? 'auto' : 'smooth' });
   };
 
   // Persist/restore scroll position per-thread using sessionStorage
@@ -79,16 +82,15 @@ const ChatWindow = ({ conversationId }) => {
     return () => el.removeEventListener('scroll', onScroll);
   }, [conversationId]);
 
-  // Track if user is at/near bottom to decide whether to auto-scroll
+  // Track if user is at/near latest (top) to decide whether to auto-scroll
   useEffect(() => {
     const el = scrollContainerRef.current;
     if (!el) return;
     const onScroll = () => {
-      const threshold = 80; // px
-      const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-      const nowAtBottom = distanceFromBottom <= threshold;
-      setAtBottom(nowAtBottom);
-      if (nowAtBottom && newSinceScroll > 0) {
+      const threshold = 80; // px from top considered "at latest"
+      const nowAtTop = el.scrollTop <= threshold;
+      setAtBottom(nowAtTop);
+      if (nowAtTop && newSinceScroll > 0) {
         setNewSinceScroll(0);
       }
     };
@@ -124,8 +126,8 @@ const ChatWindow = ({ conversationId }) => {
       const data = res.data;
       const newMsgs = data.results || data.messages || data; // fallback
       setMessages(prev => {
-        if (targetPage === 1) return newMsgs.reverse(); // ensure oldest -> newest order
-        // When loading older, we prepend newMsgs (which are older) to the start
+        if (targetPage === 1) return newMsgs.reverse(); // ensure oldest -> newest in state
+        // When loading older, prepend older to the start of the state array
         return [...newMsgs.reverse(), ...prev];
       });
       // Determine hasMore via next or length
@@ -134,11 +136,14 @@ const ChatWindow = ({ conversationId }) => {
         else if (newMsgs.length < MESSAGE_PAGE_SIZE) setHasMore(false);
       }
       setPage(targetPage);
-      // Preserve anchor only when prepending older pages, or when no saved scroll exists
+      // Preserve anchor when prepending older pages by maintaining visual position
       setTimeout(() => {
-        if (container && (targetPage > 1 || !hadSavedScroll)) {
+        if (container && targetPage > 1) {
           const newScrollHeight = container.scrollHeight;
           container.scrollTop = newScrollHeight - prevScrollHeight + container.scrollTop;
+        } else if (container && !hadSavedScroll) {
+          // Snap to latest on first load when there's no saved position
+          container.scrollTop = 0;
         }
       }, 30);
     } catch (e) {
@@ -171,11 +176,9 @@ const ChatWindow = ({ conversationId }) => {
     setPendingFiles([]);
     loadConversationMeta();
     loadMessagesPage(1).then(() => {
-      // Only auto-scroll if there are already multiple messages (existing conversation)
+      // Auto-show latest at top for existing conversations
       setTimeout(() => {
-        if (messagesEndRef.current && initialMessagesCountRef.current > 1) {
-          scrollToBottom(true);
-        }
+        scrollToLatest(true);
       }, 30);
     });
   }, [conversationId, loadConversationMeta, loadMessagesPage]);
@@ -196,16 +199,18 @@ const ChatWindow = ({ conversationId }) => {
           // Auto-scroll only if user is near bottom; otherwise increment the new message counter
           setTimeout(() => {
             if (atBottom) {
-              scrollToBottom();
+              scrollToLatest();
             } else {
               setNewSinceScroll(c => c + 1);
             }
           }, 30);
         } else if (data?.event === 'typing') {
-          // Show typing indicator for a short time when other user types
-          setOtherTyping(true);
-          if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-          typingTimeoutRef.current = setTimeout(() => setOtherTyping(false), 1500);
+          // Show typing indicator for a short time only if the other user is typing
+          if (data.user_id && user && data.user_id !== user.id) {
+            setOtherTyping(true);
+            if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+            typingTimeoutRef.current = setTimeout(() => setOtherTyping(false), 1500);
+          }
         } else if (data?.event === 'read') {
           // If the other user read, mark our sent messages as read
           if (data.user_id && user && data.user_id !== user.id) {
@@ -223,12 +228,12 @@ const ChatWindow = ({ conversationId }) => {
   // Mark read when messages change
   useEffect(() => { markReadIfNeeded(); }, [messages, markReadIfNeeded]);
 
-  // Scroll to bottom when messages appended (not when prepending older)
+  // Scroll to latest when messages appended (not when prepending older)
   const prevCountRef = useRef(0);
   useEffect(() => {
     if (firstRenderRef.current) { prevCountRef.current = messages.length; firstRenderRef.current = false; return; }
     if (messages.length > prevCountRef.current) {
-      if (atBottom) scrollToBottom();
+      if (atBottom) scrollToLatest();
     }
     prevCountRef.current = messages.length;
   }, [messages, atBottom]);
@@ -244,14 +249,14 @@ const ChatWindow = ({ conversationId }) => {
     const tempMessage = { id: tempId, content: trimmed, sender: user.username, pending: true, attachments: files.map((f, idx) => ({ id: `temp-att-${idx}`, name: f.name })) };
     setMessages(prev => [...prev, tempMessage]);
     setSending(true);
-    setTimeout(() => scrollToBottom(), 10);
+  setTimeout(() => scrollToLatest(), 10);
     try {
       // Prefer multipart when sending files; allow empty content when only attachments
       const response = files.length > 0
         ? await sendMessageMultipart(conversationId, { content: trimmed, files })
         : await sendMessage(conversationId, trimmed);
       setMessages(prev => prev.map(m => m.id === tempId ? response.data : m));
-      setTimeout(() => scrollToBottom(), 20);
+  setTimeout(() => scrollToLatest(), 20);
     } catch (err) {
       console.error('Failed to send message', err);
       setMessages(prev => prev.map(m => m.id === tempId ? { ...m, pending:false, failed:true } : m));
@@ -325,14 +330,18 @@ const ChatWindow = ({ conversationId }) => {
   return (
     <div className="chat-window">
       <div className="chat-header">
-        <img src={`https://i.pravatar.cc/40?u=${otherParticipant}`} alt={t('messaging:avatarAlt', { user: otherParticipant })} className="avatar" />
+        <InitialsAvatar name={otherParticipant} alt={t('messaging:avatarAlt', { user: otherParticipant })} className="avatar" size={40} />
         <div>
           <h3>
             {otherParticipant}
             {isOtherOwner && <span className="owner-badge" title={t('messaging:ownerTooltip','Listing owner')}>{t('messaging:owner','Owner')}</span>}
           </h3>
           <p>
-            {otherTyping ? t('messaging:typing','Typing…') : t('listing:interestedInYour', { title: conversation.listing.title })}
+            {otherTyping ? t('messaging:typing','Typing…') : (
+              conversation?.listing?.user === user?.username
+                ? t('messaging:buyerInterested', { title: conversation.listing.title, defaultValue: 'Interested in your {{title}}' })
+                : t('messaging:youInterested', { title: conversation.listing.title, defaultValue: 'You are interested in {{title}}' })
+            )}
           </p>
         </div>
       </div>
@@ -350,21 +359,6 @@ const ChatWindow = ({ conversationId }) => {
         aria-relevant="additions"
         aria-label={t('messaging:conversationWith', { user: otherParticipant })}
       >
-        {hasMore && (
-          <button
-            type="button"
-            className="load-older-btn"
-            disabled={loadingOlder}
-            onClick={() => loadMessagesPage(page + 1)}
-            aria-label={t('messaging:loadOlderAria','Load older messages')}
-          >
-                {loadingOlder ? (
-                  <span style={{ display:'inline-flex', alignItems:'center', gap:6 }}>
-                    <Spinner size={14} stroke={2} /> {t('common:loading')}
-                  </span>
-                ) : t('messaging:loadOlder')}
-          </button>
-        )}
             {loadingOlder && (
               Array.from({ length: 3 }).map((_,i)=>(
                 <div key={`older-skel-${i}`} className={`message-bubble-wrapper ${i%2===0 ? 'received':'sent'}`} aria-hidden="true">
@@ -375,8 +369,9 @@ const ChatWindow = ({ conversationId }) => {
               ))
             )}
         <ListingSnippet listing={conversation.listing} />
-        {/* Render messages with date separators */}
-        {messages.map((msg, idx) => {
+        {/* Render messages reversed visually: newest at the top. We keep state oldest->newest, so map from end to start. */}
+        {messages.slice().reverse().map((msg, revIdx) => {
+          const idx = messages.length - 1 - revIdx;
           const statusLabel = msg.failed ? ` (${t('messaging:failedSend')})` : (msg.pending ? ' …' : '');
           const ts = msg.timestamp ? new Date(msg.timestamp) : null;
           const timeShort = ts ? ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
@@ -434,10 +429,25 @@ const ChatWindow = ({ conversationId }) => {
           );
         })}
         <div ref={messagesEndRef} />
+        {hasMore && (
+          <button
+            type="button"
+            className="load-older-btn"
+            disabled={loadingOlder}
+            onClick={() => loadMessagesPage(page + 1)}
+            aria-label={t('messaging:loadOlderAria','Load older messages')}
+          >
+                {loadingOlder ? (
+                  <span style={{ display:'inline-flex', alignItems:'center', gap:6 }}>
+                    <Spinner size={14} stroke={2} /> {t('common:loading')}
+                  </span>
+                ) : t('messaging:loadOlder')}
+          </button>
+        )}
       </div>
       {newSinceScroll > 0 && (
         <div className="new-messages-chip" role="status" aria-live="polite">
-          <button type="button" onClick={() => { scrollToBottom(); setNewSinceScroll(0); }}>
+          <button type="button" onClick={() => { scrollToLatest(); setNewSinceScroll(0); }}>
             {t('messaging:newMessages',{ count: newSinceScroll, defaultValue: '{{count}} new messages' }).replace('{{count}}', String(newSinceScroll))}
           </button>
         </div>

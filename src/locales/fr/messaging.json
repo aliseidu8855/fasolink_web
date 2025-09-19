@@ -60,4 +60,6 @@
   ,"otherListingsBy": "Autres annonces de {{user}}"
   ,"viewAllListings": "Voir toutes les annonces →"
   ,"listingImageAlt": "Image d'annonce"
+  ,"buyerInterested": "Intéressé par votre {{title}}"
+  ,"youInterested": "Vous êtes intéressé par {{title}}"
 }

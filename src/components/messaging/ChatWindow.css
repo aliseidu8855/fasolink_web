@@ -114,8 +114,8 @@
 
 /* Ensure file ends with newline and no stray syntax issues */
 
-/* New messages chip that appears when scrolled up */
-.new-messages-chip { position: sticky; bottom: 64px; display:flex; justify-content:center; pointer-events:none; }
+/* New messages chip that appears when scrolled away from latest (top). Place it below header. */
+.new-messages-chip { position: sticky; top: 8px; display:flex; justify-content:center; pointer-events:none; z-index:3; }
 .new-messages-chip button { pointer-events:auto; background:#0ea5e9; color:#fff; border:none; border-radius:999px; padding:.35rem .75rem; font-size:.75rem; box-shadow:0 6px 22px -6px rgba(14,165,233,.55); cursor:pointer; }
 
 /* Date separator between message days */
@@ -129,12 +129,13 @@
 .quick-reply-chip:hover { filter:brightness(.95); }
 
 @media (max-width: 720px){
+  .safety-tip { display:none; }
   .message-input-area { padding:.6rem .75rem; gap:.5rem; bottom: 64px; }
   .message-input-area input { padding:.55rem .75rem; font-size: var(--fs-xs); }
   .send-button { width:36px; height:36px; font-size:16px; }
   .chat-header { padding:.6rem .75rem; }
   .chat-header p { font-size: var(--fs-xs); }
   .chat-window .message-bubble { font-size: var(--fs-sm); }
-  .new-messages-chip { bottom: 120px; }
+  .new-messages-chip { top: 8px; }
   .quick-reply-chip { font-size: var(--fs-xs); }
 }

@@ -7,8 +7,7 @@ import MobileBottomNav from './navigation/MobileBottomNav';
 import InstallPWA from './pwa/InstallPWA';
 import PWAUpdatePrompt from './pwa/PWAUpdatePrompt';
 import IOSAddToHomeBanner from './pwa/IOSAddToHomeBanner';
-import EnableNotificationsBanner from './pwa/EnableNotificationsBanner';
-import UnreadMessagesBanner from './UnreadMessagesBanner';
+// Removed banners per request: EnableNotificationsBanner, UnreadMessagesBanner
 import Modal from './Modal';
 import { useModal } from '../context/ModalContext';
 
@@ -45,9 +44,7 @@ const Layout = () => {
         {modalContent}
       </Modal>
       <PWAUpdatePrompt />
-      <IOSAddToHomeBanner />
-      <EnableNotificationsBanner />
-      <UnreadMessagesBanner />
+  <IOSAddToHomeBanner />
     </div>
   );
 };

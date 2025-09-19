@@ -7,6 +7,7 @@ import { useMessaging } from '../../context/MessagingContext';
 import formatRelativeTime from '../../utils/time';
 import './ConversationList.css';
 import { Skeleton, SkeletonAvatar } from '../ui/Skeleton';
+import InitialsAvatar from '../ui/InitialsAvatar';
 
 const ConversationList = ({ onSelect }) => {
   const { conversationId: activeConversationId } = useParams();
@@ -17,8 +18,14 @@ const ConversationList = ({ onSelect }) => {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return conversations;
-    return conversations.filter(c => {
+    // Sort by last_message_timestamp desc (newest first)
+    const base = [...conversations].sort((a, b) => {
+      const ta = a.last_message_timestamp ? new Date(a.last_message_timestamp).getTime() : 0;
+      const tb = b.last_message_timestamp ? new Date(b.last_message_timestamp).getTime() : 0;
+      return tb - ta;
+    });
+    if (!q) return base;
+    return base.filter(c => {
       const other = c.participants.find(p => p !== user?.username) || '';
       return (other.toLowerCase().includes(q) || (c.listing_title||'').toLowerCase().includes(q));
     });
@@ -72,10 +79,11 @@ const ConversationList = ({ onSelect }) => {
               className={`convo-item ${convo.id == activeConversationId ? 'active' : ''} ${unread ? 'unread' : ''}`}
               onClick={() => { if (onSelect) onSelect(convo.id); }}
             >
-              <img
-                src={`https://i.pravatar.cc/50?u=${otherParticipant}`}
+              <InitialsAvatar
+                name={otherParticipant || t('messaging:user','User')}
                 alt={t('messaging:avatarAlt', { user: otherParticipant || t('messaging:user','User') })}
                 className="avatar"
+                size={40}
               />
               <div className="convo-details">
                 <div className="convo-header">
