@@ -14,7 +14,7 @@ const STEP_KEYS = ['category','core','specs','review'];
 const DRAFT_KEY = 'createListing.draft.v1';
 
 export default function CreateListingPage(){
-  const { t } = useTranslation(['createListing','common']);
+  const { t } = useTranslation(['createListing','common','categories']);
   const nav = useNavigate();
   const [allCats,setAllCats] = useState([]);
   const [selectedCategoryId,setSelectedCategoryId] = useState(null);
@@ -36,6 +36,7 @@ export default function CreateListingPage(){
   const [uploadStates, setUploadStates] = useState({}); // index -> {progress, error}
   const [openCatSheet, setOpenCatSheet] = useState(false);
   const [openLocSheet, setOpenLocSheet] = useState(false);
+  const normalize = useMemo(() => (name) => (name || '').toLowerCase().replace(/[^a-z0-9]+/g,'-'), []);
 
   // Helper to sanitize unknown backend error payloads for display
   const toUserMessage = (data) => {
@@ -332,11 +333,27 @@ export default function CreateListingPage(){
           </div>
           <div className="cl-field">
             <button type="button" className="cl-cat-btn" data-expandable onClick={()=> setOpenCatSheet(true)}>
-              <span className="cl-cat-label">{allCats.find(c=> c.id===selectedCategoryId)?.name || t('createListing:chooseCategory','Choose a category')}</span>
+              <span className="cl-cat-label">{
+                (()=>{
+                  const sel = allCats.find(c=> c.id===selectedCategoryId);
+                  if (!sel) return t('createListing:chooseCategory','Choose a category');
+                  const key = sel.icon_name || normalize(sel.name);
+                  return t(`categories:${key}`, { defaultValue: sel.name });
+                })()
+              }</span>
               <span className="cl-cat-chevron">▾</span>
             </button>
           </div>
-          {selectedCategoryId && <div className="cl-cat-selection-preview">{t('createListing:category','Category')}: <strong>{allCats.find(c=> c.id===selectedCategoryId)?.name}</strong></div>}
+          {selectedCategoryId && (
+            <div className="cl-cat-selection-preview">
+              {t('createListing:category','Category')}: <strong>{(()=>{
+                const sel = allCats.find(c=> c.id===selectedCategoryId);
+                if (!sel) return '';
+                const key = sel.icon_name || normalize(sel.name);
+                return t(`categories:${key}`, { defaultValue: sel.name });
+              })()}</strong>
+            </div>
+          )}
         </section>
       )}
       {step==='core' && (
@@ -439,7 +456,12 @@ export default function CreateListingPage(){
             </div>
           ) : (
             <div className="cl-summary">
-              <p><strong>{t('createListing:category')}:</strong> {allCats.find(c=> c.id===selectedCategoryId)?.name || ''}</p>
+              <p><strong>{t('createListing:category')}:</strong> {(()=>{
+                const sel = allCats.find(c=> c.id===selectedCategoryId);
+                if (!sel) return '';
+                const key = sel.icon_name || normalize(sel.name);
+                return t(`categories:${key}`, { defaultValue: sel.name });
+              })()}</p>
               <p><strong>{t('createListing:title')}:</strong> {title}</p>
               <p><strong>{t('createListing:price')}:</strong> {price}</p>
               <p><strong>{t('createListing:location')}:</strong> {loc}</p>
@@ -490,7 +512,7 @@ export default function CreateListingPage(){
                   onClick={()=> { setSelectedCategoryId(c.id); setOpenCatSheet(false); }}
                   aria-selected={selected||undefined}
                 >
-                  <span className="cl-cat-label">{c.name}</span>
+                  <span className="cl-cat-label">{t(`categories:${c.icon_name || normalize(c.name)}`, { defaultValue: c.name })}</span>
                 </button>
               </li>
             );
