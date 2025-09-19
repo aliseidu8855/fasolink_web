@@ -33,7 +33,9 @@
     "socialFacebook": "Facebook",
     "socialTwitter": "Twitter",
     "socialInstagram": "Instagram",
-    "languageSwitch": "Langue"
+    "languageSwitch": "Langue",
+    "showAll": "Tout afficher",
+    "hideAll": "Tout masquer"
   },
   "yes": "Oui",
   "no": "Non"

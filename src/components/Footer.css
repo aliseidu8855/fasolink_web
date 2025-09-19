@@ -43,10 +43,30 @@
 /* Utility classes inside footer */
 .main-footer a { -webkit-tap-highlight-color:transparent; }
 
+/* Collapsible sections */
+.ft-section { border-top: 1px solid var(--border-soft,#e2e5e9); padding-top: .5rem; }
+.ft-toggle { display:flex; align-items:center; justify-content:space-between; width:100%; background:transparent; border:0; padding:0; text-align:left; cursor:pointer; position:relative; }
+.ft-toggle::after { content:''; width:10px; height:10px; border-right:2px solid currentColor; border-bottom:2px solid currentColor; transform:rotate(45deg); transition:transform .2s ease; opacity:.6; margin-left:.5rem; }
+.ft-content { overflow:hidden; max-height:none; transition:max-height .25s ease; }
+.ft-content ul { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.4rem; }
+.ft-content:not(.open) { display:block; }
+
+@media (max-width: 720px){
+  .ft-content { max-height:0; }
+  .ft-content.open { max-height:320px; }
+  .ft-toggle[aria-expanded="true"]::after { transform:rotate(-135deg); }
+}
+
+/* Show all / Hide all control */
+.ft-all-toggle { display:flex; justify-content:flex-end; }
+.ft-all-toggle .btn { background:transparent; border:none; color:var(--color-brand); font-weight:700; font-size:.85rem; cursor:pointer; padding:.25rem .5rem; }
+.ft-all-toggle .btn:hover { text-decoration:underline; }
+
 @media (max-width:760px){
   .main-footer { padding:2.75rem 0 0; }
   .footer-grid { gap:2rem 1.5rem; }
   .footer-logo { font-size:1.3rem; }
+  .ft-section { border-top:0; padding-top:0; }
 }
 
 @media (max-width:520px){
