@@ -38,6 +38,13 @@
   "noRatings": "No ratings yet",
   "priceNegotiable": "Negotiable",
   "yourListing": "Your listing"
+  ,"price": "Price"
+  ,"fixed": "Fixed price"
+  ,"sort": "Sort"
+  ,"sortPriceAsc": "Price ↑"
+  ,"sortPriceDesc": "Price ↓"
+  ,"sortRating": "Top rated"
+  ,"sortNewest": "Newest"
   ,"listingsPage": {
     "title": "Browse Listings",
     "searchLabel": "Search listings",
@@ -59,7 +66,11 @@
     "backToTop": "Back to top",
     "loading": "Loading…"
   }
+  ,"openFullscreen": "Open fullscreen"
+  ,"callSeller": "Call"
+  ,"showPhone": "Show phone"
   ,"pagination": {
+    "loadMore": "Load more",
     "prev": "Previous",
     "next": "Next",
     "page": "Page {{page}}",

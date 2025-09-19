@@ -95,7 +95,7 @@ export default function ListingsPage() {
     } catch (e) {
       if (e?.name !== 'CanceledError' && e?.code !== 'ERR_CANCELED') {
         console.error(e);
-        setError(t('listingsPage.error', 'Failed to load listings'));
+  setError(t('listing:listingsPage.error', 'Failed to load listings'));
       }
     } finally {
       setLoading(false);
@@ -192,7 +192,7 @@ export default function ListingsPage() {
   const toggleView = () => setView(v => v === 'compact' ? 'grid' : 'compact');
 
   const displayCount = totalCount != null ? totalCount : listings.length;
-  const resultsCountLabel = t('listingsPage.resultsCount', { count: displayCount, defaultValue: '{{count}} results' })
+  const resultsCountLabel = t('listing:listingsPage.resultsCount', { count: displayCount, defaultValue: '{{count}} results' })
     .replace('{{count}}', displayCount);
 
   return (
@@ -200,7 +200,7 @@ export default function ListingsPage() {
       <div className={`lp-loading-bar${loading ? ' active' : ''}`} aria-hidden={!loading} />
       <header className="lp-header" role="banner">
         <div className="lp-header-row" style={{gap:'.6rem', alignItems:'stretch'}}>
-          <h1 className="lp-title" style={{marginBottom:'.25rem'}}>{t('listingsPage.title','Browse Listings')}</h1>
+          <h1 className="lp-title" style={{marginBottom:'.25rem'}}>{t('listing:listingsPage.title','Browse Listings')}</h1>
           <div className="lp-embedded-search" style={{flex:1, minWidth:0}}>
             <CategorySearchBar />
           </div>
@@ -215,24 +215,24 @@ export default function ListingsPage() {
         <div className="lp-meta-row" aria-live="polite">{resultsCountLabel}</div>
       </header>
       <div className="lp-body">
-  <section ref={resultsRef} className="lp-results" role="region" aria-label={t('listingsPage.resultsAria','Results')}>
+  <section ref={resultsRef} className="lp-results" role="region" aria-label={t('listing:listingsPage.resultsAria','Results')}>
           <div className="lp-sort-row" style={{display:'flex', gap:'.75rem', justifyContent:'flex-end', alignItems:'center'}}>
-            <button type="button" onClick={toggleView} className={`lp-view-toggle ${view}`} aria-pressed={view==='compact'} title={view==='compact'?t('listingsPage.viewCompact','Compact view'):t('listingsPage.viewGrid','Grid view')}>
-              {view==='compact'?t('listingsPage.viewGrid','Grid'):t('listingsPage.viewCompact','Compact')}
+            <button type="button" onClick={toggleView} className={`lp-view-toggle ${view}`} aria-pressed={view==='compact'} title={view==='compact'?t('listing:listingsPage.viewCompact','Compact view'):t('listing:listingsPage.viewGrid','Grid view')}>
+              {view==='compact'?t('listing:listingsPage.viewGrid','Grid'):t('listing:listingsPage.viewCompact','Compact')}
             </button>
           </div>
           {error && (
             <div className="lp-error" role="alert">
               <p>{error}</p>
-              <Button variant="primary" onClick={()=>loadPage(1)} size="sm">{t('listingsPage.retry','Retry')}</Button>
+              <Button variant="primary" onClick={()=>loadPage(1)} size="sm">{t('listing:listingsPage.retry','Retry')}</Button>
             </div>
           )}
           {!error && listings.length === 0 && !loading && (
             <EmptyState
-              title={t('listingsPage.emptyTitle','No listings found')}
-              description={t('listingsPage.emptyDesc','Try adjusting filters or searching for a different term.')}
-              primaryAction={{ label: t('listingsPage.clearFilters','Clear filters'), onClick: ()=>{ setFilters({}); setQuery(''); setOrdering('-created_at'); } }}
-              secondaryAction={{ label: t('listingsPage.reload','Reload'), onClick: ()=>loadPage(1) }}
+              title={t('listing:listingsPage.emptyTitle','No listings found')}
+              description={t('listing:listingsPage.emptyDesc','Try adjusting filters or searching for a different term.')}
+              primaryAction={{ label: t('listing:listingsPage.clearFilters','Clear filters'), onClick: ()=>{ setFilters({}); setQuery(''); setOrdering('-created_at'); } }}
+              secondaryAction={{ label: t('listing:listingsPage.reload','Reload'), onClick: ()=>loadPage(1) }}
             />
           )}
           <div className={`listings-grid ${view==='compact' ? 'listings-grid-compact' : ''}`} role="list" aria-busy={loading}>
@@ -249,19 +249,19 @@ export default function ListingsPage() {
               ))
             )}
           </div>
-          {loading && listings.length > 0 && <p className="lp-loading-text">{t('listingsPage.loading','Loading…')}</p>}
+          {loading && listings.length > 0 && <p className="lp-loading-text">{t('listing:listingsPage.loading','Loading…')}</p>}
           {!loading && listings.length === 0 && !error && (
             <EmptyState
-              title={t('listingsPage.emptyTitle','No listings found')}
-              description={t('listingsPage.emptyDesc','Try adjusting filters or searching for a different term.')}
-              primaryAction={{ label: t('listingsPage.clearFilters','Clear filters'), onClick: ()=>{ setFilters({}); setQuery(''); setOrdering('-created_at'); } }}
-              secondaryAction={{ label: t('listingsPage.reload','Reload'), onClick: ()=>loadPage(1) }}
+              title={t('listing:listingsPage.emptyTitle','No listings found')}
+              description={t('listing:listingsPage.emptyDesc','Try adjusting filters or searching for a different term.')}
+              primaryAction={{ label: t('listing:listingsPage.clearFilters','Clear filters'), onClick: ()=>{ setFilters({}); setQuery(''); setOrdering('-created_at'); } }}
+              secondaryAction={{ label: t('listing:listingsPage.reload','Reload'), onClick: ()=>loadPage(1) }}
             />
           )}
           <nav className="lp-pagination" aria-label="Pagination" style={{display:'flex', justifyContent:'center', padding:'.5rem 0'}}>
             {page < totalPages && (
               <button type="button" className="pg-btn" onClick={()=>gotoPage(page+1)} disabled={loading}>
-                {loading ? t('listingsPage.loading','Loading…') : t('pagination.loadMore','Load more')}
+                {loading ? t('listing:listingsPage.loading','Loading…') : t('listing:pagination.loadMore','Load more')}
               </button>
             )}
           </nav>
@@ -269,7 +269,7 @@ export default function ListingsPage() {
       </div>
       <FilterBottomSheet open={sheetOpen} initialFilters={{ ...filters, search: debouncedQuery }} onClose={closeSheet} onApply={applySheet} />
       {showTopBtn && (
-        <button type="button" className="lp-back-top" onClick={scrollToTop} aria-label={t('listingsPage.backToTop','Back to top')}>↑</button>
+        <button type="button" className="lp-back-top" onClick={scrollToTop} aria-label={t('listing:listingsPage.backToTop','Back to top')}>↑</button>
       )}
     </div>
   );

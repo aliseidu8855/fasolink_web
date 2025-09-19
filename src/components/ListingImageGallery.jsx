@@ -72,7 +72,7 @@ const ListingImageGallery = ({ images, onOpenFullscreen }) => {
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
         role={onOpenFullscreen ? 'button' : undefined}
-        aria-label={onOpenFullscreen ? t('listing:openFullscreen','Open fullscreen') : undefined}
+  aria-label={onOpenFullscreen ? t('listing:openFullscreen','Open fullscreen') : undefined}
       >
         <img
           loading="lazy"

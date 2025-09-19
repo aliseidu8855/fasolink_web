@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { fetchListings } from '../services/api';
 import ListingCard from './ListingCard';
 import './ListingsGrid.css';
 
 const ListingsGrid = ({ filters }) => {
+  const { t } = useTranslation(['listing']);
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,12 +17,12 @@ const ListingsGrid = ({ filters }) => {
       try {
         // Clean up filters: remove empty values
         const activeFilters = Object.fromEntries(
-          Object.entries(filters).filter(([_, v]) => v != null && v !== '')
+          Object.entries(filters).filter(([, v]) => v != null && v !== '')
         );
         const response = await fetchListings(activeFilters);
         setListings(response.data.results || response.data);
       } catch (err) {
-        setError('Failed to load listings. Please try again.');
+        setError(t('listing:listingsPage.error', 'Failed to load listings'));
         console.error(err);
       } finally {
         setLoading(false);
@@ -28,9 +30,9 @@ const ListingsGrid = ({ filters }) => {
     };
 
     getListings();
-  }, [filters]); // Re-fetch whenever filters change
+  }, [filters, t]); // Re-fetch whenever filters or language change
 
-  if (loading) return <p>Loading listings...</p>;
+  if (loading) return <p>{t('listing:listingsPage.loading', 'Loading…')}</p>;
   if (error) return <p className="error-message">{error}</p>;
 
   return (
@@ -42,7 +44,7 @@ const ListingsGrid = ({ filters }) => {
           ))}
         </div>
       ) : (
-        <p>No listings found matching your criteria.</p>
+        <p>{t('listing:listingsPage.emptyTitle', 'No listings found')}</p>
       )}
     </div>
   );

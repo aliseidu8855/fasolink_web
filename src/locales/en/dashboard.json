@@ -1,4 +1,83 @@
 {
+  "layout": {
+    "brand": "My Account",
+    "sidebarAria": "Dashboard navigation",
+    "collapse": {
+      "expand": "Expand sidebar",
+      "collapse": "Collapse sidebar"
+    }
+  },
+  "nav": {
+    "overview": "Overview",
+    "listings": "Listings",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "overview": {
+    "title": "Welcome, {{username}}",
+    "subtitle": "Here's a quick look at your performance.",
+    "stats": {
+      "active": "Active",
+      "total": "Total",
+      "views": "Views",
+      "messages": "Messages"
+    }
+  },
+  "listings": {
+    "title": "Your listings",
+    "filters": "Filters",
+    "filterActive": "Active",
+    "filterAll": "All",
+    "filterArchived": "Archived",
+    "new": "New listing",
+    "empty": "No listings",
+    "emptyHelp": "You have no listings yet. Create your first listing to get started.",
+    "manage": "Manage",
+    "manageTitle": "Manage listing",
+    "edit": "Edit",
+    "deactivate": "Deactivate",
+    "activate": "Activate",
+    "unfeature": "Remove featured",
+    "feature": "Feature",
+    "archive": "Archive",
+    "unarchive": "Unarchive",
+    "delete": "Delete",
+    "toggleError": "Unable to update status",
+    "deleteConfirm": "Delete \"{{title}}\"?",
+    "deleteError": "Failed to delete",
+    "loadError": "Load error"
+  },
+  "profile": {
+    "title": "Profile",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "username": "Username",
+    "email": "Email",
+    "save": "Save",
+    "saving": "Saving…",
+    "saveError": "Failed to save"
+  },
+  "settings": {
+    "title": "Settings",
+    "coming": "Coming soon"
+  },
+  "modal": {
+    "editTitle": "Edit listing",
+    "newTitle": "New listing",
+    "fields": {
+      "title": "Title",
+      "price": "Price",
+      "description": "Description"
+    },
+    "cancel": "Cancel",
+    "saving": "Saving…",
+    "update": "Update",
+    "create": "Create",
+    "hint": "You can add images and advanced details later.",
+    "saveError": "Failed to save"
+  },
+  "authRequired": "Sign in required…",
   "welcome": "Welcome, {{username}}!",
   "subtitle": "Here are the ads you've posted. You can edit or delete them here.",
   "noListings": "You haven't posted any ads yet.",

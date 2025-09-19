@@ -67,7 +67,7 @@ export default function FilterChips({ filters = {}, ordering = '-created_at', on
     <div className="filter-chips-row" role="toolbar" aria-label={t('listing:filtersTitle','Filters')}>
       {/* Category chip */}
       <button type="button" className={`chip ${filters.category ? 'active' : ''}`} onClick={() => onOpenSheet?.()} aria-label={t('listing:category','Category')}>
-        <span className="chip-label">{filters.category ? (catLabel || t('categories','Category')) : t('categories','Category')}</span>
+        <span className="chip-label">{filters.category ? (catLabel || t('listing:category','Category')) : t('listing:category','Category')}</span>
         {filters.category ? (
           <span className="chip-clear" onClick={(e)=>{ e.stopPropagation(); onChange?.({ category: '' }); }} aria-hidden>
             <CloseIcon size={14} />
@@ -90,7 +90,7 @@ export default function FilterChips({ filters = {}, ordering = '-created_at', on
       </button>
 
       {/* Price chip */}
-      <button type="button" className={`chip ${priceLabel ? 'active' : ''}`} onClick={() => onOpenSheet?.()}>
+      <button type="button" className={`chip ${priceLabel ? 'active' : ''}`} onClick={() => onOpenSheet?.()} aria-label={t('listing:price','Price')}>
         <span className="chip-label">{priceLabel || t('listing:price','Price')}</span>
         {priceLabel ? (
           <span className="chip-clear" onClick={(e)=>{ e.stopPropagation(); onChange?.({ min_price: '', max_price: '' }); }} aria-hidden>

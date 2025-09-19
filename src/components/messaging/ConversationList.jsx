@@ -72,10 +72,14 @@ const ConversationList = ({ onSelect }) => {
               className={`convo-item ${convo.id == activeConversationId ? 'active' : ''} ${unread ? 'unread' : ''}`}
               onClick={() => { if (onSelect) onSelect(convo.id); }}
             >
-              <img src={`https://i.pravatar.cc/50?u=${otherParticipant}`} alt="User" className="avatar" />
+              <img
+                src={`https://i.pravatar.cc/50?u=${otherParticipant}`}
+                alt={t('messaging:avatarAlt', { user: otherParticipant || t('messaging:user','User') })}
+                className="avatar"
+              />
               <div className="convo-details">
                 <div className="convo-header">
-                  <span className="user-name">{otherParticipant || 'User'}</span>
+                  <span className="user-name">{otherParticipant || t('messaging:user','User')}</span>
                   <span className="timestamp">{formatRelativeTime(convo.last_message_timestamp)}</span>
                 </div>
                 <p className="last-message">{convo.last_message || t('listing:interestedInYour', { title: convo.listing_title })}</p>

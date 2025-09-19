@@ -96,7 +96,7 @@ const FilterSidebar = ({ onFilterChange, autoApply=true, initialFilters }) => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="town">{t('listing:location', 'Location')}</label>
+        <label htmlFor="town">{t('listing:locationLabel', 'Location')}</label>
         <input
           type="text"
           id="town"

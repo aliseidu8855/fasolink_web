@@ -38,6 +38,13 @@
   "noRatings": "Pas encore de notes",
   "priceNegotiable": "Prix négociable",
   "yourListing": "Votre annonce"
+  ,"price": "Prix"
+  ,"fixed": "Prix fixe"
+  ,"sort": "Trier"
+  ,"sortPriceAsc": "Prix ↑"
+  ,"sortPriceDesc": "Prix ↓"
+  ,"sortRating": "Mieux notés"
+  ,"sortNewest": "Plus récents"
   ,"categoryElectronics": "Électronique"
   ,"categoryCars": "Voitures"
   ,"categoryRealEstate": "Immobilier"
@@ -63,7 +70,11 @@
     "backToTop": "Haut de page",
     "loading": "Chargement…"
   }
+  ,"openFullscreen": "Ouvrir en plein écran"
+  ,"callSeller": "Appeler"
+  ,"showPhone": "Afficher le numéro"
   ,"pagination": {
+    "loadMore": "Charger plus",
     "prev": "Précédent",
     "next": "Suivant",
     "page": "Page {{page}}",

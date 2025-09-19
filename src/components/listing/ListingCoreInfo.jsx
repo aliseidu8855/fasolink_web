@@ -25,7 +25,7 @@ export default function ListingCoreInfo({ listing }) {
       </div>
       <div className="ld-rating-row">
         {sellerRating ? (
-          <div className="ld-rating" aria-label={`Seller rating ${sellerRating} / 5`}>
+          <div className="ld-rating" aria-label={t('listing:sellerRatingAria', { rating: sellerRating })}>
             <span className="ld-rating-val">{Number(sellerRating).toFixed(1)}</span>
             <span className="ld-rating-stars">
               {Array.from({length:5}).map((_,i)=>{

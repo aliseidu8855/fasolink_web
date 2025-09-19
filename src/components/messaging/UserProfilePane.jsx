@@ -4,9 +4,11 @@ import { useAuth } from '../../context/AuthContext';
 import { fetchConversationById } from '../../services/api'; // We need this to find the other user
 import Button from '../Button';
 import './UserProfilePane.css';
+import { useTranslation } from 'react-i18next';
 
 const UserProfilePane = ({ conversationId }) => {
   const { user } = useAuth();
+  const { t } = useTranslation(['messaging']);
   const [otherUser, setOtherUser] = useState(null);
 
   useEffect(() => {
@@ -30,7 +32,7 @@ const UserProfilePane = ({ conversationId }) => {
   return (
     <div className="user-profile-container">
       <div className="profile-header">
-        <img src={`https://i.pravatar.cc/80?u=${otherUser.name}`} alt="User" className="profile-avatar" />
+        <img src={`https://i.pravatar.cc/80?u=${otherUser.name}`} alt={t('messaging:avatarAlt', { user: otherUser.name })} className="profile-avatar" />
         <h3 className="profile-name">{otherUser.name}</h3>
         <p className="profile-username">@{otherUser.name.toLowerCase()}</p>
         <p className="profile-rating">
@@ -39,18 +41,18 @@ const UserProfilePane = ({ conversationId }) => {
               <polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9" />
             </svg>
           </span>
-          4.8 (24 reviews)
+          {t('messaging:reviewsLabel', { rating: '4.8', count: 24 })}
         </p>
       </div>
 
       <div className="profile-stats">
         <div className="stat-item">
           <strong>18</strong>
-          <span>Items Sold</span>
+          <span>{t('messaging:itemsSold')}</span>
         </div>
         <div className="stat-item">
           <strong>2</strong>
-          <span>Years on FasoLink</span>
+          <span>{t('messaging:yearsOn')}</span>
         </div>
       </div>
 
@@ -65,44 +67,44 @@ const UserProfilePane = ({ conversationId }) => {
           <span aria-hidden="true" style={{marginRight:6,display:'inline-flex'}}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H6l-4 3v-5.5A8.5 8.5 0 0 1 10.5 4H12a9 9 0 0 1 9 9z"/></svg>
           </span>
-          Usually responds in 1 hour
+          {t('messaging:respondsIn', { hours: 1 })}
         </li>
         <li>
           <span aria-hidden="true" style={{marginRight:6,display:'inline-flex'}}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           </span>
-          Joined November 2022
+          {t('messaging:joinedDate', { date: 'November 2022' })}
         </li>
         <li className="verified">
           <span aria-hidden="true" style={{marginRight:6,display:'inline-flex'}}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/></svg>
           </span>
-          Verified Seller
+          {t('messaging:verifiedSeller')}
         </li>
       </ul>
 
       <div className="profile-actions">
-        <Button variant="primary">View Profile</Button>
-        <Button variant="neutral">Block User</Button>
+        <Button variant="primary">{t('messaging:viewProfile')}</Button>
+        <Button variant="neutral">{t('messaging:blockUser')}</Button>
       </div>
 
       <div className="other-listings">
-        <h4>Other Listings by {otherUser.name}</h4>
+        <h4>{t('messaging:otherListingsBy', { user: otherUser.name })}</h4>
         <div className="mini-listing">
-          <img src="https://via.placeholder.com/60" alt="Listing" />
+          <img src="https://via.placeholder.com/60" alt={t('messaging:listingImageAlt','Listing image')} />
           <div>
             <p>Samsung Galaxy S21</p>
             <strong>280,000 CFA</strong>
           </div>
         </div>
         <div className="mini-listing">
-          <img src="https://via.placeholder.com/60" alt="Listing" />
+          <img src="https://via.placeholder.com/60" alt={t('messaging:listingImageAlt','Listing image')} />
           <div>
             <p>MacBook Air 2020</p>
             <strong>650,000 CFA</strong>
           </div>
         </div>
-        <Link to="#" className="view-all-listings">View All Listings →</Link>
+        <Link to="#" className="view-all-listings">{t('messaging:viewAllListings')}</Link>
       </div>
     </div>
   );

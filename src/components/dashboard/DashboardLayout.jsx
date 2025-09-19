@@ -15,13 +15,13 @@ const DashboardLayout = ({ active, onNavigate, onLogout, children }) => {
   const { t } = useTranslation('dashboard');
   return (
     <div className={`dashboard-shell${collapsed ? ' collapsed' : ''}`}>
-      <aside className="sidebar" aria-label="Navigation du tableau de bord">
+      <aside className="sidebar" aria-label={t('layout.sidebarAria','Dashboard navigation')}>
         <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', gap:'.5rem', marginBottom:'.25rem'}}>
-          <span style={{fontWeight:600}}>{collapsed ? 'TB' : t('layout.brand','Tableau')}</span>
+          <span style={{fontWeight:600}}>{collapsed ? 'TB' : t('layout.brand','Mon Compte')}</span>
           <button
             type="button"
             className="collapse-btn"
-            aria-label={collapsed ? t('layout.collapse.expand') : t('layout.collapse.collapse')}
+            aria-label={collapsed ? t('layout.collapse.expand','Expand sidebar') : t('layout.collapse.collapse','Collapse sidebar')}
             aria-expanded={!collapsed}
             onClick={()=>setCollapsed(c=>!c)}
           >{collapsed ? '»' : '«'}</button>

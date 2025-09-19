@@ -1,4 +1,83 @@
 {
+  "layout": {
+    "brand": "Mon compte",
+    "sidebarAria": "Navigation du tableau de bord",
+    "collapse": {
+      "expand": "Développer la barre latérale",
+      "collapse": "Réduire la barre latérale"
+    }
+  },
+  "nav": {
+    "overview": "Aperçu",
+    "listings": "Annonces",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "logout": "Déconnexion"
+  },
+  "overview": {
+    "title": "Bonjour, {{username}}",
+    "subtitle": "Voici un aperçu de vos performances.",
+    "stats": {
+      "active": "Actives",
+      "total": "Total",
+      "views": "Vues",
+      "messages": "Messages"
+    }
+  },
+  "listings": {
+    "title": "Vos annonces",
+    "filters": "Filtres",
+    "filterActive": "Actives",
+    "filterAll": "Toutes",
+    "filterArchived": "Archivées",
+    "new": "Nouvelle annonce",
+    "empty": "Aucune annonce",
+    "emptyHelp": "Vous n'avez pas encore d'annonces. Créez votre première annonce pour commencer.",
+    "manage": "Gérer",
+    "manageTitle": "Gérer l'annonce",
+    "edit": "Modifier",
+    "deactivate": "Désactiver",
+    "activate": "Activer",
+    "unfeature": "Retirer la mise en avant",
+    "feature": "Mettre en avant",
+    "archive": "Archiver",
+    "unarchive": "Désarchiver",
+    "delete": "Supprimer",
+    "toggleError": "Impossible de mettre à jour le statut",
+    "deleteConfirm": "Supprimer « {{title}} » ?",
+    "deleteError": "Échec de la suppression",
+    "loadError": "Erreur de chargement"
+  },
+  "profile": {
+    "title": "Profil",
+    "cancel": "Annuler",
+    "edit": "Modifier",
+    "username": "Nom d'utilisateur",
+    "email": "E-mail",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saveError": "Échec de l'enregistrement"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "coming": "Bientôt disponible"
+  },
+  "modal": {
+    "editTitle": "Modifier l'annonce",
+    "newTitle": "Nouvelle annonce",
+    "fields": {
+      "title": "Titre",
+      "price": "Prix",
+      "description": "Description"
+    },
+    "cancel": "Annuler",
+    "saving": "Enregistrement…",
+    "update": "Mettre à jour",
+    "create": "Créer",
+    "hint": "Vous pourrez ajouter des images et des détails avancés plus tard.",
+    "saveError": "Échec de l'enregistrement"
+  },
+  "authRequired": "Connexion requise…",
   "welcome": "Bienvenue, {{username}} !",
   "subtitle": "Voici les annonces que vous avez publiées. Vous pouvez les modifier ou les supprimer ici.",
   "noListings": "Vous n'avez pas encore publié d'annonces.",
