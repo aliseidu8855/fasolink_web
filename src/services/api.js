@@ -91,8 +91,8 @@ export const fetchAllLocations = () => {
   return apiClient.get('locations-suggest/', { params: { all: 1 } });
 };
 
-export const fetchUserListings = () => {
-  return apiClient.get('profile/my-listings/');
+export const fetchUserListings = (config = {}) => {
+  return apiClient.get('profile/my-listings/', config);
 };
 
 export const updateListing = (id, formData) => {

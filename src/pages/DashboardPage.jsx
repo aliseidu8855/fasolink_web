@@ -71,7 +71,7 @@ const DashboardPage = () => {
   if (error) return <p className="container error-message">{error}</p>;
 
   let panel = null;
-  const handleNew = () => { setEditingListing(null); setShowListingModal(true); };
+  const handleNew = () => { window.location.assign('/create-listing'); };
   const handleCreated = (created) => { setListings(ls => [created, ...ls]); };
   const handleUpdated = (updated) => { setListings(ls => ls.map(l => l.id === updated.id ? updated : l)); };
   const handleEdit = (l) => { setEditingListing(l); setShowListingModal(true); };
