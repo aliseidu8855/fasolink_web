@@ -18,6 +18,7 @@ export default defineConfig({
       // We'll keep it online-only by not precaching any app shell files.
       strategies: 'generateSW',
       workbox: {
+        // Runtime push handler for Web Push notifications
         importScripts: ['sw-push.js'],
         globPatterns: [], // don't precache built assets; stay online-only
         navigateFallback: null, // no offline fallback routing

@@ -6,6 +6,8 @@ import { MessagingProvider } from './context/MessagingContext';
 import ScrollToTop from './components/ScrollToTop';
 import GlobalLoader from './components/loading/GlobalLoader.jsx';
 import UpdateBadge from './components/UpdateBadge.jsx';
+import { useEffect } from 'react';
+import { ensurePushSubscription } from './utils/push';
 
 // Lazy-loaded pages
 const HomePage = lazy(()=>import('./pages/HomePage'));
@@ -62,6 +64,14 @@ function AppRoutes() {
 }
 
 function App() {
+  useEffect(() => {
+    // Attempt to subscribe when app mounts if user is logged in and notifications are allowed
+    const token = localStorage.getItem('authToken');
+    const vapid = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+    if (token && vapid && 'serviceWorker' in navigator) {
+      ensurePushSubscription({ vapidPublicKey: vapid }).catch(() => {})
+    }
+  }, []);
   return (
     <Router>
       <ScrollToTop />
