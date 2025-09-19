@@ -8,6 +8,7 @@ import InstallPWA from './pwa/InstallPWA';
 import PWAUpdatePrompt from './pwa/PWAUpdatePrompt';
 import IOSAddToHomeBanner from './pwa/IOSAddToHomeBanner';
 import EnableNotificationsBanner from './pwa/EnableNotificationsBanner';
+import UnreadMessagesBanner from './UnreadMessagesBanner';
 import Modal from './Modal';
 import { useModal } from '../context/ModalContext';
 
@@ -46,6 +47,7 @@ const Layout = () => {
       <PWAUpdatePrompt />
       <IOSAddToHomeBanner />
       <EnableNotificationsBanner />
+      <UnreadMessagesBanner />
     </div>
   );
 };

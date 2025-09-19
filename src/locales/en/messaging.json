@@ -30,6 +30,9 @@
   "sendMessageAria": "Send message",
   "offlineNotice": "You are offline. Messages will send when you are back online.",
   "unreadTotal": "{{count}} unread total",
+  "youHaveUnread": "You have {{count}} unread messages",
+  "viewMessages": "View",
+  "dismiss": "Dismiss",
   "refresh": "Refresh",
   "refreshList": "Refresh conversations",
   "noMatches": "No matches"

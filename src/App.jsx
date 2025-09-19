@@ -48,9 +48,7 @@ function AppRoutes() {
           path="/messages/:conversationId?"
           element={
             <ProtectedRoute>
-              <MessagingProvider>
-                <MessagesPage />
-              </MessagingProvider>
+              <MessagesPage />
             </ProtectedRoute>
           }
         />
@@ -74,11 +72,13 @@ function App() {
   }, []);
   return (
     <Router>
-      <ScrollToTop />
-      <UpdateBadge />
-      <Suspense fallback={<GlobalLoader />}>      
-        <AppRoutes />
-      </Suspense>
+      <MessagingProvider>
+        <ScrollToTop />
+        <UpdateBadge />
+        <Suspense fallback={<GlobalLoader />}>      
+          <AppRoutes />
+        </Suspense>
+      </MessagingProvider>
     </Router>
   );
 }

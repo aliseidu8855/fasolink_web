@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { fetchConversations } from '../services/api';
 import { connectSocket } from '../services/socket';
+import { useAuth } from './AuthContext';
 
 // MessagingContext centralizes polling of conversation metadata (last message, unread counts)
 // and provides a single source of truth for unread totals across the app.
@@ -12,6 +13,7 @@ const MessagingContext = createContext(null);
 export const useMessaging = () => useContext(MessagingContext);
 
 export const MessagingProvider = ({ children, pollInterval = 5000 }) => {
+  const { isAuthenticated } = useAuth();
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -38,6 +40,14 @@ export const MessagingProvider = ({ children, pollInterval = 5000 }) => {
 
   // Visibility-aware polling (fallback if websocket not connected)
   useEffect(() => {
+    // Only activate when authenticated
+    if (!isAuthenticated) {
+      // cleanup any existing timers/sockets if user logged out
+      if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+  try { wsRef.current && wsRef.current.close && wsRef.current.close(); } catch { /* ignore */ }
+      setConversations([]);
+      return;
+    }
     refresh();
     const startPolling = () => {
       if (pollRef.current) clearInterval(pollRef.current);
@@ -64,7 +74,7 @@ export const MessagingProvider = ({ children, pollInterval = 5000 }) => {
       if (pollRef.current) clearInterval(pollRef.current);
       try { close(); } catch { /* ignore */ }
     };
-  }, [refresh, pollInterval]);
+  }, [refresh, pollInterval, isAuthenticated]);
 
   // Manual visibility change immediate refresh
   useEffect(() => {

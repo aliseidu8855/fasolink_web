@@ -30,6 +30,9 @@
   "sendMessageAria": "Envoyer le message",
   "offlineNotice": "Vous êtes hors ligne. Les messages seront envoyés lorsque vous serez de retour.",
   "unreadTotal": "{{count}} non lus au total",
+  "youHaveUnread": "Vous avez {{count}} messages non lus",
+  "viewMessages": "Ouvrir",
+  "dismiss": "Ignorer",
   "refresh": "Rafraîchir",
   "refreshList": "Rafraîchir les conversations",
   "noMatches": "Aucun résultat"
