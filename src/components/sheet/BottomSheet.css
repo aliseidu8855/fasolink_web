@@ -1,0 +1,10 @@
+.bs-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:var(--z-modal,1300);display:flex;align-items:flex-end;justify-content:center;}
+.bs-panel{width:100%;max-width:640px;background:#fff;border-radius:12px 12px 0 0;box-shadow:0 -12px 24px rgba(0,0,0,.2);max-height:85vh;display:flex;flex-direction:column;}
+.bs-handle{display:flex;justify-content:center;padding:.35rem 0 .25rem;}
+.bs-handle span{width:46px;height:5px;background:#d6d9dc;border-radius:4px;}
+.bs-header{display:flex;align-items:center;gap:.5rem;padding:.6rem .85rem;border-bottom:1px solid #e5e7eb;}
+.bs-header h2{margin:0;font-size:1.05rem;}
+.bs-close{margin-left:auto;background:#f3f4f6;border:1px solid #d1d5db;border-radius:6px;padding:.25rem .5rem;cursor:pointer;}
+.bs-content{overflow:auto;padding:.85rem;}
+.bs-footer{display:flex;justify-content:flex-end;gap:.5rem;padding:.65rem .85rem;border-top:1px solid #e5e7eb;background:#fafafa;}
+@media(min-width:641px){.bs-panel{border-radius:12px;max-width:520px;margin-bottom:3vh;}}

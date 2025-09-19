@@ -69,6 +69,9 @@
 .ld-price-main { font-size:1.7rem; font-weight:700; }
 .ld-price-neg { font-size:.7rem; font-weight:600; background:#f1f4f7; padding:.25rem .45rem; border-radius:4px; }
 .ld-action-row { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
+.ld-reveal-btn { background:#f3f5f7; border:1px solid #d0d5da; padding:.4rem .75rem; border-radius:6px; font-size:.7rem; font-weight:600; cursor:pointer; }
+.ld-reveal-btn:hover { background:#e9edf1; }
+.ld-call-btn { background:#10b981; color:#fff; border:1px solid #0ea371; border-radius:6px; padding:.45rem .75rem; font-weight:700; text-decoration:none; }
 .ld-share-btn, .ld-fav-btn { background:#fff; border:1px solid #d0d5da; padding:.4rem .75rem; border-radius:6px; font-size:.7rem; font-weight:600; cursor:pointer; line-height:1; display:inline-flex; align-items:center; gap:.35rem; transition:all .2s ease; }
 .ld-share-btn:hover, .ld-fav-btn:hover { background:#f3f5f7; }
 .ld-share-btn:focus-visible, .ld-fav-btn:focus-visible { outline:2px solid #0052cc; outline-offset:2px; }

@@ -1,24 +1,61 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function ListingSpecsTable({ listing }) {
   const { t } = useTranslation(['listing']);
   const [showMore, setShowMore] = useState(false);
-  if (!listing) return null;
-  const baseSpecs = [
-    { key:'brand', label: t('listing:specBrand','Brand'), value: listing.brand },
-    { key:'category', label: t('listing:specCategory','Category'), value: listing.category },
-    { key:'type', label: t('listing:specType','Type'), value: listing.category },
-    { key:'room', label: t('listing:specRoom','Room'), value: listing.room },
-    { key:'condition', label: t('listing:specCondition','Condition'), value: listing.condition },
-    { key:'color', label: t('listing:specColor','Color'), value: listing.color },
-    { key:'material', label: t('listing:specMaterial','Material'), value: listing.material },
-    { key:'posted', label: t('listing:specPosted','Posted'), value: new Date(listing.created_at).toLocaleDateString() },
-    { key:'seller', label: t('listing:specSeller','Seller'), value: listing.user },
-    { key:'id', label: t('listing:specId','Listing ID'), value: listing.id }
-  ].filter(s => s.value);
+  const { deduped } = useMemo(() => {
+    if (!listing) return { baseSpecs: [], deduped: [] };
+    const bs = [
+      { key:'brand', label: t('listing:specBrand','Brand'), value: listing.brand },
+      { key:'category', label: t('listing:specCategory','Category'), value: listing.category },
+      { key:'room', label: t('listing:specRoom','Room'), value: listing.room },
+      { key:'condition', label: t('listing:specCondition','Condition'), value: listing.condition },
+      { key:'color', label: t('listing:specColor','Color'), value: listing.color },
+      { key:'material', label: t('listing:specMaterial','Material'), value: listing.material },
+      { key:'posted', label: t('listing:specPosted','Posted'), value: listing.created_at ? new Date(listing.created_at).toLocaleDateString() : null },
+      { key:'seller', label: t('listing:specSeller','Seller'), value: listing.user },
+      { key:'id', label: t('listing:specId','Listing ID'), value: listing.id }
+    ].filter(s => s.value);
+    const attrLabel = (k) => {
+      const map = {
+        brand: t('listing:specBrand','Brand'),
+        condition: t('listing:specCondition','Condition'),
+        color: t('listing:specColor','Color'),
+        material: t('listing:specMaterial','Material'),
+        size: t('listing:specSize','Size'),
+        gender: t('listing:specGender','Gender'),
+        property_type: t('listing:specPropertyType','Property type'),
+        bedrooms: t('listing:specBedrooms','Bedrooms'),
+        bathrooms: t('listing:specBathrooms','Bathrooms'),
+        size_sqm: t('listing:specSizeSqm','Size (sqm)'),
+        furnished: t('listing:specFurnished','Furnished'),
+        year_built: t('listing:specYearBuilt','Year built'),
+        device_type: t('listing:specDeviceType','Device type'),
+        model: t('listing:specModel','Model'),
+        internal_storage: t('listing:specStorage','Storage'),
+        ram: t('listing:specRam','RAM'),
+        screen_size: t('listing:specScreenSize','Screen size'),
+        battery: t('listing:specBattery','Battery (mAh)'),
+        os: t('listing:specOs','Operating system'),
+        sim: t('listing:specSim','SIM'),
+        network: t('listing:specNetwork','Network'),
+        exchange_possible: t('listing:specExchangePossible','Exchange possible'),
+        type: t('listing:specType','Type'),
+        power_w: t('listing:specPower','Power (W)'),
+      };
+      return map[k] || k;
+    };
+    const attrs = Array.isArray(listing.attributes_out)
+      ? listing.attributes_out.map(a => ({ key: String(a.name), label: attrLabel(String(a.name)), value: a.value })).filter(s=> s.value)
+      : [];
+    const m = new Map();
+    for (const s of bs) m.set(s.key, s);
+    for (const s of attrs) m.set(s.key, s);
+    return { deduped: Array.from(m.values()) };
+  }, [listing, t]);
   const initialCount = 6;
-  const visibleSpecs = showMore ? baseSpecs : baseSpecs.slice(0, initialCount);
+  const visibleSpecs = showMore ? deduped : deduped.slice(0, initialCount);
   return (
     <section className="ld-specs" aria-labelledby="ld-specs-h">
       <h2 id="ld-specs-h" className="ld-section-h">{t('listing:specifications','Specifications')}</h2>
@@ -30,7 +67,7 @@ export default function ListingSpecsTable({ listing }) {
           </div>
         ))}
       </dl>
-      {baseSpecs.length > initialCount && (
+      {deduped.length > initialCount && (
         <button
           type="button"
           className="ld-showmore-btn"

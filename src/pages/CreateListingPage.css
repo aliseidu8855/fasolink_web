@@ -158,6 +158,22 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color:#dc2626; 
   border-radius: 6px;
   margin-top: 0.75rem;
 }
+/* Sticky publish bar */
+.cl-sticky-publish {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .65rem .9rem;
+  margin-top: 1rem;
+  background: #fff;
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 -6px 16px rgba(0,0,0,.06);
+}
+.cl-publish-stats { display:flex; gap:.5rem; color:#4b5563; font-size:.85rem; font-weight:600; }
 @media (max-width: 640px) {
   .cl-field input[type="number"],
   .cl-field textarea {

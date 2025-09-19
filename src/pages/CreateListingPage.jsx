@@ -8,6 +8,7 @@ import ImageUploader from '../components/ImageUploader';
 import { pLimit } from '../utils/concurrency';
 import { BF_LOCATIONS } from '../data/locations.js';
 import './CreateListingPage.css';
+import BottomSheet from '../components/sheet/BottomSheet.jsx';
 // Categories are now loaded dynamically from the backend and selected by id.
 const STEP_KEYS = ['category','core','specs','review'];
 const DRAFT_KEY = 'createListing.draft.v1';
@@ -33,6 +34,8 @@ export default function CreateListingPage(){
   const [submitting,setSubmitting]=useState(false);
   const [submitError,setSubmitError]=useState(null);
   const [uploadStates, setUploadStates] = useState({}); // index -> {progress, error}
+  const [openCatSheet, setOpenCatSheet] = useState(false);
+  const [openLocSheet, setOpenLocSheet] = useState(false);
 
   const limit = useMemo(()=> pLimit(3), []);
 
@@ -64,6 +67,8 @@ export default function CreateListingPage(){
   const [createdId,setCreatedId]=useState(null);
   const [descCount, setDescCount] = useState(0);
   const firstErrorRef = useRef(null);
+  const imagesCount = images.length;
+  const descChars = desc.length;
 
   useEffect(()=>{ fetchCategories().then(r=> setAllCats(r.data)); },[]);
 
@@ -313,23 +318,12 @@ export default function CreateListingPage(){
           <div className="cl-cat-bar">
             <h2 id="cl-cat-h" className="cl-cat-heading">{t('createListing:chooseCategory','Choose a category')}</h2>
           </div>
-          <ul className="cl-cat-grid" role="listbox">
-            {visibleCategories.map((c)=> {
-              const selected = selectedCategoryId === c.id;
-              return (
-                <li key={c.id}>
-                  <button
-                    type="button"
-                    className={`cl-cat-btn${selected?' selected':''}`}
-                    onClick={()=> setSelectedCategoryId(c.id)}
-                    aria-selected={selected||undefined}
-                  >
-                    <span className="cl-cat-label">{c.name}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="cl-field">
+            <button type="button" className="cl-cat-btn" data-expandable onClick={()=> setOpenCatSheet(true)}>
+              <span className="cl-cat-label">{allCats.find(c=> c.id===selectedCategoryId)?.name || t('createListing:chooseCategory','Choose a category')}</span>
+              <span className="cl-cat-chevron">▾</span>
+            </button>
+          </div>
           {selectedCategoryId && <div className="cl-cat-selection-preview">{t('createListing:category','Category')}: <strong>{allCats.find(c=> c.id===selectedCategoryId)?.name}</strong></div>}
         </section>
       )}
@@ -353,16 +347,10 @@ export default function CreateListingPage(){
           </div>
           <div className="cl-field">
             <label>{t('createListing:location')}*</label>
-            <div className="cl-loc-row">
-              <select value={selectedRegionCode} onChange={e=> { setSelectedRegionCode(e.target.value); setSelectedTown(''); }}>
-                <option value="">{t('createListing:selectRegion')}</option>
-                {BF_LOCATIONS.map(r=> <option key={r.code} value={r.code}>{r.region}</option>)}
-              </select>
-              <select value={selectedTown} onChange={e=> setSelectedTown(e.target.value)} disabled={!selectedRegionCode}>
-                <option value="">{t('createListing:selectTown')}</option>
-                {selectedRegionCode && BF_LOCATIONS.find(r=> r.code===selectedRegionCode)?.towns.map(tw=> <option key={tw} value={tw}>{tw}</option>)}
-              </select>
-            </div>
+            <button type="button" className="cl-cat-btn" data-expandable onClick={()=> setOpenLocSheet(true)}>
+              <span className="cl-cat-label">{selectedTown || (selectedRegionCode ? (BF_LOCATIONS.find(r=> r.code===selectedRegionCode)?.region) : t('createListing:selectRegion'))}</span>
+              <span className="cl-cat-chevron">▾</span>
+            </button>
             <p className="cl-field-hint">{t('createListing:locationHint')}</p>
             {fieldErrors.location && <span className="cl-err-msg" role="alert">{fieldErrors.location}</span>}
           </div>
@@ -455,13 +443,71 @@ export default function CreateListingPage(){
       )}
       <div className="cl-nav-row">
         {step!=='category' && step!=='review' && <Button onClick={goPrev} variant="secondary">{t('createListing:back')}</Button>}
-  {['category','core','specs'].includes(step) && <Button disabled={!canNext} onClick={handleAttemptNext}>{t('createListing:next')}</Button>}
+        {['category','core','specs'].includes(step) && <Button disabled={!canNext} onClick={handleAttemptNext}>{t('createListing:next')}</Button>}
         {step==='review' && !createdId && <Button onClick={onSubmit} disabled={submitting}>{submitting? t('common:loading'): t('createListing:submit')}</Button>}
         <Button onClick={clearDraft} variant="ghost">{t('createListing:clearDraft','Clear draft')}</Button>
+      </div>
+      {/* Sticky publish bar */}
+      <div className="cl-sticky-publish" role="region" aria-label={t('createListing:publishBar','Publish controls')}>
+        <div className="cl-publish-stats">
+          <span>{t('createListing:chars','Chars')}: {descChars}</span>
+          <span>•</span>
+          <span>{t('createListing:images','Images')}: {imagesCount}</span>
+        </div>
+        {step!=='review' && <Button onClick={handleAttemptNext} disabled={!canNext}>{t('createListing:next','Next')}</Button>}
+        {step==='review' && !createdId && <Button onClick={onSubmit} disabled={submitting || !canNext}>{submitting? t('common:loading'): t('createListing:publish','Publish')}</Button>}
       </div>
       <div className="cl-live-region" aria-live="polite" aria-atomic="true" style={{position:'absolute', left:'-9999px', height:'1px', width:'1px', overflow:'hidden'}}>{!canNext && firstErrorMessage}</div>
         </div>{/* end cl-main */}
       </div>{/* end cl-layout */}
+      {/* Category sheet */}
+      <BottomSheet
+        open={openCatSheet}
+        title={t('createListing:chooseCategory','Choose a category')}
+        onClose={()=> setOpenCatSheet(false)}
+        footer={<Button onClick={()=> setOpenCatSheet(false)} variant="secondary">{t('common:done','Done')}</Button>}
+      >
+        <ul className="cl-cat-grid" role="listbox" aria-label={t('createListing:categories','Categories')}>
+          {allCats.map((c)=> {
+            const selected = selectedCategoryId === c.id;
+            return (
+              <li key={c.id}>
+                <button
+                  type="button"
+                  className={`cl-cat-btn${selected?' selected':''}`}
+                  onClick={()=> { setSelectedCategoryId(c.id); setOpenCatSheet(false); }}
+                  aria-selected={selected||undefined}
+                >
+                  <span className="cl-cat-label">{c.name}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </BottomSheet>
+
+      {/* Location sheet */}
+      <BottomSheet
+        open={openLocSheet}
+        title={t('createListing:location','Location')}
+        onClose={()=> setOpenLocSheet(false)}
+        footer={<Button onClick={()=> setOpenLocSheet(false)} variant="secondary">{t('common:done','Done')}</Button>}
+      >
+        <div className="cl-field">
+          <label htmlFor="cl-region">{t('createListing:selectRegion')}</label>
+          <select id="cl-region" value={selectedRegionCode} onChange={e=> { setSelectedRegionCode(e.target.value); setSelectedTown(''); }}>
+            <option value="">{t('createListing:selectRegion')}</option>
+            {BF_LOCATIONS.map(r=> <option key={r.code} value={r.code}>{r.region}</option>)}
+          </select>
+        </div>
+        <div className="cl-field">
+          <label htmlFor="cl-town">{t('createListing:selectTown')}</label>
+          <select id="cl-town" value={selectedTown} onChange={e=> setSelectedTown(e.target.value)} disabled={!selectedRegionCode}>
+            <option value="">{t('createListing:selectTown')}</option>
+            {selectedRegionCode && BF_LOCATIONS.find(r=> r.code===selectedRegionCode)?.towns.map(tw=> <option key={tw} value={tw}>{tw}</option>)}
+          </select>
+        </div>
+      </BottomSheet>
     </div>
   );
 }

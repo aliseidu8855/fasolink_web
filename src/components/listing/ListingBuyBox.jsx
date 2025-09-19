@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 export default function ListingBuyBox({ listing, onMessageSeller, isOwn, formatPrice }) {
   const { t } = useTranslation(['listing']);
   const [copied, setCopied] = useState(false);
+  const [showPhone, setShowPhone] = useState(false);
   const [fav, setFav] = useState(false);
 
   // Initialize favorite state from localStorage
@@ -79,6 +80,26 @@ export default function ListingBuyBox({ listing, onMessageSeller, isOwn, formatP
             <Button variant="primary" onClick={onMessageSeller} className="ld-primary-action">
               {t('listing:messageSeller','Message seller')}
             </Button>
+          )}
+          {!isOwn && listing.contact_phone && (
+            showPhone ? (
+              <a
+                href={`tel:${listing.contact_phone}`}
+                className="ld-call-btn"
+                title={t('listing:callSeller','Call')}
+              >
+                {listing.contact_phone}
+              </a>
+            ) : (
+              <button
+                type="button"
+                className="ld-reveal-btn"
+                onClick={()=> setShowPhone(true)}
+                title={t('listing:showPhone','Show phone number')}
+              >
+                {t('listing:showPhone','Show phone')}
+              </button>
+            )
           )}
           <button
             type="button"
