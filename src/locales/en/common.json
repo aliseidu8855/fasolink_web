@@ -38,5 +38,12 @@
     "socialTwitter": "Twitter",
     "socialInstagram": "Instagram",
     "languageSwitch": "Language"
+  },
+  "dismiss": "Dismiss",
+  "notifications": {
+    "bannerAria": "Notifications prompt",
+    "title": "Enable notifications",
+    "body": "Get alerts when a buyer or seller sends you a message.",
+    "enable": "Enable"
   }
 }

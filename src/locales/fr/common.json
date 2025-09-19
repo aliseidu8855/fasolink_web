@@ -38,5 +38,12 @@
     "hideAll": "Tout masquer"
   },
   "yes": "Oui",
-  "no": "Non"
+  "no": "Non",
+  "dismiss": "Ignorer",
+  "notifications": {
+    "bannerAria": "Invite de notification",
+    "title": "Activer les notifications",
+    "body": "Recevez des alertes lorsqu'un acheteur ou vendeur vous envoie un message.",
+    "enable": "Activer"
+  }
 }

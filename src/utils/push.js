@@ -1,5 +1,6 @@
 // Minimal Web Push subscription helper
 import apiClient from '../services/api'
+import i18n from '../i18n'
 
 const base64ToUint8Array = (base64) => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4)
@@ -24,6 +25,7 @@ export async function ensurePushSubscription({ vapidPublicKey }) {
     p256dh: json.keys?.p256dh,
     auth: json.keys?.auth,
     user_agent: navigator.userAgent,
+    lang: i18n.language || 'fr',
   })
   return { enabled: true }
 }
@@ -40,5 +42,17 @@ export async function disablePushSubscription() {
       console.warn('[push] unsubscribe cleanup failed', e)
     }
     await sub.unsubscribe()
+  }
+}
+
+export async function requestAndSubscribe(vapidPublicKey) {
+  if (!('Notification' in window)) return { ok: false, reason: 'unsupported' }
+  const p = await Notification.requestPermission()
+  if (p !== 'granted') return { ok: false, reason: p }
+  try {
+    await ensurePushSubscription({ vapidPublicKey })
+    return { ok: true }
+  } catch (e) {
+    return { ok: false, reason: e?.message || 'error' }
   }
 }

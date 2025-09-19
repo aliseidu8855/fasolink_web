@@ -7,6 +7,7 @@ import MobileBottomNav from './navigation/MobileBottomNav';
 import InstallPWA from './pwa/InstallPWA';
 import PWAUpdatePrompt from './pwa/PWAUpdatePrompt';
 import IOSAddToHomeBanner from './pwa/IOSAddToHomeBanner';
+import EnableNotificationsBanner from './pwa/EnableNotificationsBanner';
 import Modal from './Modal';
 import { useModal } from '../context/ModalContext';
 
@@ -44,6 +45,7 @@ const Layout = () => {
       </Modal>
       <PWAUpdatePrompt />
       <IOSAddToHomeBanner />
+      <EnableNotificationsBanner />
     </div>
   );
 };
