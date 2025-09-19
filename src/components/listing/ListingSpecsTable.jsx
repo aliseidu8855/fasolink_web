@@ -6,9 +6,21 @@ export default function ListingSpecsTable({ listing }) {
   const [showMore, setShowMore] = useState(false);
   const { deduped } = useMemo(() => {
     if (!listing) return { baseSpecs: [], deduped: [] };
+    const normalizeVal = (key, val) => {
+      if (typeof val === 'boolean') return val ? t('common:yes','Yes') : t('common:no','No');
+      if (typeof val === 'string') {
+        const low = val.toLowerCase();
+        if (['exchange_possible','furnished'].includes(String(key))) {
+          if (['true','1','yes','oui'].includes(low)) return t('common:yes','Yes');
+          if (['false','0','no','non'].includes(low)) return t('common:no','No');
+        }
+      }
+      return val;
+    };
+    const categoryLabel = listing.category_name || listing.category;
     const bs = [
       { key:'brand', label: t('listing:specBrand','Brand'), value: listing.brand },
-      { key:'category', label: t('listing:specCategory','Category'), value: listing.category },
+      { key:'category', label: t('listing:specCategory','Category'), value: categoryLabel },
       { key:'room', label: t('listing:specRoom','Room'), value: listing.room },
       { key:'condition', label: t('listing:specCondition','Condition'), value: listing.condition },
       { key:'color', label: t('listing:specColor','Color'), value: listing.color },
@@ -47,7 +59,7 @@ export default function ListingSpecsTable({ listing }) {
       return map[k] || k;
     };
     const attrs = Array.isArray(listing.attributes_out)
-      ? listing.attributes_out.map(a => ({ key: String(a.name), label: attrLabel(String(a.name)), value: a.value })).filter(s=> s.value)
+      ? listing.attributes_out.map(a => ({ key: String(a.name), label: attrLabel(String(a.name)), value: normalizeVal(String(a.name), a.value) })).filter(s=> s.value !== undefined && s.value !== null && String(s.value).trim() !== '')
       : [];
     const m = new Map();
     for (const s of bs) m.set(s.key, s);

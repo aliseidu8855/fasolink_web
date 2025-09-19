@@ -37,6 +37,19 @@ export default function CreateListingPage(){
   const [openCatSheet, setOpenCatSheet] = useState(false);
   const [openLocSheet, setOpenLocSheet] = useState(false);
 
+  // Helper to sanitize unknown backend error payloads for display
+  const toUserMessage = (data) => {
+    if (data == null) return 'Unexpected error';
+    if (typeof data === 'string') {
+      const s = data.trim();
+      if (s.startsWith('<!DOCTYPE') || s.startsWith('<html') || s.includes('<html')) {
+        return 'Server error occurred while submitting. Please try again.';
+      }
+      return s.slice(0, 500);
+    }
+    try { return JSON.stringify(data).slice(0, 1000); } catch { return 'Unexpected error'; }
+  };
+
   const limit = useMemo(()=> pLimit(3), []);
 
   const uploadImageAt = async (listingId, idx) => {
@@ -146,8 +159,7 @@ export default function CreateListingPage(){
     }
   },[selectedTown, selectedRegionCode]);
 
-  // Flat list of categories from backend
-  const visibleCategories = allCats;
+  // Flat list of categories from backend (use allCats directly)
 
   const requiredSpecsValid = specMeta.filter(s=> s.required).every(s=> {
     const v = specValues[s.key];
@@ -290,7 +302,7 @@ export default function CreateListingPage(){
         }
   // Store raw backend errors for visibility
   console.error('Create listing error:', data);
-  setFieldErrors(fe); setSpecErrors(se); setSubmitError(JSON.stringify(data));
+  setFieldErrors(fe); setSpecErrors(se); setSubmitError(toUserMessage(data));
         if(fe.category){ setStep('category'); }
         else if(fe.title || fe.price || fe.location || fe.description || fe.contact_phone){ setStep('core'); }
         else if(Object.keys(se).length>0){ setStep('specs'); }
