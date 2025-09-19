@@ -90,7 +90,14 @@ export const injectCategoryTranslations = (lng, map) => {
   if (!map || typeof map !== 'object') return;
   const ns = 'categories';
   const existing = i18n.getResourceBundle(lng, ns) || {};
-  const merged = { ...existing, ...map };
+  const merged = { ...existing };
+  for (const [k, v] of Object.entries(map)) {
+    // Do not overwrite existing localized strings; only fill gaps
+    if (merged[k] == null || merged[k] === '') {
+      merged[k] = v;
+    }
+  }
+  // Deep merge, do not overwrite existing values
   i18n.addResourceBundle(lng, ns, merged, true, true);
 };
 

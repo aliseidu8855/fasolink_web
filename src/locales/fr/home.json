@@ -4,6 +4,8 @@
     "subtitle": "Achetez, vendez et découvrez des services fiables partout au Burkina Faso.",
     "searchPlaceholder": "Rechercher des produits, services...",
     "quickBrowse": "Populaires",
+    "featured": "À la une",
+    "listingFallback": "Annonce",
     "stats": {
       "listings": "Annonces actives",
       "users": "Utilisateurs fiables",
@@ -42,9 +44,15 @@
     "secure": "Sûr & Simple"
   },
   "testimonials": {
-    "title": "Ce que disent les utilisateurs"
+    "title": "Ce que disent les utilisateurs",
+    "items": {
+      "1": { "name": "Awa K.", "role": "Vendeuse", "text": "« J’ai vendu mon téléphone en moins de 24h. Expérience fluide ! »" },
+      "2": { "name": "Moussa D.", "role": "Acheteur", "text": "« Vendeurs fiables et réponses rapides. Mon site préféré. »" },
+      "3": { "name": "Fatou S.", "role": "Entrepreneure", "text": "« Idéal pour atteindre des clients locaux sans frais supplémentaires. »" }
+    }
   },
   "listings": {
+    "recentTitle": "Annonces récentes",
     "featuredSubtitle": "Sélections et bonnes affaires",
     "recentSubtitle": "Ajouts récents de la communauté"
   }

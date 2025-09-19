@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Hero from '../components/Hero';
 import ListingRow from '../components/ListingRow';
 import HowItWorks from '../components/home/HowItWorks';
@@ -6,6 +7,7 @@ import CategoryChips from '../components/home/CategoryChips';
 import './HomePage.css';
 
 const HomePage = () => {
+  const { t } = useTranslation(['home']);
   return (
     <>
       <Hero />
@@ -15,7 +17,7 @@ const HomePage = () => {
         </div>
         <div className="home-section">
           <ListingRow
-            title="Recent Listings"
+            title={t('home:listings.recentTitle','Recent Listings')}
             apiParams={{ ordering: '-created_at' }}
             compact
             pageSize={12}

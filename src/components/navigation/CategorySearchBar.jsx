@@ -137,7 +137,7 @@ export default function CategorySearchBar() {
             <input
               value={catFilter}
               onChange={(e)=>setCatFilter(e.target.value)}
-              placeholder={t('search','Filter...')}
+              placeholder={t('filterPlaceholder','Filter...')}
               autoFocus
             />
           </div>
@@ -174,7 +174,7 @@ export default function CategorySearchBar() {
           {query.length < 2 && recent.length > 0 && (
             <div className="cat-suggest-block">
               <div className="cat-suggest-header">
-                <span>Recent</span>
+                <span>{t('recent','Recent')}</span>
               </div>
               {recent.slice(0,6).map(r => (
                 <button key={r} type="button" className="cat-suggest-item" onClick={() => navigate({ pathname: '/listings', search: `?q=${encodeURIComponent(r)}${selectedCat?`&category=${selectedCat}`:''}` })}>

@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchCategories } from '../../services/api';
 import { Skeleton } from '../ui/Skeleton';
 import './CategoryChips.css';
+import { useTranslation } from 'react-i18next';
 
 // Mobile-first horizontal category chips for quick entry into the marketplace.
 const CategoryChips = () => {
+  const { t } = useTranslation(['navigation','categories']);
   const [cats, setCats] = useState([]);
   const [loading, setLoading] = useState(true);
+  const normalize = useMemo(() => (name) => (name || '').toLowerCase().replace(/[^a-z0-9]+/g,'-'), []);
 
   useEffect(() => {
     let cancelled = false;
@@ -29,7 +32,7 @@ const CategoryChips = () => {
   if (!loading && cats.length === 0) return null;
 
   return (
-    <div className="cat-chips" aria-label="Categories">
+    <div className="cat-chips" aria-label={t('navigation:categories')}>
       <div className="cat-chips-scroller">
         {loading ? (
           Array.from({ length: 8 }).map((_, i) => (
@@ -44,7 +47,7 @@ const CategoryChips = () => {
               to={`/listings?category=${encodeURIComponent(c.id)}`}
               className="cat-chip"
             >
-              <span className="cat-chip-label">{c.name}</span>
+              <span className="cat-chip-label">{t(`categories:${c.icon_name || normalize(c.name)}`, { defaultValue: c.name })}</span>
             </Link>
           ))
         )}

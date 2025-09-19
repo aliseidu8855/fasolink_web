@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { fetchCategories } from '../../services/api';
 import { Link } from 'react-router-dom';
 import './CategoryStrip.css';
 
 const CategoryStrip = () => {
-  const { t } = useTranslation(['home']);
+  const { t } = useTranslation(['home','categories']);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const normalize = useMemo(() => (name) => (name || '').toLowerCase().replace(/[^a-z0-9]+/g,'-'), []);
 
   useEffect(() => {
     const load = async () => {
       try {
         const res = await fetchCategories();
-        setCategories(res.data.slice(0, 10));
+        const data = Array.isArray(res.data) ? res.data : (Array.isArray(res.data?.results) ? res.data.results : []);
+        setCategories(data.slice(0, 10));
       } catch { /* ignore */ }
       finally { setLoading(false); }
     };
@@ -32,7 +34,7 @@ const CategoryStrip = () => {
             <span className="cat-pill skeleton" key={i} aria-hidden="true" />
           ))}
           {!loading && categories.map(c => (
-            <Link key={c.id} to={`/listings?category=${c.id}`} className="cat-pill">{c.name}</Link>
+            <Link key={c.id} to={`/listings?category=${c.id}`} className="cat-pill">{t(`categories:${c.icon_name || normalize(c.name)}`, { defaultValue: c.name })}</Link>
           ))}
           {!loading && (
             <Link to="/categories" className="cat-pill cat-more" aria-label={t('home:categoryStrip.viewAll','View all categories')}>

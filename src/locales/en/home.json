@@ -4,6 +4,8 @@
     "subtitle": "Buy, sell and discover trusted services across Burkina Faso.",
     "searchPlaceholder": "Search products, services...",
     "quickBrowse": "Popular now",
+    "featured": "Featured",
+    "listingFallback": "Listing",
     "stats": {
       "listings": "Active listings",
       "users": "Trusted users",
@@ -42,9 +44,15 @@
     "secure": "Safe & Simple"
   },
   "testimonials": {
-    "title": "What People Say"
+    "title": "What People Say",
+    "items": {
+      "1": { "name": "Awa K.", "role": "Seller", "text": "“I sold my phone in less than 24 hours. Smooth experience!”" },
+      "2": { "name": "Moussa D.", "role": "Buyer", "text": "“Trusted sellers and fast responses. My go-to marketplace.”" },
+      "3": { "name": "Fatou S.", "role": "Entrepreneur", "text": "“Great for reaching local customers without extra fees.”" }
+    }
   },
   "listings": {
+    "recentTitle": "Recent Listings",
     "featuredSubtitle": "Curated picks and hot deals",
     "recentSubtitle": "Freshly added by the community"
   }
