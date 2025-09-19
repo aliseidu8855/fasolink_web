@@ -54,7 +54,7 @@ const MessagesPage = () => {
   }, [conversationId]);
 
   return (
-    <div className="messages-page-wrapper" data-mobile={isMobile}>
+    <div className="container messages-page-wrapper" data-mobile={isMobile}>
       {/* Global NavBar is shown above; no custom top bar here */}
       <div className="messages-page-body">
         <div className={`messages-sidebar ${sidebarOpen ? 'open' : ''} ${isMobile ? 'mobile' : ''}`}>

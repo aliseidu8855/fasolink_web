@@ -1,5 +1,5 @@
 .listing-row-section {
-  padding: 3rem 1rem;
+  padding: 3rem 0;
 }
 
 .section-header {
@@ -44,8 +44,8 @@
 
 .listing-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem;
 }
 
 .lazy-sentinel {
@@ -54,16 +54,21 @@
   grid-column: 1 / -1;
 }
 
+.lr-more-wrap { display:flex; justify-content:center; padding-top: .5rem; }
+.lr-more-btn { appearance:none; border:1px solid rgba(var(--brand-ink-rgb),0.2); background:#fff; color: var(--brand-ink); padding:.55rem .9rem; border-radius:999px; font-weight:600; cursor:pointer; }
+.lr-more-btn:hover { border-color: rgba(var(--brand-ink-rgb),0.35); }
+.lr-more-btn:disabled { opacity:.6; cursor:default; }
+
 /* Compact variant (denser) */
 .listing-grid.compact {
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 1rem;
 }
 
 /* Breakpoints */
 @media (max-width: 900px) {
   .listing-row-section {
-    padding: 2.5rem 0.75rem;
+    padding: 2.5rem 0;
   }
 }
 @media (max-width: 700px) {
@@ -87,7 +92,7 @@
 }
 @media (max-width: 480px) {
   .listing-row-section {
-    padding: 2.1rem 0.6rem;
+    padding: 2.1rem 0;
   }
   .section-title { font-size: 1.05rem; }
   .section-subtitle {
@@ -107,7 +112,7 @@
 }
 @media (max-width: 360px) {
   .listing-row-section {
-    padding: 1.8rem 0.5rem;
+    padding: 1.8rem 0;
   }
   .listing-grid {
     grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));

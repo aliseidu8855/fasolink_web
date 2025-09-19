@@ -23,7 +23,7 @@ const NavBar = () => {
   }, []);
   return (
     <header className={`nav-root ${scrolled ? 'is-scrolled' : ''} ${isHome ? 'is-home' : 'is-inner'}`} role="banner">      
-      <div className="nav-inner container">
+      <div className="nav-inner utility-container">
         <div className="nav-left">
           <div className="nav-brand-wrap">
             <NavBrand />

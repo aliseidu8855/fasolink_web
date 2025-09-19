@@ -1,4 +1,4 @@
-.messages-page-wrapper { display:flex; flex-direction:column; height:calc(100vh - 58px); max-width:var(--container-max); margin:0 auto; background:var(--color-bg-primary,#fff); min-height:0; padding-left:1rem; padding-right:1rem; }
+.messages-page-wrapper { display:flex; flex-direction:column; height:calc(100vh - 58px); max-width:var(--container-max); margin:0 auto; background:var(--color-bg-primary,#fff); min-height:0; }
 .messages-topbar { position:sticky; top:0; z-index:60; display:flex; align-items:center; justify-content:space-between; padding:.55rem clamp(.75rem,2vw,1.25rem); background:#ffffff; border-bottom:1px solid #e5e5e5; gap:.75rem; box-shadow:0 2px 4px -2px rgba(0,0,0,.08); }
 .mt-menu-btn { background:#fff; border:1px solid #ddd; border-radius:6px; padding:.45rem .55rem; display:inline-flex; align-items:center; justify-content:center; font-size:.9rem; cursor:pointer; line-height:1; }
 .mt-menu-btn:focus-visible { outline:2px solid var(--color-focus-ring); outline-offset:2px; }
@@ -33,7 +33,7 @@
 	.mt-title { font-size:.95rem; }
 	.messages-sidebar { display:block; }
 	.messages-main { flex:1; }
-	.messages-page-wrapper { padding-left:.75rem; padding-right:.75rem; }
+		/* rely on .container gutters on mobile too */
 	.messages-placeholder { padding:1.25rem; font-size:.9rem; }
 	.chat-window .messages-area { padding:1rem .85rem 1.1rem; }
 	.chat-window .message-bubble-wrapper { max-width:82%; }

@@ -25,6 +25,25 @@ const timeAgo = (isoString) => {
   return diffW + 'w';
 };
 
+// Small star rating visual (0-5)
+const Stars = ({ value = 0 }) => {
+  const full = Math.floor(Number(value) || 0);
+  const half = (Number(value) - full) >= 0.5 ? 1 : 0;
+  const empty = 5 - full - half;
+  const Item = ({ type, idx }) => (
+    <svg key={type + idx} width={12} height={12} viewBox="0 0 24 24" fill={type==='empty'?'none':'currentColor'} stroke="currentColor" strokeWidth={type==='half'?1.5:0} aria-hidden>
+      <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.402 8.168L12 18.896l-7.336 3.869 1.402-8.168L.132 9.21l8.2-1.192z" />
+    </svg>
+  );
+  return (
+    <span className="lc-stars" aria-hidden>
+      {Array.from({length: full}).map((_,i)=> <Item type="full" idx={i} />)}
+      {Array.from({length: half}).map((_,i)=> <Item type="half" idx={i} />)}
+      {Array.from({length: empty}).map((_,i)=> <Item type="empty" idx={i} />)}
+    </span>
+  );
+};
+
 // Accept optional compact flag and minimal flag to reduce details in dense grids
 const ListingCard = ({ listing, compact = false, minimal = false }) => {
   const { t } = useTranslation(['listing','common']);
@@ -46,6 +65,20 @@ const ListingCard = ({ listing, compact = false, minimal = false }) => {
 
   const relative = listing.created_at ? timeAgo(listing.created_at) : '';
   const sellerRating = listing.seller_rating;
+  // Derive 1-2 quick spec chips to make cards more descriptive
+  const specChips = [];
+  const attrs = Array.isArray(listing.attributes_out) ? listing.attributes_out : [];
+  const candidates = ['brand','model','condition','color','property_type','internal_storage','ram','size_sqm','device_type','type'];
+  // Include brand + one more meaningful attribute when available
+  const map = {};
+  attrs.forEach(a => { if (a && a.name && a.value && !map[a.name]) map[a.name] = a.value; });
+  if (listing.brand) map['brand'] = listing.brand;
+  for (const key of candidates) {
+    if (map[key] && !specChips.find(c=>c.key===key)) {
+      specChips.push({ key, label: String(map[key]).slice(0,20) });
+    }
+    if (specChips.length >= 2) break;
+  }
 
   const cardClass = `listing-card${compact ? ' compact' : ''}${minimal ? ' minimal' : ''}`;
   return (
@@ -66,12 +99,24 @@ const ListingCard = ({ listing, compact = false, minimal = false }) => {
           <span className="lc-price">{formatPrice(listing.price)}</span>
           <span className="lc-currency">{t('listing:priceCurrency')}</span>
         </div>
+        {!minimal && specChips.length > 0 && (
+          <div className="lc-specs">
+            {specChips.map(c => (
+              <span key={c.key} className="lc-spec-pill">{c.label}</span>
+            ))}
+          </div>
+        )}
         {!minimal && listing.location && <div className="lc-location" title={listing.location}>{listing.location}</div>}
         {!minimal && (
           <div className="lc-meta">
             {relative && <span className="lc-time" aria-label="time">{relative}</span>}
             {relative && sellerRating && <span className="lc-dot" />}
-            {sellerRating && <span className="lc-rating" aria-label={t('listing:sellerRating','Seller rating')}>{Number(sellerRating).toFixed(1)}</span>}
+            {sellerRating && (
+              <span className="lc-rating" aria-label={t('listing:sellerRating','Seller rating')}>
+                <Stars value={Number(sellerRating)} />
+                <span className="lc-rating-num">{Number(sellerRating).toFixed(1)}</span>
+              </span>
+            )}
           </div>
         )}
       </div>

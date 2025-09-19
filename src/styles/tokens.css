@@ -141,6 +141,7 @@
 
   /* Layout metrics */
   --container-max: 1200px;
+  --container-pad-x: 1.25rem; /* unified horizontal page padding */
   --nav-height: 58px;
   --nav-height-compact: 48px;
   --nav-action-btn-gap: 0.45rem;

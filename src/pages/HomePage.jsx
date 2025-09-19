@@ -18,7 +18,7 @@ const HomePage = () => {
             title="Recent Listings"
             apiParams={{ ordering: '-created_at' }}
             compact
-            lazySecondHalf
+            pageSize={12}
           />
         </div>
         <div className="home-section">

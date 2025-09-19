@@ -51,7 +51,7 @@ h6, .h6 { font-size: var(--fs-md); line-height: var(--lh-normal); font-weight: v
   width: 100%;
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 var(--container-pad-x);
 }
 
 /* Focus ring utility */
