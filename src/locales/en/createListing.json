@@ -27,6 +27,7 @@
   "next": "Next",
   "back": "Back",
   "submit": "Submit",
+  "publish": "Publish",
   "submitError": "Submit failed",
   "required": "Required",
   "selectOption": "Select",
@@ -42,5 +43,18 @@
   "imageRemoved": "Image removed {{name}}",
   "imageMoved": "Image moved from position {{from}} to {{to}}",
   "booleanYes": "Yes",
-  "booleanNo": "No"
+  "booleanNo": "No",
+  "titleHint": "5+ chars",
+  "priceHint": "Numeric",
+  "descHint": "Required • {{count}}/2000",
+  "uploadsComplete": "All images uploaded.",
+  "uploadsInProgress": "Images are still uploading or failed. You can retry failed ones.",
+  "addMoreImages": "Add more images",
+  "clearDraft": "Clear draft",
+  "publishBar": "Publish controls",
+  "chars": "Chars",
+  "unexpectedError": "Unexpected error",
+  "serverSubmitError": "A server error occurred while submitting. Please try again.",
+  "uploadFailed": "Upload failed",
+  "networkError": "Network error. Please check your connection and try again."
 }

@@ -27,6 +27,7 @@
   "next": "Suivant",
   "back": "Retour",
   "submit": "Soumettre",
+  "publish": "Publier",
   "submitError": "Échec de l'envoi",
   "required": "Obligatoire",
   "selectOption": "Sélectionner",
@@ -42,5 +43,18 @@
   "imageRemoved": "Image supprimée {{name}}",
   "imageMoved": "Image déplacée de la position {{from}} à {{to}}",
   "booleanYes": "Oui",
-  "booleanNo": "Non"
+  "booleanNo": "Non",
+  "titleHint": "5+ caractères",
+  "priceHint": "Numérique",
+  "descHint": "Obligatoire • {{count}}/2000",
+  "uploadsComplete": "Toutes les images ont été téléversées.",
+  "uploadsInProgress": "Les images sont en cours de téléversement ou ont échoué. Vous pouvez réessayer celles en échec.",
+  "addMoreImages": "Ajouter plus d'images",
+  "clearDraft": "Effacer le brouillon",
+  "publishBar": "Contrôles de publication",
+  "chars": "Caractères",
+  "unexpectedError": "Erreur inattendue",
+  "serverSubmitError": "Une erreur serveur s'est produite lors de l'envoi. Veuillez réessayer.",
+  "uploadFailed": "Échec du téléversement",
+  "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer."
 }

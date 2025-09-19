@@ -39,15 +39,15 @@ export default function CreateListingPage(){
 
   // Helper to sanitize unknown backend error payloads for display
   const toUserMessage = (data) => {
-    if (data == null) return 'Unexpected error';
+    if (data == null) return t('createListing:unexpectedError','Unexpected error');
     if (typeof data === 'string') {
       const s = data.trim();
       if (s.startsWith('<!DOCTYPE') || s.startsWith('<html') || s.includes('<html')) {
-        return 'Server error occurred while submitting. Please try again.';
+        return t('createListing:serverSubmitError','A server error occurred while submitting. Please try again.');
       }
       return s.slice(0, 500);
     }
-    try { return JSON.stringify(data).slice(0, 1000); } catch { return 'Unexpected error'; }
+    try { return JSON.stringify(data).slice(0, 1000); } catch { return t('createListing:unexpectedError','Unexpected error'); }
   };
 
   const limit = useMemo(()=> pLimit(3), []);
@@ -64,7 +64,7 @@ export default function CreateListingPage(){
       });
       setUploadStates(prev=> ({...prev, [idx]: { progress: 100, error: null }}));
     }catch(err){
-      const msg = err?.response?.data?.detail || err?.message || 'Upload failed';
+      const msg = err?.response?.data?.detail || err?.message || t('createListing:uploadFailed','Upload failed');
       setUploadStates(prev=> ({...prev, [idx]: { progress: prev[idx]?.progress || 0, error: msg }}));
       throw err;
     }
@@ -309,7 +309,7 @@ export default function CreateListingPage(){
         else { setStep('review'); }
       } else if (e.request && !e.response) {
         // Network error (CORS, offline, DNS, etc.)
-        setSubmitError('Network error. Please check your connection and try again.');
+  setSubmitError(t('createListing:networkError','Network error. Please check your connection and try again.'));
       } else {
         setSubmitError(data || 'Failed');
       }
@@ -345,7 +345,7 @@ export default function CreateListingPage(){
           <div className="cl-field">
             <label htmlFor="cl-title">{t('createListing:title')}*</label>
             <input id="cl-title" value={title} aria-invalid={title.trim().length<=4 || undefined} ref={title.trim().length<=4 && !firstErrorRef.current ? firstErrorRef : undefined} onChange={e=> setTitle(e.target.value)} />
-            <small className="cl-hint">5+ chars</small>
+            <small className="cl-hint">{t('createListing:titleHint','5+ chars')}</small>
             {fieldErrors.title && <span className="cl-err-msg" role="alert">{fieldErrors.title}</span>}
           </div>
           <div className="cl-field">
@@ -354,7 +354,7 @@ export default function CreateListingPage(){
               <input id="cl-price" value={price} aria-invalid={!price || undefined} ref={!price && !firstErrorRef.current ? firstErrorRef : undefined} onChange={e=> setPrice(e.target.value.replace(/[^0-9.]/g,''))} inputMode="decimal" min="0" step="0.01" />
               <span className="cl-adorn">CFA</span>
             </div>
-            <small className="cl-hint">Numeric</small>
+            <small className="cl-hint">{t('createListing:priceHint','Numeric')}</small>
             {fieldErrors.price && <span className="cl-err-msg" role="alert">{fieldErrors.price}</span>}
           </div>
           <div className="cl-field">
@@ -371,7 +371,7 @@ export default function CreateListingPage(){
           <div className="cl-field">
             <label htmlFor="cl-desc">{t('createListing:description','Description')}*</label>
             <textarea id="cl-desc" rows={5} value={desc} aria-invalid={!desc.trim() || undefined} onChange={e=> { setDesc(e.target.value); setDescCount(e.target.value.length); }} maxLength={2000} />
-            <small className="cl-hint">Required • {descCount}/2000</small>
+            <small className="cl-hint">{t('createListing:descHint','Required • {{count}}/2000', { count: descCount })}</small>
             {fieldErrors.description && <span className="cl-err-msg" role="alert">{fieldErrors.description}</span>}
             {!fieldErrors.description && !desc.trim() && <span className="cl-err-msg" role="alert">{t('createListing:required')}</span>}
           </div>
