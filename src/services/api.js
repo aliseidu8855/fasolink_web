@@ -99,6 +99,11 @@ export const updateListing = (id, formData) => {
   return apiClient.patch(`listings/${id}/`, formData);
 };
 
+// Quick toggle owner actions
+export const quickToggleListing = (id, action) => {
+  return apiClient.post(`listings/${id}/quick-toggle/`, { action });
+};
+
 // Append a single image to an existing listing via PATCH (multipart)
 export const appendListingImage = (id, file, onUploadProgress) => {
   const fd = new FormData();
