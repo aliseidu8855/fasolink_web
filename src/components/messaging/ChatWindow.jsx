@@ -124,11 +124,21 @@ const ChatWindow = ({ conversationId }) => {
       const res = await fetchConversationMessages(conversationId, targetPage);
       // Assuming backend returns {results, next, previous, count}
       const data = res.data;
-      const newMsgs = data.results || data.messages || data; // fallback
+      let newMsgs = data.results || data.messages || data; // fallback
+      // Normalize order to oldest->newest if backend differs between environments
+      if (Array.isArray(newMsgs)) {
+        newMsgs = [...newMsgs].sort((a, b) => {
+          const ta = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+          const tb = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+          if (ta !== tb) return ta - tb;
+          // Fallback to id compare to keep stable order
+          return (a.id || 0) - (b.id || 0);
+        });
+      }
       setMessages(prev => {
-        if (targetPage === 1) return newMsgs.reverse(); // ensure oldest -> newest in state
-        // When loading older, prepend older to the start of the state array
-        return [...newMsgs.reverse(), ...prev];
+        if (targetPage === 1) return newMsgs; // keep oldest -> newest as delivered by backend
+        // When loading older, prepend older to the start of the state array (already oldest->newest)
+        return [...newMsgs, ...prev];
       });
       // Determine hasMore via next or length
       if (data.next === null || newMsgs.length < MESSAGE_PAGE_SIZE) {
