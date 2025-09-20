@@ -38,8 +38,8 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  /* keep content visible above sticky input + mobile bottom nav */
-  padding-bottom: 9rem;
+  /* keep content visible above sticky input + quick replies + mobile bottom nav */
+  padding-bottom: 11rem;
 }
 .load-older-btn {
   align-self: center;
@@ -115,7 +115,7 @@
 /* Ensure file ends with newline and no stray syntax issues */
 
 /* New messages chip that appears when scrolled away from latest (top). Place it below header. */
-.new-messages-chip { position: sticky; bottom: 84px; display:flex; justify-content:center; pointer-events:none; z-index:4; }
+.new-messages-chip { position: sticky; bottom: calc(var(--mobile-bottom-nav-height, 56px) + 64px); display:flex; justify-content:center; pointer-events:none; z-index:4; }
 .new-messages-chip button { pointer-events:auto; background:#0ea5e9; color:#fff; border:none; border-radius:999px; padding:.35rem .75rem; font-size:.75rem; box-shadow:0 6px 22px -6px rgba(14,165,233,.55); cursor:pointer; }
 
 /* Date separator between message days */
@@ -131,18 +131,18 @@
 /* Match bottom nav breakpoint and lift input above the nav */
 @media (max-width: 900px){
   .safety-tip { display:none; }
-  /* Keep the sticky input above the Bottom Nav (56px high on mobile) */
-  .message-input-area { padding:.6rem .75rem; gap:.5rem; bottom: 56px; }
+  /* Keep the sticky input above the Bottom Nav */
+  .message-input-area { padding:.6rem .75rem; gap:.5rem; bottom: calc(var(--mobile-bottom-nav-height, 56px) + env(safe-area-inset-bottom, 0px)); }
   .message-input-area input { padding:.55rem .75rem; font-size: var(--fs-xs); }
   .send-button { width:36px; height:36px; font-size:16px; }
   .chat-header { padding:.6rem .75rem; }
   .chat-header p { font-size: var(--fs-xs); }
   .chat-window .message-bubble { font-size: var(--fs-sm); }
-  .new-messages-chip { bottom: 120px; }
+  .new-messages-chip { bottom: calc(var(--mobile-bottom-nav-height, 56px) + 64px); }
   .quick-reply-chip { font-size: var(--fs-xs); }
 }
 
 /* Very small screens use a slightly shorter nav height */
 @media (max-width: 420px){
-  .message-input-area { bottom: 54px; }
+  .message-input-area { bottom: calc(var(--mobile-bottom-nav-height, 54px) + env(safe-area-inset-bottom, 0px)); }
 }

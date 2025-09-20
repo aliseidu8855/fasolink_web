@@ -359,6 +359,22 @@ const ChatWindow = ({ conversationId }) => {
         aria-relevant="additions"
         aria-label={t('messaging:conversationWith', { user: otherParticipant })}
       >
+        {hasMore && (
+          <button
+            type="button"
+            className="load-older-btn"
+            disabled={loadingOlder}
+            onClick={() => loadMessagesPage(page + 1)}
+            aria-label={t('messaging:loadOlderAria','Load older messages')}
+            style={{ marginBottom: '1rem' }}
+          >
+                {loadingOlder ? (
+                  <span style={{ display:'inline-flex', alignItems:'center', gap:6 }}>
+                    <Spinner size={14} stroke={2} /> {t('common:loading')}
+                  </span>
+                ) : t('messaging:loadOlder')}
+          </button>
+        )}
             {loadingOlder && (
               Array.from({ length: 3 }).map((_,i)=>(
                 <div key={`older-skel-${i}`} className={`message-bubble-wrapper ${i%2===0 ? 'received':'sent'}`} aria-hidden="true">
@@ -428,21 +444,6 @@ const ChatWindow = ({ conversationId }) => {
           );
         })}
         <div ref={messagesEndRef} />
-        {hasMore && (
-          <button
-            type="button"
-            className="load-older-btn"
-            disabled={loadingOlder}
-            onClick={() => loadMessagesPage(page + 1)}
-            aria-label={t('messaging:loadOlderAria','Load older messages')}
-          >
-                {loadingOlder ? (
-                  <span style={{ display:'inline-flex', alignItems:'center', gap:6 }}>
-                    <Spinner size={14} stroke={2} /> {t('common:loading')}
-                  </span>
-                ) : t('messaging:loadOlder')}
-          </button>
-        )}
       </div>
       {newSinceScroll > 0 && (
         <div className="new-messages-chip" role="status" aria-live="polite">

@@ -41,8 +41,8 @@ const Layout = () => {
         id="main-content"
         style={{
           paddingTop: applyMainPadding ? '58px' : '0',
-          // Reserve space for the bottom nav so content/input isn't obscured on mobile widths
-          paddingBottom: isMobile ? '64px' : 0,
+          // Reserve space for the fixed bottom nav on mobile widths
+          paddingBottom: isMobile ? 'var(--mobile-bottom-nav-height)' : 0,
           height: isMessages ? 'calc(100vh - 58px)' : undefined,
           minHeight: 0
         }}

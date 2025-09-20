@@ -144,6 +144,8 @@
   --container-pad-x: 1.25rem; /* unified horizontal page padding */
   --nav-height: 58px;
   --nav-height-compact: 48px;
+  /* Mobile bottom nav fixed height (used globally to offset content) */
+  --mobile-bottom-nav-height: 56px;
   --nav-action-btn-gap: 0.45rem;
   --nav-search-max: 540px;
 
@@ -156,3 +158,8 @@
 }
 
 html { color-scheme: light; }
+
+/* Override mobile bottom nav height on very small screens */
+@media (max-width: 420px){
+  :root { --mobile-bottom-nav-height: 54px; }
+}
