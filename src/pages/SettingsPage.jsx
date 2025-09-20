@@ -17,7 +17,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div style={{ maxWidth: 640, margin: '0 auto', padding: '1.5rem 1rem' }}>
+    <div className="container" style={{ maxWidth: 640, margin: '0 auto', padding: '1.5rem var(--container-pad-x)' }}>
       <h1 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Paramètres</h1>
       <section style={sectionStyle}>
         <h2 style={h2Style}>PWA / Installation</h2>

@@ -6,7 +6,7 @@
 }
 
 .list-header {
-  padding: 1.5rem;
+  padding: 1.5rem var(--container-pad-x);
   border-bottom: 1px solid #eee;
 }
 
@@ -16,7 +16,7 @@
 
 .search-bar {
   position: relative;
-  padding: 1rem 1.5rem;
+  padding: 1rem var(--container-pad-x);
   border-bottom: 1px solid #eee;
 }
 
@@ -45,7 +45,7 @@
 
 .convo-item {
   display: flex;
-  padding: .7rem 1rem;
+  padding: .7rem var(--container-pad-x);
   cursor: pointer;
   border-bottom: 1px solid #eee;
   text-decoration: none;
@@ -145,9 +145,9 @@
 /* Mobile tweaks */
 @media (max-width: 720px){
   .list-header { display: none; }
-  .search-bar { padding: .75rem 1rem; }
+  .search-bar { padding: .75rem var(--container-pad-x); }
   .search-bar input { padding: .6rem .75rem .6rem 2.25rem; font-size: .95rem; }
-  .convo-item { padding: .6rem .9rem; }
+  .convo-item { padding: .6rem var(--container-pad-x); }
   .avatar { width: 36px; height: 36px; margin-right: .6rem; }
   .user-name { font-size: .95rem; }
   .last-message { font-size: .85rem; margin-bottom: .35rem; }

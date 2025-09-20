@@ -113,13 +113,11 @@ const ChatWindow = ({ conversationId }) => {
   // Load a page of messages (pagination backend: page param) prepend older
   const loadMessagesPage = useCallback(async (targetPage) => {
     if (!conversationId) return;
-    if (targetPage === 1) setInitialLoading(true);
+    if (targetPage === 1) setLoadingOlder(true);
     else setLoadingOlder(true);
     const container = scrollContainerRef.current;
     const prevScrollHeight = container ? container.scrollHeight : 0;
-    const hadSavedScroll = (targetPage === 1) ? (() => {
-      try { return !!sessionStorage.getItem(`chat:scroll:${conversationId}`); } catch { return false; }
-    })() : false;
+    // saved scroll restoration handled in initial loader
     try {
       const res = await fetchConversationMessages(conversationId, targetPage);
       // Assuming backend returns {results, next, previous, count}
@@ -136,31 +134,77 @@ const ChatWindow = ({ conversationId }) => {
         });
       }
       setMessages(prev => {
-        if (targetPage === 1) return newMsgs; // keep oldest -> newest as delivered by backend
-        // When loading older, prepend older to the start of the state array (already oldest->newest)
+        if (prev.length === 0) return newMsgs; // initial fill
+        // When loading older (earlier page numbers), prepend older to the start of the state array
         return [...newMsgs, ...prev];
       });
-      // Determine hasMore via next or length
-      if (data.next === null || newMsgs.length < MESSAGE_PAGE_SIZE) {
-        if (targetPage === 1) setHasMore(false); // no more pages if first page incomplete
-        else if (newMsgs.length < MESSAGE_PAGE_SIZE) setHasMore(false);
-      }
+      // Determine if more older pages exist: in this paging scheme, page numbers decrease for older
+      setHasMore(targetPage > 1 || Boolean(data.previous));
       setPage(targetPage);
       // Preserve anchor when prepending older pages by maintaining visual position
       setTimeout(() => {
-        if (container && targetPage > 1) {
+        if (container) {
           const newScrollHeight = container.scrollHeight;
           container.scrollTop = container.scrollTop + (newScrollHeight - prevScrollHeight);
-        } else if (container && !hadSavedScroll) {
-          // Snap to latest on first load when there's no saved position
-          container.scrollTop = container.scrollHeight;
         }
       }, 30);
     } catch (e) {
       console.error('Failed to load messages page', e);
     } finally {
-      setInitialLoading(false);
       setLoadingOlder(false);
+    }
+  }, [conversationId]);
+
+  // Initial latest-page load: compute last page via count, then fetch it
+  const loadInitialLatest = useCallback(async () => {
+    if (!conversationId) return;
+    setInitialLoading(true);
+    try {
+      const first = await fetchConversationMessages(conversationId, 1);
+      const firstData = first.data || {};
+      const count = typeof firstData.count === 'number' ? firstData.count : null;
+      const pageSize = Array.isArray(firstData.results) ? firstData.results.length || MESSAGE_PAGE_SIZE : MESSAGE_PAGE_SIZE;
+      const lastPage = count ? Math.max(1, Math.ceil(count / (pageSize || MESSAGE_PAGE_SIZE))) : 1;
+      if (lastPage > 1) {
+        const last = await fetchConversationMessages(conversationId, lastPage);
+        const data = last.data || {};
+        let newMsgs = data.results || data.messages || [];
+        if (Array.isArray(newMsgs)) {
+          newMsgs = [...newMsgs].sort((a, b) => {
+            const ta = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+            const tb = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+            if (ta !== tb) return ta - tb;
+            return (a.id || 0) - (b.id || 0);
+          });
+        }
+        setMessages(newMsgs);
+        setPage(lastPage);
+        setHasMore(Boolean(data.previous) || lastPage > 1);
+      } else {
+        // Only one page; normalize and set
+        let newMsgs = firstData.results || firstData.messages || [];
+        if (Array.isArray(newMsgs)) {
+          newMsgs = [...newMsgs].sort((a, b) => {
+            const ta = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+            const tb = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+            if (ta !== tb) return ta - tb;
+            return (a.id || 0) - (b.id || 0);
+          });
+        }
+        setMessages(newMsgs);
+        setPage(1);
+        setHasMore(false);
+      }
+      // Snap to latest unless there is a saved scroll
+      const key = `chat:scroll:${conversationId}`;
+      const hadSaved = (() => { try { return !!sessionStorage.getItem(key); } catch { return false; } })();
+      if (!hadSaved) {
+        setTimeout(() => scrollToLatest(true), 30);
+      }
+    } catch (e) {
+      console.error('Failed to load latest page', e);
+    } finally {
+      setInitialLoading(false);
     }
   }, [conversationId]);
 
@@ -185,13 +229,8 @@ const ChatWindow = ({ conversationId }) => {
     setHasMore(true);
     setPendingFiles([]);
     loadConversationMeta();
-    loadMessagesPage(1).then(() => {
-      // Auto-show latest at top for existing conversations
-      setTimeout(() => {
-        scrollToLatest(true);
-      }, 30);
-    });
-  }, [conversationId, loadConversationMeta, loadMessagesPage]);
+    loadInitialLatest();
+  }, [conversationId, loadConversationMeta, loadInitialLatest]);
 
   // Real-time: open websocket per conversation
   useEffect(() => {
@@ -204,7 +243,11 @@ const ChatWindow = ({ conversationId }) => {
           const m = data.message;
           setMessages(prev => {
             const exists = prev.some(x => x.id === m.id);
-            return exists ? prev : [...prev, { ...m, sender: m.sender_id === user?.id ? user?.username : (conversation?.participants?.find(p => p !== user?.username) || 'user') }];
+            if (exists) return prev;
+            // Prefer server-provided sender fields; fallback to mapping by sender_id
+            const other = conversation?.participants?.find(p => p !== user?.username) || 'user';
+            const derivedSender = m.sender || m.sender_username || (m.sender_id === user?.id ? user?.username : other);
+            return [...prev, { ...m, sender: derivedSender }];
           });
           // Auto-scroll only if user is near bottom; otherwise increment the new message counter
           setTimeout(() => {
@@ -374,7 +417,7 @@ const ChatWindow = ({ conversationId }) => {
             type="button"
             className="load-older-btn"
             disabled={loadingOlder}
-            onClick={() => loadMessagesPage(page + 1)}
+            onClick={() => page > 1 && loadMessagesPage(page - 1)}
             aria-label={t('messaging:loadOlderAria','Load older messages')}
             style={{ marginBottom: '1rem' }}
           >
@@ -501,6 +544,12 @@ const ChatWindow = ({ conversationId }) => {
           maxLength={1000}
           value={newMessage}
           onChange={e => setNewMessage(e.target.value)}
+          onPaste={(e) => {
+            const files = Array.from(e.clipboardData?.files || []);
+            if (files.length) {
+              setPendingFiles(prev => [...prev, ...files]);
+            }
+          }}
         />
         {pendingFiles.length > 0 && (
           <div className="pending-files" aria-live="polite">

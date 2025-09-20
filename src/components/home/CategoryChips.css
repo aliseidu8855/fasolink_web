@@ -1,6 +1,6 @@
 .cat-chips {
-  padding: 0.25rem var(--space-4, 1rem);
-
+  /* Use global container gutters for consistent horizontal padding */
+  padding: 0.25rem var(--container-pad-x);
 }
 
 .cat-chips-scroller {
@@ -36,7 +36,7 @@
 .cat-chip.skel { width: 84px; }
 
 @media (min-width: 768px) {
-  .cat-chips { padding: 0.5rem var(--space-6, 1.5rem); }
+  .cat-chips { padding: 0.5rem var(--container-pad-x); }
 }
 @media (max-width: 480px) {
   .cat-chip { padding: 0.4rem 0.65rem; font-size: 0.75rem; }

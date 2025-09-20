@@ -1,5 +1,6 @@
 .listing-row-section {
-  padding: 3rem 0;
+  /* Use only vertical padding; horizontal gutters come from the `.container` wrapper */
+  padding-block: 3rem;
 }
 
 .section-header {
@@ -67,9 +68,7 @@
 
 /* Breakpoints */
 @media (max-width: 900px) {
-  .listing-row-section {
-    padding: 2.5rem 0;
-  }
+  .listing-row-section { padding-block: 2.5rem; }
 }
 @media (max-width: 700px) {
   .section-header {
@@ -91,9 +90,7 @@
   }
 }
 @media (max-width: 480px) {
-  .listing-row-section {
-    padding: 2.1rem 0;
-  }
+  .listing-row-section { padding-block: 2.1rem; }
   .section-title { font-size: 1.05rem; }
   .section-subtitle {
     font-size: 0.68rem;
@@ -111,9 +108,7 @@
   }
 }
 @media (max-width: 360px) {
-  .listing-row-section {
-    padding: 1.8rem 0;
-  }
+  .listing-row-section { padding-block: 1.8rem; }
   .listing-grid {
     grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 0.65rem;

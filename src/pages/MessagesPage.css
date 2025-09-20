@@ -1,5 +1,5 @@
 .messages-page-wrapper { display:flex; flex-direction:column; height:calc(100vh - 58px); max-width:var(--container-max); margin:0 auto; background:var(--color-bg-primary,#fff); min-height:0; }
-.messages-topbar { position:sticky; top:0; z-index:60; display:flex; align-items:center; justify-content:space-between; padding:.55rem clamp(.75rem,2vw,1.25rem); background:#ffffff; border-bottom:1px solid #e5e5e5; gap:.75rem; box-shadow:0 2px 4px -2px rgba(0,0,0,.08); }
+.messages-topbar { position:sticky; top:0; z-index:60; display:flex; align-items:center; justify-content:space-between; padding:.55rem var(--container-pad-x); background:#ffffff; border-bottom:1px solid #e5e5e5; gap:.75rem; box-shadow:0 2px 4px -2px rgba(0,0,0,.08); }
 .mt-menu-btn { background:#fff; border:1px solid #ddd; border-radius:6px; padding:.45rem .55rem; display:inline-flex; align-items:center; justify-content:center; font-size:.9rem; cursor:pointer; line-height:1; }
 .mt-menu-btn:focus-visible { outline:2px solid var(--color-focus-ring); outline-offset:2px; }
 .mt-left { display:flex; align-items:center; gap:.75rem; min-width:0; }
@@ -15,7 +15,7 @@
 .close-btn { background:none; border:none; font-size:1.4rem; line-height:1; cursor:pointer; color:#444; }
 .open-sidebar-btn { position:absolute; top:.75rem; left:.75rem; z-index:10; background:#fff; border:1px solid #ddd; border-radius:6px; padding:.45rem .6rem; font-size:.7rem; text-transform:uppercase; letter-spacing:.5px; font-weight:600; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,.15); }
 .open-sidebar-btn:hover { background:#f5f5f5; }
-.chat-mobile-bar { background:#fff; border-bottom:1px solid #eee; padding:.5rem .5rem; display:flex; align-items:center; }
+.chat-mobile-bar { background:#fff; border-bottom:1px solid #eee; padding:.5rem var(--container-pad-x); display:flex; align-items:center; }
 .back-btn { background:#fff; border:1px solid #ddd; border-radius:8px; padding:.35rem .45rem; display:inline-flex; align-items:center; justify-content:center; color:#111; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,.04); }
 .back-btn:hover { background:#f7f7f7; }
 .back-btn:focus-visible { outline:2px solid var(--color-focus-ring); outline-offset:2px; }

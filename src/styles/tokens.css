@@ -141,7 +141,8 @@
 
   /* Layout metrics */
   --container-max: 1200px;
-  --container-pad-x: 1.25rem; /* unified horizontal page padding */
+  /* Horizontal page padding: slightly tighter on mobile, wider on tablet/desktop */
+  --container-pad-x: 1rem; /* mobile default */
   --nav-height: 58px;
   --nav-height-compact: 48px;
   /* Mobile bottom nav fixed height (used globally to offset content) */
@@ -162,4 +163,9 @@ html { color-scheme: light; }
 /* Override mobile bottom nav height on very small screens */
 @media (max-width: 420px){
   :root { --mobile-bottom-nav-height: 54px; }
+}
+
+/* Increase horizontal container padding on tablet and up */
+@media (min-width: 720px){
+  :root { --container-pad-x: 1.25rem; }
 }
