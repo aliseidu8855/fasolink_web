@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { useMessaging } from '../../context/MessagingContext';
 import './MobileBottomNav.css';
-import { HomeIcon, CategoryIcon, MessageBubbleIcon, UserIcon, PlusCircleIcon } from '../icons/Icons.jsx';
+import { HomeIcon, CategoryIcon, MessageBubbleIcon, PlusCircleIcon, ShopIcon } from '../icons/Icons.jsx';
 
 // Compact bottom navigation for mobile devices.
 // Appears only below a max-width breakpoint (handled via CSS).
@@ -28,7 +28,8 @@ const MobileBottomNav = () => {
     { to: '/listings', label: t('navigation:categories','Catégories'), icon: <CategoryIcon size={22} /> },
     { action: handlePost, label: t('navigation:postAdShort','Vendre'), icon: <PlusCircleIcon size={22} />, special:true },
     { to: '/messages', key: 'messages', label: t('navigation:messages','Messages'), icon: <MessageBubbleIcon size={22} /> },
-    { key: 'account', to: '/dashboard', label: t('navigation:account','Compte'), icon: <UserIcon size={22} /> }
+    // Rename Account to Shop; keep route to dashboard as the user's shop management
+    { key: 'shop', to: '/dashboard', label: t('navigation:myShop','Ma boutique'), icon: <ShopIcon size={22} /> }
   ];
 
   return (
@@ -36,7 +37,7 @@ const MobileBottomNav = () => {
       <ul>
         {navItems.map((item, idx) => {
           const isMessages = item.key === 'messages';
-          const isAccount = item.key === 'account';
+          const isShop = item.key === 'shop';
           return (
             <li key={idx} className={item.action ? 'post-slot' : ''}>
               {item.action ? (
@@ -44,7 +45,7 @@ const MobileBottomNav = () => {
                   <span className="mbn-icon" aria-hidden="true">{item.icon}</span>
                   <span className="mbn-label mbn-label-strong">{item.label}</span>
                 </button>
-              ) : isAccount ? (
+              ) : isShop ? (
                 isAuthenticated ? (
                   <NavLink to={item.to} end className={({isActive})=> 'mbn-btn' + (isActive ? ' active':'')} aria-label={item.label}>
                     <span className="mbn-icon" aria-hidden="true">{item.icon}</span>

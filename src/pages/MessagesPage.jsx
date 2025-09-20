@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowRightIcon, CloseIcon } from '../components/icons/Icons.jsx';
 import ConversationList from '../components/messaging/ConversationList';
 import ChatWindow from '../components/messaging/ChatWindow';
 import './MessagesPage.css';
@@ -50,7 +51,11 @@ const MessagesPage = () => {
                       className="back-btn"
                       onClick={() => navigate('/messages')}
                       aria-label={t('messaging:backToList')}
-                    >&larr; {t('messaging:back')}</button>
+                    >
+                      <span aria-hidden="true" style={{ display:'inline-block', transform:'rotate(180deg)' }}>
+                        <ArrowRightIcon size={18} />
+                      </span>
+                    </button>
                   </div>
                   <div ref={chatScrollRef} className="chat-scroll-anchor">
                     <ChatWindow conversationId={conversationId} />

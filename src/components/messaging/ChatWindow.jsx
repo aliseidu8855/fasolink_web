@@ -14,7 +14,7 @@ const ChatWindow = ({ conversationId }) => {
   const { user } = useAuth();
   const { t } = useTranslation(['messaging','listing']);
   const [conversation, setConversation] = useState(null);
-  const [messages, setMessages] = useState([]); // We'll keep state oldest->newest but render reversed (newest on top)
+  const [messages, setMessages] = useState([]); // Keep state oldest->newest and render in natural order (newest at bottom)
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -54,12 +54,11 @@ const ChatWindow = ({ conversationId }) => {
 
   // const pageVisible = () => document.visibilityState === 'visible';
 
-  // With newest-on-top UI, scrolling to "top" means showing the latest messages area.
+  // With newest-at-bottom UI, scroll to bottom to show latest.
   const scrollToLatest = (instant=false) => {
     const el = scrollContainerRef.current;
     if (!el) return;
-    // Since newest is visually at top, scrollTop = 0 shows latest
-    el.scrollTo({ top: 0, behavior: instant ? 'auto' : 'smooth' });
+    el.scrollTo({ top: el.scrollHeight, behavior: instant ? 'auto' : 'smooth' });
   };
 
   // Persist/restore scroll position per-thread using sessionStorage
@@ -82,15 +81,16 @@ const ChatWindow = ({ conversationId }) => {
     return () => el.removeEventListener('scroll', onScroll);
   }, [conversationId]);
 
-  // Track if user is at/near latest (top) to decide whether to auto-scroll
+  // Track if user is at/near latest (bottom) to decide whether to auto-scroll
   useEffect(() => {
     const el = scrollContainerRef.current;
     if (!el) return;
     const onScroll = () => {
-      const threshold = 80; // px from top considered "at latest"
-      const nowAtTop = el.scrollTop <= threshold;
-      setAtBottom(nowAtTop);
-      if (nowAtTop && newSinceScroll > 0) {
+      const threshold = 80; // px from bottom considered "at latest"
+      const distanceFromBottom = el.scrollHeight - el.clientHeight - el.scrollTop;
+      const nowAtBottom = distanceFromBottom <= threshold;
+      setAtBottom(nowAtBottom);
+      if (nowAtBottom && newSinceScroll > 0) {
         setNewSinceScroll(0);
       }
     };
@@ -140,10 +140,10 @@ const ChatWindow = ({ conversationId }) => {
       setTimeout(() => {
         if (container && targetPage > 1) {
           const newScrollHeight = container.scrollHeight;
-          container.scrollTop = newScrollHeight - prevScrollHeight + container.scrollTop;
+          container.scrollTop = container.scrollTop + (newScrollHeight - prevScrollHeight);
         } else if (container && !hadSavedScroll) {
           // Snap to latest on first load when there's no saved position
-          container.scrollTop = 0;
+          container.scrollTop = container.scrollHeight;
         }
       }, 30);
     } catch (e) {
@@ -255,7 +255,7 @@ const ChatWindow = ({ conversationId }) => {
       const response = files.length > 0
         ? await sendMessageMultipart(conversationId, { content: trimmed, files })
         : await sendMessage(conversationId, trimmed);
-      setMessages(prev => prev.map(m => m.id === tempId ? response.data : m));
+    setMessages(prev => prev.map(m => m.id === tempId ? response.data : m));
   setTimeout(() => scrollToLatest(), 20);
     } catch (err) {
       console.error('Failed to send message', err);
@@ -369,9 +369,8 @@ const ChatWindow = ({ conversationId }) => {
               ))
             )}
         <ListingSnippet listing={conversation.listing} />
-        {/* Render messages reversed visually: newest at the top. We keep state oldest->newest, so map from end to start. */}
-        {messages.slice().reverse().map((msg, revIdx) => {
-          const idx = messages.length - 1 - revIdx;
+        {/* Render messages in natural order: oldest at top, newest at bottom. */}
+        {messages.map((msg, idx) => {
           const statusLabel = msg.failed ? ` (${t('messaging:failedSend')})` : (msg.pending ? ' …' : '');
           const ts = msg.timestamp ? new Date(msg.timestamp) : null;
           const timeShort = ts ? ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';

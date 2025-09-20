@@ -15,9 +15,10 @@
 .close-btn { background:none; border:none; font-size:1.4rem; line-height:1; cursor:pointer; color:#444; }
 .open-sidebar-btn { position:absolute; top:.75rem; left:.75rem; z-index:10; background:#fff; border:1px solid #ddd; border-radius:6px; padding:.45rem .6rem; font-size:.7rem; text-transform:uppercase; letter-spacing:.5px; font-weight:600; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,.15); }
 .open-sidebar-btn:hover { background:#f5f5f5; }
-.chat-mobile-bar { background:#fff; border-bottom:1px solid #eee; padding:.5rem .75rem; display:flex; align-items:center; }
-.back-btn { background:none; border:none; font-size:.8rem; font-weight:600; color:#0366d6; cursor:pointer; }
-.back-btn:hover { text-decoration:underline; }
+.chat-mobile-bar { background:#fff; border-bottom:1px solid #eee; padding:.5rem .5rem; display:flex; align-items:center; }
+.back-btn { background:#fff; border:1px solid #ddd; border-radius:8px; padding:.35rem .45rem; display:inline-flex; align-items:center; justify-content:center; color:#111; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+.back-btn:hover { background:#f7f7f7; }
+.back-btn:focus-visible { outline:2px solid var(--color-focus-ring); outline-offset:2px; }
 .messages-main { flex:1; display:flex; flex-direction:column; background:var(--color-bg-alt,#fafafa); position:relative; min-width:0; min-height:0; }
 .chat-wrapper { display:flex; flex-direction:column; height:100%; min-height:0; }
 .chat-scroll-anchor { display:flex; flex:1; min-height:0; }
