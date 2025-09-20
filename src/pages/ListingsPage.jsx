@@ -10,6 +10,7 @@ import Button from '../components/Button';
 import CategorySearchBar from '../components/navigation/CategorySearchBar';
 import FilterChips from '../components/listings/FilterChips';
 import FilterBottomSheet from '../components/listings/FilterBottomSheet';
+import { useSEO, canonicalForPath } from '../utils/seo';
 
 // Debounce helper (simple)
 const useDebouncedValue = (value, delay) => {
@@ -194,6 +195,20 @@ export default function ListingsPage() {
   const displayCount = totalCount != null ? totalCount : listings.length;
   const resultsCountLabel = t('listing:listingsPage.resultsCount', { count: displayCount, defaultValue: '{{count}} results' })
     .replace('{{count}}', displayCount);
+
+  // SEO
+  const titleBits = [];
+  if (filters?.category) titleBits.push(String(filters.category));
+  if (filters?.location) titleBits.push(String(filters.location));
+  const titlePrefix = titleBits.length ? titleBits.join(' · ') + ' – ' : '';
+  const pageTitle = `${titlePrefix}${t('listing:listingsPage.title','Browse Listings')} | FasoLink`;
+  const canonical = canonicalForPath('/listings' + location.search);
+  const frHref = canonical;
+  const hreflangs = [
+    { href: frHref, hrefLang: 'fr' },
+    { href: canonical, hrefLang: 'x-default' },
+  ];
+  useSEO({ title: pageTitle, description: resultsCountLabel, canonical, hreflangs });
 
   return (
     <div className="lp-shell">

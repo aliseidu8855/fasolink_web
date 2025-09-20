@@ -15,6 +15,7 @@ import RelatedListingsCarousel from '../components/listing/RelatedListingsCarous
 import './ListingDetailPage.css';
 import ListingDetailSkeleton from '../components/listing/ListingDetailSkeleton';
 import ListingGalleryOverlay from '../components/listing/ListingGalleryOverlay';
+import { useSEO, canonicalForPath } from '../utils/seo';
 
 // Helper to format the CFA currency
 const formatPrice = (price) => {
@@ -161,6 +162,17 @@ const ListingDetailPage = () => {
     };
     return { "@graph": [ product, breadcrumb ] };
   };
+
+  // SEO for detail page (call hook unconditionally)
+  const firstImg = (Array.isArray(listing?.images) && listing.images.length) ? listing.images[0].image : undefined;
+  const seoTitle = listing ? `${listing.title} | FasoLink` : 'FasoLink – Détail de l\'annonce';
+  const seoDesc = listing?.description?.slice(0, 160) || 'Consultez les détails de cette annonce sur FasoLink.';
+  const seoCanonical = listing ? canonicalForPath(`/listings/${listing.id}`) : undefined;
+  const hreflangs = [
+    ...(seoCanonical ? [{ href: seoCanonical, hrefLang: 'fr' }] : []),
+    ...(seoCanonical ? [{ href: seoCanonical, hrefLang: 'x-default' }] : []),
+  ];
+  useSEO({ title: seoTitle, description: seoDesc, canonical: seoCanonical, image: firstImg, hreflangs });
 
   if (loading) return <ListingDetailSkeleton />;
   if (error) return <p className="container error-message">{error}</p>;
